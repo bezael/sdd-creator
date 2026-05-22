@@ -150,7 +150,11 @@ El agente:
 
 > **Spec → Plan → Tests → Código.** Código es lo último que pasa, no lo primero.
 
-La metodología SDD está documentada en el libro [*SDD: Construye con control*](https://leanpub.com/sdd) y en los cursos y workshops de Dominicode.
+La metodología SDD está documentada en el libro y en los cursos de Dominicode:
+
+- **Curso online** — [Construye con IA: de la idea al producto con Claude Code](https://www.udemy.com/course/construye-con-ia-de-la-idea-al-producto-con-claude-code/?referralCode=AECD9EA3796054DEDD5D) (Udemy)
+- **Libro digital** — [SDD: Construye con control](https://leanpub.com/sdd-spec-driven-development) (Leanpub)
+- **Libro físico** — [Spec-Driven Development: construir agentes proyecto](https://www.amazon.es/-/en/Spec-Driven-Development-construir-agentes-proyecto/dp/B0GW6HN48K/ref=tmm_pap_swatch_0?_encoding=UTF8&dib_tag=AUTHOR&dib=eyJ2IjoiMSJ9.8_Nr_CREQqyDdShal8UyRqcr3ftdcpnEePLWr8CRp8lfNCG-sv6OjDTMbGd3G2MP.d4mvOV0abTcNYbavuQe615dpMa41i88elPTIhzy2yRk) (Amazon)
 
 ---
 
