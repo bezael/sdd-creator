@@ -1,5 +1,7 @@
 # bezael/sdd-creator — Skills de Dominicode
 
+> [🇬🇧 English version](./README.en.md)
+
 > Genera specs siguiendo la metodología **Spec-Driven Development** de Dominicode (Bezael Pérez) en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
 > Antes de generar código, el agente produce `spec.md` (6 secciones), `plan.md` (decisiones técnicas) y `tasks.md` (lista TDD ordenada) bajo `specs/<feature-slug>/`.
