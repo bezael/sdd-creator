@@ -1,105 +1,105 @@
-# Tasks — [Nombre del feature/producto]
+# Tasks — [Feature/Product Name]
 
-> Derivado de `spec.md` + `plan.md`. **Ejecutar las tareas en orden estricto.**
-> Para cada funcionalidad: 🔴 test que falla → 🟢 implementación mínima → 🔵 refactor (si aporta).
-> Si una tarea revela que falta algo en el spec → **vuelve al spec primero**, no improvises en código.
-
----
-
-## Convenciones
-
-- **Checkbox** `[ ]` → pendiente / `[x]` → completada
-- **Emojis** marcan la fase TDD:
-  - ⚙️ Setup (no requiere test)
-  - 🔴 Red — escribir test que falla
-  - 🟢 Green — implementación mínima que hace pasar el test
-  - 🔵 Refactor — cleanup sin cambiar comportamiento
-  - 🔗 Integración — test que cruza módulos
-- **Cada tarea lista** los archivos que toca y el criterio que satisface
+> Derived from `spec.md` + `plan.md`. **Execute tasks in strict order.**
+> For each feature: 🔴 failing test → 🟢 minimal implementation → 🔵 refactor (if it adds value).
+> If a task reveals something missing in the spec → **go back to the spec first**, don't improvise in code.
 
 ---
 
-## Fase 0 — Setup del proyecto y verificación del runner
+## Conventions
 
-> **Gate obligatorio:** sin runner de tests verificado, NO se puede empezar la Fase 1.
-> Antes de generar esta fase, ya se hizo el Paso 3.5 (detección del runner). Escoge **una** de las dos rutas según el resultado.
-
-### Ruta A — Runner ya existe en el proyecto
-
-- [x] ⚙️ **Runner verificado:** [nombre, ej. vitest 1.6.0] detectado en `[archivo, ej. package.json]`. Comando: `[ej. npm test]`. (No requiere instalación.)
-- [ ] ⚙️ **Confirmar que el runner ejecuta** — corre `[comando]` en el repo actual. Debe terminar sin error (puede no haber tests aún).
-
-### Ruta B — Hay que instalar el runner
-
-- [ ] ⚙️ **Instalar runner** — `[comando de instalación, ej. npm install -D vitest @vitest/ui]`.
-- [ ] ⚙️ **Configurar runner** — `[archivos de config, ej. vitest.config.ts + script "test": "vitest" en package.json]`.
-- [ ] ⚙️ **Smoke test del runner** — crear `tests/smoke.test.[ts|py|...]` con un test trivial (`expect(true).toBe(true)` o equivalente). Correr `[comando]` y verificar que **pasa**. Esto valida que la config funciona antes de empezar TDD real.
-
-### Resto del setup (común a ambas rutas)
-
-- [ ] ⚙️ **Inicializar proyecto si es greenfield** — `package.json`, `tsconfig.json` u otros manifiestos. Test: N/A.
-- [ ] ⚙️ **Configurar linter / formatter** — [eslint, prettier, biome, ruff, rustfmt...]. Test: el comando del linter pasa con el repo actual.
-- [ ] ⚙️ **Crear estructura de carpetas según `plan.md` sección 3** — Test: N/A.
-
-> **No avances a Fase 1 hasta que el smoke test del runner pase en verde** (Ruta B) o el runner existente ejecute sin errores (Ruta A).
+- **Checkbox** `[ ]` → pending / `[x]` → done
+- **Emojis** mark the TDD phase:
+  - ⚙️ Setup (no test required)
+  - 🔴 Red — write a failing test
+  - 🟢 Green — minimal implementation that makes the test pass
+  - 🔵 Refactor — cleanup without changing behavior
+  - 🔗 Integration — test that crosses modules
+- **Each task lists** the files it touches and the criterion it satisfies
 
 ---
 
-## Fase 1 — Módulo [primer módulo del orden en plan.md]
+## Phase 0 — Project setup and runner verification
 
-### Funcionalidad: [copiar literal de Sección 3 del spec]
+> **Mandatory gate:** without a verified test runner, Phase 1 cannot start.
+> Before generating this phase, Step 3.5 (runner detection) has already been done. Choose **one** of the two routes based on the result.
 
-- [ ] 🔴 **Test: [nombre del test]** — archivos: `tests/[modulo]/[caso].test.ts`. Criterio: `spec.md §3 → "El usuario puede [X]"`. Debe FALLAR al correrlo.
-- [ ] 🟢 **Implementar [X]** — archivos: `src/[modulo]/[archivo].ts`. Hace que el test rojo pase. NO añadir código que no necesite el test.
-- [ ] 🔵 **Refactor [opcional]** — archivos: `src/[modulo]/[archivo].ts`. Solo si mejora claridad. Tests siguen en verde.
+### Route A — Runner already exists in the project
 
-### Funcionalidad: [siguiente del mismo módulo]
+- [x] ⚙️ **Runner verified:** [name, e.g. vitest 1.6.0] detected in `[file, e.g. package.json]`. Command: `[e.g. npm test]`. (No installation required.)
+- [ ] ⚙️ **Confirm the runner executes** — run `[command]` in the current repo. Must complete without error (there may be no tests yet).
+
+### Route B — Runner needs to be installed
+
+- [ ] ⚙️ **Install runner** — `[install command, e.g. npm install -D vitest @vitest/ui]`.
+- [ ] ⚙️ **Configure runner** — `[config files, e.g. vitest.config.ts + script "test": "vitest" in package.json]`.
+- [ ] ⚙️ **Smoke test the runner** — create `tests/smoke.test.[ts|py|...]` with a trivial test (`expect(true).toBe(true)` or equivalent). Run `[command]` and verify it **passes**. This validates the config works before starting real TDD.
+
+### Rest of setup (common to both routes)
+
+- [ ] ⚙️ **Initialize project if greenfield** — `package.json`, `tsconfig.json` or other manifests. Test: N/A.
+- [ ] ⚙️ **Configure linter / formatter** — [eslint, prettier, biome, ruff, rustfmt...]. Test: the linter command passes on the current repo.
+- [ ] ⚙️ **Create folder structure per `plan.md` section 3** — Test: N/A.
+
+> **Do not advance to Phase 1 until the runner smoke test passes green** (Route B) or the existing runner executes without errors (Route A).
+
+---
+
+## Phase 1 — Module [first module from build order in plan.md]
+
+### Feature: [copy literal from Section 3 of the spec]
+
+- [ ] 🔴 **Test: [test name]** — files: `tests/[module]/[case].test.ts`. Criterion: `spec.md §3 → "The user can [X]"`. Must FAIL when run.
+- [ ] 🟢 **Implement [X]** — files: `src/[module]/[file].ts`. Makes the red test pass. Do NOT add code the test doesn't require.
+- [ ] 🔵 **Refactor [optional]** — files: `src/[module]/[file].ts`. Only if it improves clarity. Tests stay green.
+
+### Feature: [next one in the same module]
 
 - [ ] 🔴 **Test: [...]** — ...
-- [ ] 🟢 **Implementar [...]** — ...
+- [ ] 🟢 **Implement [...]** — ...
 - [ ] 🔵 **Refactor** — ...
 
-### Cierre del módulo
+### Module close
 
-- [ ] 🔗 **Test de integración del módulo** — verifica que las funcionalidades del módulo encajan entre sí. Archivos: `tests/[modulo]/integration.test.ts`.
+- [ ] 🔗 **Module integration test** — verifies that the module's features work together. Files: `tests/[module]/integration.test.ts`.
 
 ---
 
-## Fase 2 — Módulo [segundo módulo del orden en plan.md]
+## Phase 2 — Module [second module from build order in plan.md]
 
-### Funcionalidad: [...]
+### Feature: [...]
 
 - [ ] 🔴 **Test: [...]** — ...
-- [ ] 🟢 **Implementar [...]** — ...
+- [ ] 🟢 **Implement [...]** — ...
 - [ ] 🔵 **Refactor** — ...
 
-> Repite el patrón red → green → refactor para cada funcionalidad de cada módulo, en el orden definido en `plan.md` sección 6.
+> Repeat the red → green → refactor pattern for each feature of each module, in the order defined in `plan.md` section 6.
 
 ---
 
-## Fase N — Flujos end-to-end
+## Phase N — End-to-end flows
 
-> Después de tener todos los módulos, escribe un test E2E por cada flujo de la Sección 4 del spec.
+> After all modules are done, write one E2E test per flow from Section 4 of the spec.
 
-- [ ] 🔗 **E2E flujo: [nombre del flujo]** — happy path. Archivos: `tests/e2e/[flujo].test.ts`.
-- [ ] 🔗 **E2E flujo: [nombre del flujo]** — caso de error definido en la spec. Archivos: `tests/e2e/[flujo]-error.test.ts`.
-
----
-
-## Fase final — Requisitos no funcionales
-
-> Para cada NFR de la Sección 6 del spec que sea verificable, una tarea.
-
-- [ ] 🔗 **NFR rendimiento: [criterio]** — archivos: `tests/perf/[caso].test.ts` o herramienta de benchmark.
-- [ ] 🔗 **NFR seguridad: [criterio]** — archivos: `tests/security/[caso].test.ts` o auditoría manual.
-- [ ] ⚙️ **NFR idioma: [criterio]** — i18n configurado, strings extraídos.
+- [ ] 🔗 **E2E flow: [flow name]** — happy path. Files: `tests/e2e/[flow].test.ts`.
+- [ ] 🔗 **E2E flow: [flow name]** — error case defined in the spec. Files: `tests/e2e/[flow]-error.test.ts`.
 
 ---
 
-## Reglas de ejecución
+## Final phase — Non-functional requirements
 
-1. **Una tarea a la vez.** No abras dos en paralelo en la misma sesión.
-2. **Antes de marcar 🟢 completada:** corre los tests y verifica que el test correspondiente pasa.
-3. **Antes de marcar 🔵 completada:** corre TODOS los tests y verifica que siguen en verde.
-4. **Si una tarea revela ambigüedad en el spec:** detén la ejecución, actualiza `spec.md` y `plan.md`, y regenera las tareas afectadas. No improvises en código.
-5. **Commits:** uno por tarea completada. Mensaje sugerido: `[fase] feat(modulo): descripción — task #N`.
+> For each verifiable NFR from Section 6 of the spec, one task.
+
+- [ ] 🔗 **NFR performance: [criterion]** — files: `tests/perf/[case].test.ts` or benchmark tool.
+- [ ] 🔗 **NFR security: [criterion]** — files: `tests/security/[case].test.ts` or manual audit.
+- [ ] ⚙️ **NFR language: [criterion]** — i18n configured, strings extracted.
+
+---
+
+## Execution rules
+
+1. **One task at a time.** Do not open two in parallel in the same session.
+2. **Before marking 🟢 done:** run the tests and verify the corresponding test passes.
+3. **Before marking 🔵 done:** run ALL tests and verify they stay green.
+4. **If a task reveals ambiguity in the spec:** stop execution, update `spec.md` and `plan.md`, and regenerate the affected tasks. Do not improvise in code.
+5. **Commits:** one per completed task. Suggested message: `[phase] feat(module): description — task #N`.

@@ -1,7 +1,7 @@
 # Engineering skills
 
-Skills para el trabajo diario de desarrollo de software.
+Skills for day-to-day software development work.
 
-| Skill | Descripción |
+| Skill | Description |
 |-------|-------------|
-| [dominicode-sdd-creator](./dominicode-sdd-creator/SKILL.md) | Genera `spec.md` + `plan.md` + `tasks.md` (TDD) antes de escribir código, siguiendo la metodología Spec-Driven Development de Dominicode. |
+| [dominicode-sdd-creator](./dominicode-sdd-creator/SKILL.md) | Generates `spec.md` + `plan.md` + `tasks.md` (TDD) before writing any code, following the Dominicode Spec-Driven Development methodology. |

@@ -1,90 +1,90 @@
-# Plan técnico — [Nombre del feature/producto]
+# Technical Plan — [Feature/Product Name]
 
-> Derivado de `spec.md`. **No empieces este archivo hasta que la spec esté confirmada por el usuario.**
-> Si el spec cambia, este archivo se reescribe — no se parchea.
-
----
-
-## 1. Stack final
-
-> Decisiones cerradas, con una línea de justificación por cada una. Si la Sección 5 del spec decía "a decidir con el agente", aquí es donde lo decides — con trade-offs explícitos.
-
-- **Frontend:** [tecnología] — [por qué, en 1 línea]
-- **Backend / API:** [tecnología] — [por qué]
-- **Base de datos:** [tecnología] — [por qué]
-- **Autenticación:** [proveedor / patrón] — [por qué]
-- **Hosting:** [dónde] — [por qué]
-- **Test runner (unit):** [vitest / jest / pytest / rspec / cargo test / go test / junit / xunit / ...] — [por qué]. **Decisión obligatoria — sin runner no hay TDD.**
-- **Test runner (E2E, si aplica):** [playwright / cypress / ...] — [por qué]
-- **CI:** [GitHub Actions / GitLab CI / ninguno por ahora] — [cuándo se conecta]
-
-### Stacks descartados
-
-> Documenta brevemente qué considerados y por qué NO. Esto evita revisitar la misma decisión en 3 meses.
-
-- **[Stack alternativo]:** descartado porque [razón].
+> Derived from `spec.md`. **Do not start this file until the spec is confirmed by the user.**
+> If the spec changes, this file is rewritten — not patched.
 
 ---
 
-## 2. Modelo de datos
+## 1. Final stack
 
-> Las entidades principales y cómo se relacionan. Una línea por entidad.
+> Closed decisions, with one line of rationale each. If Section 5 of the spec said "to be decided with the agent", this is where you decide — with explicit trade-offs.
 
-- **[Entidad]** — campos clave: [campo1, campo2]. Relación: [pertenece a / tiene muchos ...].
-- **[Entidad]** — campos clave: [...]. Relación: [...].
+- **Frontend:** [technology] — [why, in 1 line]
+- **Backend / API:** [technology] — [why]
+- **Database:** [technology] — [why]
+- **Authentication:** [provider / pattern] — [why]
+- **Hosting:** [where] — [why]
+- **Test runner (unit):** [vitest / jest / pytest / rspec / cargo test / go test / junit / xunit / ...] — [why]. **Mandatory decision — without a runner there is no TDD.**
+- **Test runner (E2E, if applicable):** [playwright / cypress / ...] — [why]
+- **CI:** [GitHub Actions / GitLab CI / none for now] — [when it connects]
 
-> Si el modelo es complejo (>6 entidades), añade un diagrama o ASCII en un anexo.
+### Discarded stacks
+
+> Briefly document what was considered and why NOT. This prevents revisiting the same decision in 3 months.
+
+- **[Alternative stack]:** discarded because [reason].
 
 ---
 
-## 3. Contratos (API o componentes)
+## 2. Data model
 
-> Si es backend: lista los endpoints o handlers principales.
-> Si es solo frontend: lista los componentes principales y su responsabilidad.
+> The main entities and how they relate. One line per entity.
+
+- **[Entity]** — key fields: [field1, field2]. Relationship: [belongs to / has many ...].
+- **[Entity]** — key fields: [...]. Relationship: [...].
+
+> If the model is complex (>6 entities), add a diagram or ASCII in an appendix.
+
+---
+
+## 3. Contracts (API or components)
+
+> If it's backend: list the main endpoints or handlers.
+> If it's frontend only: list the main components and their responsibility.
 
 **Backend / API:**
-- `[METHOD] /ruta` — [qué hace] — input: [...], output: [...]
-- `[METHOD] /ruta` — [qué hace] — ...
+- `[METHOD] /route` — [what it does] — input: [...], output: [...]
+- `[METHOD] /route` — [what it does] — ...
 
-**Frontend / componentes:**
-- `<NombreComponente>` — [responsabilidad en 1 línea]
-- `<NombreComponente>` — [...]
-
----
-
-## 4. Dependencias externas
-
-> Servicios y librerías clave. Para cada uno: por qué se eligió y cuál es el plan B si falla.
-
-- **[Servicio / librería]** — uso: [...]. Plan B si falla: [...].
+**Frontend / components:**
+- `<ComponentName>` — [responsibility in 1 line]
+- `<ComponentName>` — [...]
 
 ---
 
-## 5. Riesgos técnicos y mitigaciones
+## 4. External dependencies
 
-> Lista 3–5 cosas que podrían salir mal. Para cada una: la mitigación.
+> Key services and libraries. For each: why it was chosen and what the fallback is if it fails.
 
-- **Riesgo:** [descripción]. **Mitigación:** [acción concreta].
-- **Riesgo:** [descripción]. **Mitigación:** [acción concreta].
-
----
-
-## 6. Orden de construcción
-
-> Qué módulo se construye primero, segundo, tercero. Justifica el orden.
-
-1. **Módulo [X]** — primero porque [es la base que el resto necesita / mayor riesgo técnico / habilita demo más temprana].
-2. **Módulo [Y]** — segundo porque [depende de X / desbloquea el flujo principal].
-3. **Módulo [Z]** — al final porque [es marginal / depende de los anteriores].
+- **[Service / library]** — usage: [...]. Fallback if it fails: [...].
 
 ---
 
-## 7. Criterios de "hecho" para el plan
+## 5. Technical risks and mitigations
 
-- [ ] Todas las funcionalidades del spec aparecen en el modelo de datos o en los contratos
-- [ ] Cada riesgo tiene mitigación
-- [ ] El orden de construcción es claro y no tiene ciclos
-- [ ] **El test runner (unit, y E2E si aplica) está decidido y justificado**
-- [ ] El usuario ha confirmado el stack
+> List 3–5 things that could go wrong. For each: the mitigation.
 
-*Cuando los 5 puntos estén tickeados, pasa al Paso 3.5 (verificación del runner) y luego a `tasks.md`.*
+- **Risk:** [description]. **Mitigation:** [concrete action].
+- **Risk:** [description]. **Mitigation:** [concrete action].
+
+---
+
+## 6. Build order
+
+> Which module is built first, second, third. Justify the order.
+
+1. **Module [X]** — first because [it's the base everything else needs / highest technical risk / enables earlier demo].
+2. **Module [Y]** — second because [depends on X / unlocks the main flow].
+3. **Module [Z]** — last because [it's marginal / depends on the above].
+
+---
+
+## 7. Definition of done for the plan
+
+- [ ] All features from the spec appear in the data model or contracts
+- [ ] Every risk has a mitigation
+- [ ] The build order is clear and has no cycles
+- [ ] **The test runner (unit, and E2E if applicable) is decided and justified**
+- [ ] The user has confirmed the stack
+
+*When all 5 points are checked, move to Step 3.5 (runner verification) and then to `tasks.md`.*

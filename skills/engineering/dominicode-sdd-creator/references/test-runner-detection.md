@@ -1,18 +1,18 @@
-# Test runner — detección y decisión
+# Test runner — detection and decision
 
-> **Sin runner de tests no hay TDD.** Antes de generar `tasks.md`, verifica si el proyecto tiene una herramienta de tests instalada y funcional. Si no la tiene, instalarla es la **primera tarea**, no algo que se hace "después".
+> **Without a test runner there is no TDD.** Before generating `tasks.md`, verify that the project has a testing tool installed and working. If it doesn't, installing one is the **first task** — not something done "later".
 
 ---
 
-## Protocolo de detección
+## Detection protocol
 
-Ejecuta este protocolo entre `plan.md` y `tasks.md`. Si estás en un agente con acceso a filesystem (Claude Code, Cursor, Codex), inspecciona los archivos. Si no, pídele al usuario que te diga qué hay.
+Run this protocol between `plan.md` and `tasks.md`. If you are in an agent with filesystem access (Claude Code, Cursor, Codex), inspect the files. If not, ask the user what's there.
 
-### Paso 1 — Detectar el ecosistema
+### Step 1 — Detect the ecosystem
 
-Mira la raíz del proyecto:
+Look at the project root:
 
-| Archivo | Ecosistema |
+| File | Ecosystem |
 |---|---|
 | `package.json` | Node / JavaScript / TypeScript |
 | `pyproject.toml`, `requirements.txt`, `setup.py` | Python |
@@ -23,146 +23,146 @@ Mira la raíz del proyecto:
 | `composer.json` | PHP |
 | `pubspec.yaml` | Dart / Flutter |
 | `*.csproj`, `*.sln` | C# / .NET |
-| _(nada — proyecto vacío)_ | Greenfield → se decide en `plan.md` |
+| _(nothing — empty project)_ | Greenfield → decided in `plan.md` |
 
-### Paso 2 — Buscar runner instalado
+### Step 2 — Look for an installed runner
 
-Para cada ecosistema, comprueba estas señales:
+For each ecosystem, check these signals:
 
 #### Node / JavaScript / TypeScript
 
-En `package.json`, busca en `devDependencies` o `dependencies`:
+In `package.json`, look in `devDependencies` or `dependencies`:
 - `vitest`, `jest`, `mocha`, `ava`, `tap`, `node --test` (Node 20+)
 - E2E: `@playwright/test`, `cypress`, `webdriverio`
 - React: `@testing-library/react`
 
-Y un script en `package.json`:
+And a script in `package.json`:
 ```json
 "scripts": { "test": "..." }
 ```
 
-Carpetas/archivos típicos: `tests/`, `__tests__/`, `*.test.ts`, `*.spec.ts`.
+Typical folders/files: `tests/`, `__tests__/`, `*.test.ts`, `*.spec.ts`.
 
 #### Python
 
-En `pyproject.toml` (sección `[tool.poetry.dev-dependencies]` o `[project.optional-dependencies.dev]`) o en `requirements-dev.txt`:
-- `pytest`, `unittest` (built-in pero suele requerir setup), `nose2`, `hypothesis`
+In `pyproject.toml` (section `[tool.poetry.dev-dependencies]` or `[project.optional-dependencies.dev]`) or in `requirements-dev.txt`:
+- `pytest`, `unittest` (built-in but usually needs setup), `nose2`, `hypothesis`
 
-Carpetas/archivos: `tests/`, `test_*.py`, `*_test.py`, `conftest.py`.
+Folders/files: `tests/`, `test_*.py`, `*_test.py`, `conftest.py`.
 
 #### Rust
 
-`cargo test` viene **built-in**. Si hay `Cargo.toml`, hay runner. Verifica si hay tests:
+`cargo test` is **built-in**. If there is a `Cargo.toml`, there is a runner. Check for tests:
 - `tests/` (integration tests)
-- `#[cfg(test)]` en archivos `src/*.rs`
+- `#[cfg(test)]` in `src/*.rs` files
 
 #### Go
 
-`go test` viene **built-in**. Si hay `go.mod`, hay runner. Verifica:
-- Archivos `*_test.go`
+`go test` is **built-in**. If there is a `go.mod`, there is a runner. Check for:
+- `*_test.go` files
 
 #### Ruby
 
-En `Gemfile`:
-- `rspec`, `minitest` (built-in en Ruby moderno)
+In `Gemfile`:
+- `rspec`, `minitest` (built-in in modern Ruby)
 
-Carpetas: `spec/`, `test/`.
+Folders: `spec/`, `test/`.
 
 #### Java / Kotlin
 
-En `pom.xml` o `build.gradle`:
+In `pom.xml` or `build.gradle`:
 - JUnit (`junit`, `junit-jupiter`), TestNG, Spock (Groovy)
 
-Carpetas: `src/test/java/`, `src/test/kotlin/`.
+Folders: `src/test/java/`, `src/test/kotlin/`.
 
 #### PHP
 
-En `composer.json`:
+In `composer.json`:
 - `phpunit/phpunit`, `pest`, `behat`
 
-Carpetas: `tests/`.
+Folders: `tests/`.
 
 #### Dart / Flutter
 
-En `pubspec.yaml` (`dev_dependencies`):
+In `pubspec.yaml` (`dev_dependencies`):
 - `test`, `flutter_test`, `mockito`
 
-Carpetas: `test/`.
+Folders: `test/`.
 
 #### C# / .NET
 
-Archivos de proyecto referenciando:
+Project files referencing:
 - `xunit`, `nunit`, `mstest`
 
-Proyectos `*.Tests.csproj`.
+`*.Tests.csproj` projects.
 
-### Paso 3 — Clasificar el resultado
+### Step 3 — Classify the result
 
-| Resultado | Significado | Acción |
+| Result | Meaning | Action |
 |---|---|---|
-| **A. Runner instalado y configurado** | Existe el paquete + hay tests pasando (o "no tests" sin error) | Usa ese runner. No propongas otro. |
-| **B. Runner instalado pero sin tests todavía** | Está en `package.json`/`Cargo.toml`/etc. pero no hay archivos `*.test.*` | Usa ese runner. La primera tarea 🔴 crea la estructura de tests. |
-| **C. Sin runner, con proyecto existente** | Hay `package.json` u otro manifiesto pero ningún runner | **Para antes de seguir.** Propone el runner estándar de ese ecosistema (ver matriz abajo) y añade tareas de Setup en Fase 0 de `tasks.md`. Confirma con el usuario. |
-| **D. Greenfield (proyecto vacío)** | No hay manifiestos | La decisión ya debe estar en `plan.md` sección "Stack final → CI / Tests". Si no está, **vuelve a `plan.md`** y ciérralo antes de seguir. |
-| **E. Usuario rechaza tener runner** | Caso raro pero posible | **Detente.** No se puede hacer SDD-TDD sin tests. Explica al usuario que la skill no aplica y ofrécele un fallback: spec sin TDD (genera spec.md + plan.md, no tasks.md). |
+| **A. Runner installed and configured** | Package exists + tests are passing (or "no tests" without error) | Use that runner. Don't propose another. |
+| **B. Runner installed but no tests yet** | It's in `package.json`/`Cargo.toml`/etc. but no `*.test.*` files exist | Use that runner. The first 🔴 task creates the test structure. |
+| **C. No runner, with existing project** | There is a `package.json` or other manifest but no runner | **Stop before continuing.** Propose the standard runner for that ecosystem (see matrix below) and add Setup tasks in Phase 0 of `tasks.md`. Confirm with the user. |
+| **D. Greenfield (empty project)** | No manifests | The decision must already be in `plan.md` section "Final stack → CI / Tests". If it's not, **go back to `plan.md`** and close it before continuing. |
+| **E. User refuses to have a runner** | Rare but possible | **Stop.** SDD-TDD cannot be done without tests. Tell the user the skill doesn't apply and offer a fallback: spec without TDD (generate spec.md + plan.md, no tasks.md). |
 
 ---
 
-## Matriz de defaults recomendados
+## Recommended defaults matrix
 
-Cuando estás en caso **C** o **D** y debes proponer un runner, usa estos defaults por ecosistema. **Propón siempre con justificación de 1 línea**, no impongas.
+When you are in case **C** or **D** and must propose a runner, use these defaults per ecosystem. **Always propose with a 1-line justification** — don't impose.
 
-| Ecosistema | Default recomendado | Por qué |
+| Ecosystem | Recommended default | Why |
 |---|---|---|
-| **Node moderno + TS** | Vitest | rápido, soporta TS nativo, API compatible con Jest |
-| **Node legacy / CRA** | Jest | el estándar histórico, máxima compatibilidad |
-| **Frontend React/Vue/Svelte** | Vitest + Testing Library | combo más común en 2025+ |
-| **Node E2E** | Playwright | mejor DX que Cypress hoy, multi-browser |
-| **Python** | pytest | de facto estándar, mucho mejor DX que unittest |
-| **Rust** | `cargo test` (built-in) | no añadir más |
-| **Go** | `go test` (built-in) | no añadir más |
-| **Ruby** | RSpec | comunidad mayoritaria; Minitest si el equipo prefiere lo built-in |
-| **Java moderno** | JUnit 5 (Jupiter) | estándar actual |
-| **Kotlin** | JUnit 5 o Kotest | Kotest si prefieren DSL idiomático |
-| **PHP** | PHPUnit | estándar; Pest si el equipo quiere sintaxis tipo Jest |
-| **Dart/Flutter** | `flutter_test` (built-in) | viene con Flutter |
-| **C# / .NET** | xUnit | recomendación oficial de Microsoft |
+| **Modern Node + TS** | Vitest | fast, native TS support, Jest-compatible API |
+| **Legacy Node / CRA** | Jest | the historical standard, maximum compatibility |
+| **Frontend React/Vue/Svelte** | Vitest + Testing Library | most common combo in 2025+ |
+| **Node E2E** | Playwright | better DX than Cypress today, multi-browser |
+| **Python** | pytest | de facto standard, far better DX than unittest |
+| **Rust** | `cargo test` (built-in) | no addition needed |
+| **Go** | `go test` (built-in) | no addition needed |
+| **Ruby** | RSpec | majority community; Minitest if the team prefers the built-in |
+| **Modern Java** | JUnit 5 (Jupiter) | current standard |
+| **Kotlin** | JUnit 5 or Kotest | Kotest if they prefer the idiomatic DSL |
+| **PHP** | PHPUnit | standard; Pest if the team wants Jest-like syntax |
+| **Dart/Flutter** | `flutter_test` (built-in) | comes with Flutter |
+| **C# / .NET** | xUnit | Microsoft's official recommendation |
 
 ---
 
-## Cómo se refleja en los artefactos
+## How it reflects in the artifacts
 
-### En `plan.md`
+### In `plan.md`
 
-La sección "Stack final → CI / Tests" **no es opcional**. Debe quedar cerrada con:
-- Runner unitario elegido + por qué
-- Runner E2E si aplica + por qué
-- Cómo se ejecutan (`npm test`, `pytest`, etc.)
-- Si va a CI: dónde (GitHub Actions, GitLab CI, etc.)
+The "Final stack → CI / Tests" section **is not optional**. It must be closed with:
+- Unit runner chosen + why
+- E2E runner if applicable + why
+- How they are run (`npm test`, `pytest`, etc.)
+- If going to CI: where (GitHub Actions, GitLab CI, etc.)
 
-### En `tasks.md`, Fase 0
+### In `tasks.md`, Phase 0
 
-Dos rutas posibles, **escoge una** según el resultado de la detección:
+Two possible paths — **choose one** based on the detection result:
 
-**Ruta A — Runner ya existe:**
+**Route A — Runner already exists:**
 ```markdown
-- [x] ⚙️ Runner de tests verificado: [nombre] — comando: `[comando]`. (No requiere instalación.)
+- [x] ⚙️ Test runner verified: [name] — command: `[command]`. (No installation required.)
 ```
 
-**Ruta B — Hay que instalarlo:**
+**Route B — Needs to be installed:**
 ```markdown
-- [ ] ⚙️ **Instalar [runner]** — `npm install -D vitest @vitest/ui` (o equivalente).
-- [ ] ⚙️ **Configurar [runner]** — añadir `vitest.config.ts`, script `"test": "vitest"` en `package.json`.
-- [ ] ⚙️ **Smoke test del runner** — crear `tests/smoke.test.ts` con un `expect(true).toBe(true)`, correr `npm test`, verificar que pasa.
+- [ ] ⚙️ **Install [runner]** — `npm install -D vitest @vitest/ui` (or equivalent).
+- [ ] ⚙️ **Configure [runner]** — add `vitest.config.ts`, script `"test": "vitest"` in `package.json`.
+- [ ] ⚙️ **Smoke test the runner** — create `tests/smoke.test.ts` with an `expect(true).toBe(true)`, run `npm test`, verify it passes.
 ```
 
-El **smoke test** del runner no es opcional. Si no verificas que el runner ejecuta antes de empezar TDD, la primera tarea 🔴 puede fallar por configuración rota y no sabrás si la implementación funciona.
+The **runner smoke test** is not optional. If you don't verify the runner executes before starting TDD, the first 🔴 task may fail due to broken config and you won't know whether the implementation works.
 
 ---
 
-## Reglas
+## Rules
 
-- ❌ Nunca asumas que hay runner. Verifica.
-- ❌ Nunca cambies un runner existente sin pedirlo. Si el proyecto usa Jest y tú prefieres Vitest, **es problema tuyo, no del proyecto**.
-- ✅ Si añades tareas de Setup en Fase 0, el smoke test del runner va **antes** de la primera 🔴 Red task de cualquier funcionalidad.
-- ✅ Si el usuario rechaza tener tests, ofrécele explícitamente la salida: "esta skill produce spec + plan, no tasks; el TDD lo dejamos fuera".
+- ❌ Never assume there is a runner. Verify.
+- ❌ Never change an existing runner without asking. If the project uses Jest and you prefer Vitest, **that's your problem, not the project's**.
+- ✅ If you add Setup tasks in Phase 0, the runner smoke test goes **before** the first 🔴 Red task of any feature.
+- ✅ If the user refuses to have tests, explicitly offer the exit: "this skill produces spec + plan, not tasks; TDD is left out".

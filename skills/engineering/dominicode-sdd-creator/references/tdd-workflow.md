@@ -1,121 +1,121 @@
-# TDD Workflow — encadenamiento Spec → Plan → Tests → Código
+# TDD Workflow — chaining Spec → Plan → Tests → Code
 
-> Detalle del paso 4 del workflow. Define cómo se traducen las funcionalidades de la Sección 3 del spec en tareas TDD ejecutables.
-
----
-
-## Principio
-
-**Una funcionalidad del spec = al menos un ciclo Red → Green → Refactor.**
-
-Si una funcionalidad necesita más de un ciclo (porque tiene sub-comportamientos), se descompone en varias filas de tareas, **pero todas comparten la misma funcionalidad fuente** del spec. Mantén la trazabilidad citando el bullet exacto del spec en cada test.
+> Detail for Step 4 of the workflow. Defines how the features from Section 3 of the spec are translated into executable TDD tasks.
 
 ---
 
-## El ciclo, en concreto
+## Principle
 
-### 🔴 Red — escribir el test que falla
+**One spec feature = at least one Red → Green → Refactor cycle.**
 
-- El nombre del test es una traducción literal del bullet del spec: `"El usuario puede crear proyectos con nombre, cliente y tarifa"` → `it("crea un proyecto con nombre, cliente y tarifa", ...)`.
-- El test debe fallar por la razón correcta (la lógica no existe), no por errores de sintaxis o imports rotos.
-- Verifica que falla **antes** de marcar la tarea como avanzada al siguiente paso.
-- Si no sabes cómo escribir el test, **el bullet del spec es ambiguo**. Vuelve al spec.
-
-### 🟢 Green — mínima implementación que pasa el test
-
-- "Mínima" en serio. Si el test pide que sume 2 + 2 y devuelva 4, `return 4` está permitido en green.
-- La duplicación y los hardcodes se resuelven en el refactor, no en green.
-- No anticipes funcionalidades futuras. Si el siguiente test va a forzarte a generalizar, perfecto, eso es TDD funcionando.
-
-### 🔵 Refactor — limpieza opcional
-
-- Solo si **mejora la claridad o elimina duplicación real**. "Refactor por refactorizar" no es una tarea.
-- Tests TODOS verdes antes y después. Si rompes algo, vuelve atrás, no parches.
-- Renombrar, extraer función/método, mover archivo, separar responsabilidades. NO añadir comportamiento.
+If a feature needs more than one cycle (because it has sub-behaviors), it is broken down into multiple task rows, **but all share the same source feature** from the spec. Maintain traceability by citing the exact bullet from the spec in each test.
 
 ---
 
-## Naming de tests
+## The cycle, concretely
 
-Convención recomendada (alinea con la forma "El usuario puede…" del spec):
+### 🔴 Red — write the failing test
+
+- The test name is a literal translation of the spec bullet: `"The user can create projects with name, client and rate"` → `it("creates a project with name, client and rate", ...)`.
+- The test must fail for the right reason (the logic doesn't exist yet), not due to syntax errors or broken imports.
+- Verify it fails **before** marking the task as advanced to the next step.
+- If you don't know how to write the test, **the spec bullet is ambiguous**. Go back to the spec.
+
+### 🟢 Green — minimal implementation that passes the test
+
+- "Minimal" for real. If the test asks you to add 2 + 2 and return 4, `return 4` is allowed in green.
+- Duplication and hardcodes are resolved in refactor, not in green.
+- Don't anticipate future features. If the next test will force you to generalize, good — that's TDD working.
+
+### 🔵 Refactor — optional cleanup
+
+- Only if it **improves clarity or removes real duplication**. "Refactor for its own sake" is not a task.
+- All tests green before and after. If you break something, go back — don't patch.
+- Rename, extract function/method, move file, separate concerns. Do NOT add behavior.
+
+---
+
+## Test naming
+
+Recommended convention (aligns with the "The user can…" form from the spec):
 
 ```
-describe('[Módulo] — [Funcionalidad del spec]', () => {
-  it('[comportamiento esperado en lenguaje natural]', () => { ... });
-  it('falla si [precondición de error de la Sección 4]', () => { ... });
+describe('[Module] — [Spec feature]', () => {
+  it('[expected behavior in natural language]', () => { ... });
+  it('fails if [error precondition from Section 4]', () => { ... });
 });
 ```
 
-Ejemplo real:
+Real example:
 
 ```ts
-describe('Módulo de horas — registrar horas trabajadas', () => {
-  it('guarda una entrada con fecha, duración y descripción', () => { /* ... */ });
-  it('actualiza el total del proyecto tras guardar', () => { /* ... */ });
-  it('rechaza duraciones <= 0 con mensaje específico', () => { /* ... */ });
+describe('Hours module — log worked hours', () => {
+  it('saves an entry with date, duration and description', () => { /* ... */ });
+  it('updates the project total after saving', () => { /* ... */ });
+  it('rejects durations <= 0 with a specific message', () => { /* ... */ });
 });
 ```
 
-Notarás que **el tercer test** viene directamente del error path de la Sección 4 del spec. Esa es la razón por la que SDD obliga a escribir error paths: cada uno se convierte en un test.
+Notice that **the third test** comes directly from the error path in Section 4 of the spec. That is why SDD requires error paths: each one becomes a test.
 
 ---
 
-## Cuándo añadir test de integración (🔗)
+## When to add an integration test (🔗)
 
-Tres situaciones:
+Three situations:
 
-1. **Cierre de módulo:** un test que ejercita 2–3 funcionalidades del módulo juntas, verificando que encajan.
-2. **Flujo end-to-end:** uno por cada flujo de la Sección 4 del spec. El happy path y al menos un error path.
-3. **NFR verificable:** rendimiento, seguridad, accesibilidad. No todos los NFRs se testean automáticamente; los que sí, van aquí.
+1. **Module close:** a test that exercises 2–3 features of the module together, verifying they fit.
+2. **End-to-end flow:** one per flow in Section 4 of the spec. The happy path and at least one error path.
+3. **Verifiable NFR:** performance, security, accessibility. Not all NFRs are automatically tested; those that are go here.
 
-Los tests unitarios cubren funcionalidades aisladas. Los de integración cubren flujos. **No los confundas** — si un test "unitario" levanta una base de datos, ya no es unitario.
+Unit tests cover isolated features. Integration tests cover flows. **Don't confuse them** — if a "unit" test spins up a database, it's no longer a unit test.
 
 ---
 
-## Anti-patterns frecuentes
+## Common anti-patterns
 
-| Anti-pattern | Por qué falla | Qué hacer en su lugar |
+| Anti-pattern | Why it fails | What to do instead |
 |---|---|---|
-| Escribir test después del código | No es TDD, es "test-after". La presión psicológica de tener código ya escrito sesga el test hacia confirmar lo que hay, no hacia el comportamiento deseado. | Test primero, siempre. Si ya tienes código, bórralo o ignóralo hasta tener el test rojo. |
-| Test que no falla nunca | Estás testeando un mock o una tautología. | Antes de implementar, corre el test y confirma que falla por la razón correcta. |
-| Saltar el refactor "porque hay prisa" | La deuda se acumula en silencio. En 5 tareas el código está ilegible. | Refactor es opcional **por tarea**, pero el equipo debe revisar deuda cada cierre de módulo. |
-| Test con múltiples asserts no relacionados | Falla un assert y no sabes qué se rompió de verdad. | Un comportamiento por test. Si necesitas varios asserts, todos deben describir el mismo comportamiento. |
-| Implementar sin tener el bullet del spec correspondiente | Estás añadiendo funcionalidad fuera de alcance. | Si la implementación lo requiere, vuelve al spec y añade el bullet primero. |
-| Tests E2E para todo | Lentos, frágiles, caros de mantener. | E2E solo para flujos críticos. La mayoría del comportamiento se cubre con unitarios. |
-| Marcar 🟢 sin correr todos los tests | Pasa el test nuevo pero rompiste otro hace 2 tareas. | Antes de marcar verde, `npm test` (o equivalente) completo. |
+| Writing the test after the code | That's "test-after", not TDD. The psychological pressure of already-written code biases the test toward confirming what exists, not toward the desired behavior. | Test first, always. If you already have code, delete it or ignore it until you have a red test. |
+| A test that never fails | You're testing a mock or a tautology. | Before implementing, run the test and confirm it fails for the right reason. |
+| Skipping refactor "because we're in a hurry" | Debt accumulates silently. In 5 tasks the code is unreadable. | Refactor is optional **per task**, but the team should review debt at every module close. |
+| Test with multiple unrelated asserts | One assert fails and you don't know what actually broke. | One behavior per test. If you need multiple asserts, they must all describe the same behavior. |
+| Implementing without the corresponding spec bullet | You're adding out-of-scope functionality. | If the implementation requires it, go back to the spec and add the bullet first. |
+| E2E tests for everything | Slow, fragile, expensive to maintain. | E2E only for critical flows. Most behavior is covered by unit tests. |
+| Marking 🟢 without running all tests | The new test passes but you broke another one 2 tasks ago. | Before marking green, run `npm test` (or equivalent) in full. |
 
 ---
 
-## Plantilla de tarea TDD
+## TDD task template
 
-Cada tarea en `tasks.md` sigue este formato:
+Each task in `tasks.md` follows this format:
 
 ```markdown
-- [ ] 🔴 **Test: el usuario registra horas con fecha, duración y descripción**
-      Archivos: `tests/horas/register.test.ts`
-      Criterio: spec.md §3 → "El usuario puede registrar horas trabajadas con fecha, duración y descripción"
-      Debe fallar al correr el test.
+- [ ] 🔴 **Test: the user logs hours with date, duration and description**
+      Files: `tests/hours/register.test.ts`
+      Criterion: spec.md §3 → "The user can log worked hours with date, duration and description"
+      Must fail when the test is run.
 
-- [ ] 🟢 **Implementar registro de horas**
-      Archivos: `src/horas/register.ts`, `src/horas/types.ts`
-      Hace pasar el test rojo anterior. No añadir validación que no exija el test.
+- [ ] 🟢 **Implement hour logging**
+      Files: `src/hours/register.ts`, `src/hours/types.ts`
+      Makes the previous red test pass. Do not add validation the test doesn't require.
 
-- [ ] 🔵 **Refactor: extraer validación a `validators.ts`**  (opcional)
-      Archivos: `src/horas/register.ts`, `src/horas/validators.ts`
-      Solo si el siguiente test rojo (validación de duración <= 0) va a duplicar lógica.
+- [ ] 🔵 **Refactor: extract validation to `validators.ts`**  (optional)
+      Files: `src/hours/register.ts`, `src/hours/validators.ts`
+      Only if the next red test (duration <= 0 validation) will duplicate logic.
 ```
 
-Tres campos no negociables: archivos que toca, criterio que satisface (con cita al spec), y el estado esperado al ejecutar.
+Three non-negotiable fields: files it touches, criterion it satisfies (with spec citation), and the expected state when run.
 
 ---
 
-## Cuándo detener el ciclo TDD y volver al spec
+## When to stop the TDD cycle and go back to the spec
 
-Estas señales indican que el problema **no es de código, es de spec**:
+These signals indicate the problem **is not a code problem — it's a spec problem**:
 
-- El test rojo no se puede escribir porque el comportamiento esperado es ambiguo
-- Dos tests del mismo módulo se contradicen
-- La implementación mínima requiere una decisión arquitectónica no presente en `plan.md`
-- Un error path no aparece en la Sección 4 pero claramente debería existir
+- The red test cannot be written because the expected behavior is ambiguous
+- Two tests from the same module contradict each other
+- The minimal implementation requires an architectural decision not present in `plan.md`
+- An error path doesn't appear in Section 4 but clearly should exist
 
-Cuando ocurra: **para de codear**. Actualiza `spec.md` → confirma con el usuario → actualiza `plan.md` si afecta → regenera las tareas afectadas en `tasks.md` → retoma TDD desde el punto donde paraste.
+When this happens: **stop coding**. Update `spec.md` → confirm with the user → update `plan.md` if it's affected → regenerate the affected tasks in `tasks.md` → resume TDD from where you stopped.

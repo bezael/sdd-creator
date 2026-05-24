@@ -1,108 +1,108 @@
 # AGENTS.md — Dominicode SDD Creator
 
-> Versión espejo del `SKILL.md` para agentes que adoptan el estándar [AGENTS.md](https://agents.md): Codex CLI, Cursor, Gemini CLI, Aider, Continue, y otros. Contenido equivalente, sin el frontmatter YAML específico de Anthropic.
+> Mirror version of `SKILL.md` for agents that adopt the [AGENTS.md](https://agents.md) standard: Codex CLI, Cursor, Gemini CLI, Aider, Continue, and others. Equivalent content, without the Anthropic-specific YAML frontmatter.
 >
-> Metodología por **Bezael Pérez · Dominicode**.
+> Methodology by **Bezael Pérez · Dominicode**.
 
 ---
 
-## Propósito
+## Purpose
 
-Este archivo instruye al agente para que **antes de generar código** de cualquier feature o producto no trivial, ejecute el flujo Spec-Driven Development de Dominicode: producir `spec.md`, `plan.md` y `tasks.md` (con TDD) bajo `specs/<feature-slug>/`.
+This file instructs the agent to **before generating code** for any non-trivial feature or product, execute the Dominicode Spec-Driven Development flow: produce `spec.md`, `plan.md` and `tasks.md` (with TDD) under `specs/<feature-slug>/`.
 
-## Cuándo activar este flujo
+## When to activate this flow
 
-Activa el flujo SDD al **inicio** de cualquier trabajo de código no trivial, incluso si el usuario no dijo la palabra "spec". Señales:
+Activate the SDD flow at the **start** of any non-trivial coding work, even if the user did not say the word "spec". Signals:
 
-- Frases como "quiero construir...", "vamos a hacer una app de...", "diseña X", "scaffold de...", "empieza un MVP de..."
-- Una descripción de feature sin artefactos previos de planificación
-- Un pedido que toca más de un módulo, capa o pantalla
-- Un pedido que normalmente generaría >100 líneas de código
+- Phrases like "I want to build...", "let's make an app for...", "design X", "scaffold...", "start an MVP of..."
+- A feature description without prior planning artifacts
+- A request that touches more than one module, layer, or screen
+- A request that would normally generate >100 lines of code
 
-**No** actives para:
-- Bug fixes con repro clara
-- Refactors pequeños en un solo archivo
-- Preguntas puras ("¿cómo funciona X?")
-- Continuación de trabajo donde ya existe `specs/<name>/spec.md` → léelo en su lugar
+**Do not** activate for:
+- Bug fixes with a clear repro
+- Small refactors in a single file
+- Pure questions ("how does X work?")
+- Continuing work where `specs/<name>/spec.md` already exists → read it instead
 
 ---
 
-## Workflow híbrido
+## Hybrid workflow
 
-### Paso 0 — Detectar nivel de contexto
+### Step 0 — Detect the context level
 
-| Nivel | Señal | Acción |
+| Level | Signal | Action |
 |-------|-------|--------|
-| **ALTO** | PRD detallado, ticket, o 3+ párrafos | Draft completo + lista "Open questions" |
-| **MEDIO** | 1–2 frases con goal claro | Draft con `[NEEDS CONFIRMATION: ...]` en lo incierto |
-| **BAJO** | "quiero hacer una app de X" | Entrevistar **una sección a la vez**, no las 6 de golpe |
+| **HIGH** | Detailed PRD, ticket, or 3+ paragraphs | Full draft + "Open questions" list |
+| **MEDIUM** | 1–2 sentences with a clear goal | Draft with `[NEEDS CONFIRMATION: ...]` on unknowns |
+| **LOW** | "I want to make an app for X" | Interview the user **one section at a time** — do NOT dump all 6 questions at once |
 
-Anuncia al usuario qué modo detectaste antes de empezar.
+Tell the user which mode you detected before starting.
 
-### Paso 1 — Elegir slug del feature
+### Step 1 — Choose the feature slug
 
-Pide o infiere un kebab-case (ej. `invoice-generator`). Los artefactos van bajo `specs/<feature-slug>/`.
+Ask for or infer a kebab-case name (e.g. `invoice-generator`). All artifacts go under `specs/<feature-slug>/`.
 
-### Paso 2 — Escribir `spec.md` (6 secciones, en orden)
+### Step 2 — Write `spec.md` (6 sections, in order)
 
-Usa el template en `templates/spec.md`. Reglas estrictas:
+Use the template at `templates/spec.md`. Strict rules:
 
-1. **Visión** — Máximo 2 oraciones. Si no entra, la idea no está clara.
-2. **Usuarios** — Acciones concretas por rol, no marketing personas. Formato: `Usuario [rol]: acción 1, acción 2, acción 3`.
-3. **Funcionalidades** — Frases tipo `El usuario puede ...` / `El sistema permite ...`. Organizadas por módulo. **No negociable.**
-4. **Flujos** — 3–5 acciones principales con pasos exactos. **Cada flujo lleva al menos un caso de error.**
-5. **Arquitectura** — Si el usuario no tiene preferencia, escribe `A decidir con el agente` y propone 2–3 stacks con trade-offs en `plan.md`. No inventes silenciosamente.
-6. **NFRs** — Mínimo: rendimiento, seguridad, escalabilidad, idioma. Más si aplica.
+1. **Vision** — Maximum 2 sentences. If it doesn't fit, the idea is not clear yet.
+2. **Users** — Concrete actions per role, not marketing personas. Format: `User [role]: action 1, action 2, action 3`.
+3. **Features** — Phrases like `The user can ...` / `The system allows ...`. Organized by module. **Non-negotiable.**
+4. **Flows** — 3–5 main actions with exact steps. **Every flow must include at least one error/failure path.**
+5. **Architecture** — If the user has no preference, write `To be decided with the agent` and propose 2–3 stacks with trade-offs in `plan.md`. Don't silently invent one.
+6. **NFRs** — Minimum: performance, security, scalability, language. Add more if relevant.
 
-**Detente y pide confirmación al usuario antes de seguir.**
+**Stop and ask the user to confirm before continuing.**
 
-### Paso 3 — Escribir `plan.md`
+### Step 3 — Write `plan.md`
 
-Template en `templates/plan.md`. Cubre: stack final con justificación, modelo de datos, contratos (API o componentes), dependencias externas, riesgos + mitigaciones, orden de construcción.
+Template at `templates/plan.md`. Covers: final stack with rationale, data model, contracts (API or components), external dependencies, risks + mitigations, build order.
 
-**Confirma con el usuario antes de seguir al Paso 3.5.**
+**Confirm with the user before moving to Step 3.5.**
 
-### Paso 3.5 — Verificar el test runner (puerta antes del TDD)
+### Step 3.5 — Verify the test runner (gate before TDD)
 
-**Sin runner de tests no hay TDD.** Antes de escribir `tasks.md`, verifica que el proyecto tenga runner — o que instalarlo sea la primera tarea.
+**Without a working test runner there is no TDD.** Before writing `tasks.md`, verify that the project has a test runner — or that installing one is the first task.
 
-Inspecciona la raíz del proyecto (o pregunta al usuario si no tienes filesystem):
+Inspect the project root (or ask the user if you have no filesystem access):
 
-1. **Detecta ecosistema**: `package.json` → Node, `pyproject.toml`/`requirements.txt` → Python, `Cargo.toml` → Rust, `go.mod` → Go, `Gemfile` → Ruby, `pom.xml`/`build.gradle` → Java/Kotlin, `composer.json` → PHP, `pubspec.yaml` → Dart, `*.csproj` → .NET.
-2. **Busca runner instalado** en las dev dependencies del manifiesto Y archivos/carpetas de tests (`tests/`, `__tests__/`, `*.test.*`, `*_test.go`, `spec/`, etc).
-3. **Clasifica**:
-   - **A. Runner instalado + hay tests** → úsalo. No propongas otro.
-   - **B. Runner instalado pero no hay tests aún** → úsalo; la primera tarea 🔴 crea el scaffold.
-   - **C. Proyecto existe pero sin runner** → **detente**. Propón el default del ecosistema (Vitest para Node-TS, pytest para Python, RSpec para Ruby, JUnit 5 para Java, xUnit para .NET — `cargo test` y `go test` son built-in). Confirma con el usuario. Las tareas de instalación van en Fase 0 de `tasks.md`.
-   - **D. Greenfield** → el runner debe estar decidido en `plan.md` § "Stack final → CI / Tests". Si no está, vuelve y ciérralo antes de continuar.
-   - **E. El usuario rechaza tener tests** → **la skill no aplica.** Sé honesto con el usuario: SDD sin TDD es media metodología. Ofrécele el fallback: producir `spec.md` + `plan.md` y omitir `tasks.md`. No cambies silenciosamente a tareas sin TDD.
+1. **Detect ecosystem**: `package.json` → Node, `pyproject.toml`/`requirements.txt` → Python, `Cargo.toml` → Rust, `go.mod` → Go, `Gemfile` → Ruby, `pom.xml`/`build.gradle` → Java/Kotlin, `composer.json` → PHP, `pubspec.yaml` → Dart, `*.csproj` → .NET.
+2. **Look for an installed runner** in the manifest's dev dependencies AND test files/folders (`tests/`, `__tests__/`, `*.test.*`, `*_test.go`, `spec/`, etc).
+3. **Classify**:
+   - **A. Runner installed + tests exist** → use it. Don't propose another.
+   - **B. Runner installed but no tests yet** → use it; the first 🔴 task creates the test scaffold.
+   - **C. Project exists but no runner** → **stop**. Propose the ecosystem default (Vitest for Node-TS, pytest for Python, RSpec for Ruby, JUnit 5 for Java, xUnit for .NET — `cargo test` and `go test` are built-in). Confirm with the user. Setup tasks go in Phase 0 of `tasks.md`.
+   - **D. Greenfield** → the runner must already be decided in `plan.md` § "Final stack → CI / Tests". If not, go back and close it before continuing.
+   - **E. User refuses to have tests** → **the skill does not apply.** Be honest with the user: SDD without TDD is half the methodology. Offer the fallback: produce `spec.md` + `plan.md` and skip `tasks.md`. Don't silently switch to non-TDD tasks.
 
-Comunica el resultado al usuario en una frase antes de seguir al Paso 4 ("Detecté pytest en `pyproject.toml`, lo uso" / "No hay runner — te propongo Vitest, confirma").
+Tell the user the result in one sentence before proceeding to Step 4 ("Detected pytest in `pyproject.toml`, using it" / "No runner found — proposing Vitest, please confirm").
 
-Detalle completo y matriz por ecosistema en `references/test-runner-detection.md`.
+Full detail and per-ecosystem matrix in `references/test-runner-detection.md`.
 
-### Paso 4 — Escribir `tasks.md` (TDD)
+### Step 4 — Write `tasks.md` (TDD)
 
-Template en `templates/tasks.md`. Para cada funcionalidad de la Sección 3:
+Template at `templates/tasks.md`. For each feature in Section 3:
 
-1. ⚙️ Setup (si necesario)
-2. 🔴 Red — test que falla
-3. 🟢 Green — implementación mínima
-4. 🔵 Refactor (opcional, solo si aporta)
-5. 🔗 Integración (cuando cruza módulos o cierra módulo)
+1. ⚙️ Setup (if needed)
+2. 🔴 Red — failing test
+3. 🟢 Green — minimal implementation
+4. 🔵 Refactor (optional, only if it adds clarity)
+5. 🔗 Integration (when it crosses modules or closes a module)
 
-Detalle completo y anti-patterns en `references/tdd-workflow.md`.
+Full detail and anti-patterns in `references/tdd-workflow.md`.
 
-### Paso 5 — Handoff
+### Step 5 — Hand off
 
-Indica al usuario que:
-1. Los 3 archivos están en `specs/<feature-slug>/`
-2. Para implementar, ejecutar la primera tarea no marcada de `tasks.md`, nada más
-3. Si una tarea revela una decisión faltante: actualizar `spec.md` primero, no improvisar en código
+Tell the user that:
+1. The 3 files are in `specs/<feature-slug>/`
+2. To implement, execute the first unchecked task in `tasks.md`, nothing else
+3. If a task surfaces a missing spec decision: update `spec.md` first, don't paper over it in code
 
 ---
 
-## Estructura de salida
+## Output structure
 
 ```
 specs/
@@ -112,34 +112,34 @@ specs/
     └── tasks.md
 ```
 
-Si `specs/<feature-slug>/` ya existe, **léelo primero** y propón cambios en lugar de sobrescribir.
+If `specs/<feature-slug>/` already exists, **read it first** and propose changes rather than overwriting.
 
 ---
 
-## Reglas duras
+## Hard rules
 
-- ❌ Nunca escribir código de implementación en el mismo turno en que se crea la spec
-- ❌ Nunca saltar la Sección 1 ni aceptar una Visión de más de 2 oraciones
-- ❌ Nunca escribir un flujo solo con happy path
-- ❌ Nunca elegir stack en silencio si el usuario no dio preferencia
-- ❌ Nunca escribir una tarea 🟢 antes de su 🔴
-- ❌ Nunca saltar el Paso 3.5 (verificación del runner) — sin runner no hay TDD
-- ✅ Confirmar con el usuario entre Paso 2, Paso 3, Paso 3.5 y Paso 4
-- ✅ Si la implementación revela un gap: actualizar `spec.md` → `plan.md` → `tasks.md` → entonces código
-
----
-
-## Recursos referenciados
-
-- `templates/spec.md` — plantilla de las 6 secciones
-- `templates/plan.md` — plantilla del plan técnico
-- `templates/tasks.md` — plantilla TDD
-- `references/examples.md` — ejemplo trabajado completo
-- `references/tdd-workflow.md` — detalle TDD y anti-patterns
-- `references/test-runner-detection.md` — cómo verificar si el proyecto tiene runner, defaults por ecosistema, smoke test
-
-Cárgalos solo cuando los necesites (progressive disclosure), no todos a la vez.
+- ❌ Never write implementation code in the same turn that the spec is created
+- ❌ Never skip Section 1 (Vision) or accept a Vision longer than 2 sentences
+- ❌ Never write a flow with only the happy path
+- ❌ Never silently pick a stack if the user gave no preference
+- ❌ Never write a Green task before its Red task
+- ❌ Never skip Step 3.5 (test runner verification) — without a runner there is no TDD
+- ✅ Confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
+- ✅ If implementation reveals a gap: update `spec.md` → `plan.md` → `tasks.md` → then code
 
 ---
 
-*Skill by **Bezael Pérez · Dominicode** — Construye con IA: De la Idea al Producto con Claude y Specs.*
+## Referenced resources
+
+- `templates/spec.md` — the 6-section spec template
+- `templates/plan.md` — technical plan template
+- `templates/tasks.md` — TDD task list template
+- `references/examples.md` — fully worked example
+- `references/tdd-workflow.md` — TDD detail and anti-patterns
+- `references/test-runner-detection.md` — how to verify the test runner, defaults per ecosystem, smoke test
+
+Load them only when needed (progressive disclosure), not all at once.
+
+---
+
+*Skill by **Bezael Pérez · Dominicode** — Build with AI: From Idea to Product with Claude and Specs.*

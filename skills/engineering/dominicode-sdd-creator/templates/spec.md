@@ -1,140 +1,140 @@
-# Spec — [Nombre del feature/producto]
+# Spec — [Feature/Product Name]
 
-> Plantilla Spec-First de Dominicode (Bezael Pérez).
-> Rellena cada sección **en orden**. No avances a `plan.md` hasta tener las 6 secciones cerradas.
-
----
-
-## SECCIÓN 1 — Visión del producto
-
-> La descripción más corta y clara de lo que construyes. **Una o dos oraciones máximo**. Si no puedes explicarlo en dos oraciones, aún no está claro — vuelve a pensarlo antes de seguir.
-
-**Preguntas guía:**
-- ¿Qué hace exactamente este producto / feature?
-- ¿Para quién es?
-- ¿Qué problema resuelve en una frase?
-
-**Visión:**
-[Escribe aquí — 1 o 2 oraciones, no más]
+> Dominicode Spec-First template (Bezael Pérez).
+> Fill each section **in order**. Do not move to `plan.md` until all 6 sections are closed.
 
 ---
 
-## SECCIÓN 2 — Usuarios y casos de uso
+## SECTION 1 — Product Vision
 
-> Quién usa el producto y para qué. **No perfiles de marketing** — acciones concretas que realiza cada tipo de usuario.
+> The shortest, clearest description of what you are building. **One or two sentences maximum**. If you cannot explain it in two sentences, it's not clear yet — think it through before continuing.
 
-**Preguntas guía:**
-- ¿Quién es el usuario principal?
-- ¿Hay usuarios con roles diferentes? (admin, usuario estándar, visitante, sistema)
-- ¿Cuáles son las 3 acciones principales que hace cada uno?
+**Guiding questions:**
+- What exactly does this product / feature do?
+- Who is it for?
+- What problem does it solve in one sentence?
 
-**Usuarios:**
-
-**Usuario [rol 1]:** [acción 1], [acción 2], [acción 3].
-
-**Usuario [rol 2]:** [acción 1], [acción 2], [acción 3].
+**Vision:**
+[Write here — 1 or 2 sentences, no more]
 
 ---
 
-## SECCIÓN 3 — Funcionalidades
+## SECTION 2 — Users and Use Cases
 
-> La lista completa de lo que hace el sistema, organizada por módulos. Usa **siempre** la forma "El usuario puede..." o "El sistema permite/realiza...". Esto te fuerza a pensar desde el comportamiento, no desde el código.
+> Who uses the product and what for. **No marketing personas** — concrete actions each type of user performs.
 
-**Preguntas guía:**
-- ¿Qué módulos tiene el sistema?
-- ¿Qué puede hacer el usuario en cada módulo?
-- ¿Qué hace el sistema automáticamente?
+**Guiding questions:**
+- Who is the primary user?
+- Are there users with different roles? (admin, standard user, visitor, system)
+- What are the 3 main actions each one performs?
 
-**Módulo [nombre]:**
-- El usuario puede [acción].
-- El usuario puede [acción].
-- El sistema permite [acción automática].
+**Users:**
 
-**Módulo [nombre]:**
-- El usuario puede [acción].
-- El sistema calcula [algo] automáticamente.
-- El usuario puede [acción].
+**User [role 1]:** [action 1], [action 2], [action 3].
 
-> Añade tantos módulos como necesites. Si un módulo tiene menos de 2 funcionalidades, probablemente debe fusionarse con otro.
+**User [role 2]:** [action 1], [action 2], [action 3].
 
 ---
 
-## SECCIÓN 4 — Flujos de usuario
+## SECTION 3 — Features
 
-> Los pasos exactos que sigue un usuario para completar cada acción principal. **Cada flujo debe incluir al menos un caso de error**, no solo el happy path.
+> The complete list of what the system does, organized by modules. **Always** use the form "The user can..." or "The system allows/performs...". This forces you to think from behavior, not from code.
 
-**Preguntas guía:**
-- ¿Cuáles son las 3–5 acciones más importantes del producto?
-- ¿Qué pasos sigue el usuario para completar cada una?
-- ¿Qué pasa si algo sale mal en cada paso?
+**Guiding questions:**
+- What modules does the system have?
+- What can the user do in each module?
+- What does the system do automatically?
 
-**Flujo — [nombre de la acción principal]:**
-1. El usuario [acción inicial].
-2. El sistema [respuesta].
-3. El usuario [siguiente paso].
-4. El sistema [resultado final].
-- **Error:** si [condición de fallo], el sistema [comportamiento de error].
+**Module [name]:**
+- The user can [action].
+- The user can [action].
+- The system allows [automatic action].
 
-**Flujo — [otra acción principal]:**
+**Module [name]:**
+- The user can [action].
+- The system automatically calculates [something].
+- The user can [action].
+
+> Add as many modules as needed. If a module has fewer than 2 features, it should probably be merged with another.
+
+---
+
+## SECTION 4 — User Flows
+
+> The exact steps a user follows to complete each main action. **Every flow must include at least one error case**, not just the happy path.
+
+**Guiding questions:**
+- What are the 3–5 most important actions in the product?
+- What steps does the user follow to complete each one?
+- What happens if something goes wrong at each step?
+
+**Flow — [name of main action]:**
+1. The user [initial action].
+2. The system [response].
+3. The user [next step].
+4. The system [final result].
+- **Error:** if [failure condition], the system [error behavior].
+
+**Flow — [another main action]:**
 1. ...
 2. ...
 - **Error:** ...
 
-> Mínimo 3 flujos, máximo 5. Si tienes más de 5 flujos principales, el alcance es demasiado grande para una sola spec — divídelo.
+> Minimum 3 flows, maximum 5. If you have more than 5 main flows, the scope is too large for a single spec — split it.
 
 ---
 
-## SECCIÓN 5 — Arquitectura
+## SECTION 5 — Architecture
 
-> La estructura técnica del sistema. Qué componentes necesita, cómo se comunican, qué tecnologías usar. Si no tienes decisiones técnicas previas, escribe **"A decidir con el agente"** y el plan.md lo resolverá con trade-offs explícitos.
+> The technical structure of the system. What components it needs, how they communicate, what technologies to use. If you have no prior technical decisions, write **"To be decided with the agent"** and plan.md will resolve it with explicit trade-offs.
 
-**Preguntas guía:**
-- ¿Es una app web, móvil, CLI, o varias?
-- ¿Necesita backend propio o puede usar servicios externos (BaaS)?
-- ¿Cómo se almacenan los datos?
-- ¿Hay autenticación de usuarios?
-- ¿Se integra con otros servicios o APIs?
+**Guiding questions:**
+- Is it a web app, mobile, CLI, or multiple?
+- Does it need its own backend or can it use external services (BaaS)?
+- How is data stored?
+- Is there user authentication?
+- Does it integrate with other services or APIs?
 
-**Arquitectura propuesta:**
+**Proposed architecture:**
 
-- **Frontend:** [framework + por qué, o "a decidir"]
-- **Backend:** [framework / serverless / BaaS, o "a decidir"]
-- **Base de datos:** [tipo + producto, o "a decidir"]
-- **Autenticación:** [proveedor, o "a decidir"]
-- **Hosting:** [dónde se despliega, o "a decidir"]
-- **Integraciones:** [APIs externas necesarias]
+- **Frontend:** [framework + why, or "to be decided"]
+- **Backend:** [framework / serverless / BaaS, or "to be decided"]
+- **Database:** [type + product, or "to be decided"]
+- **Authentication:** [provider, or "to be decided"]
+- **Hosting:** [where it deploys, or "to be decided"]
+- **Integrations:** [required external APIs]
 
 ---
 
-## SECCIÓN 6 — Requisitos no funcionales
+## SECTION 6 — Non-functional Requirements
 
-> Las restricciones que el sistema debe cumplir aunque el usuario no las vea directamente. Muchos proyectos los ignoran hasta que el problema aparece en producción.
+> The constraints the system must meet even if the user doesn't see them directly. Many projects ignore these until the problem appears in production.
 
-**Preguntas guía:**
-- ¿Cuántos usuarios simultáneos necesita soportar?
-- ¿Hay datos sensibles? (PII, pagos, salud)
-- ¿Necesita funcionar sin conexión?
-- ¿En qué idiomas?
-- ¿Hay requisitos de accesibilidad o compliance? (GDPR, WCAG)
+**Guiding questions:**
+- How many concurrent users must it support?
+- Is there sensitive data? (PII, payments, health)
+- Does it need to work offline?
+- In what languages?
+- Are there accessibility or compliance requirements? (GDPR, WCAG)
 
-**Requisitos:**
+**Requirements:**
 
-- **Rendimiento:** [ej. carga inicial < 3s, respuesta API < 500ms]
-- **Seguridad:** [ej. datos de cada usuario aislados; cifrado en tránsito; sin almacenar passwords en claro]
-- **Escalabilidad:** [ej. diseñado para hasta 1.000 usuarios en v1]
-- **Idioma:** [ej. español en v1, inglés en v2]
-- **Accesibilidad:** [ej. WCAG 2.1 AA en formularios críticos, o "no aplica en v1"]
-- **Compliance / privacidad:** [ej. GDPR si hay usuarios UE, o "no aplica"]
+- **Performance:** [e.g. initial load < 3s, API response < 500ms]
+- **Security:** [e.g. each user's data is isolated; encryption in transit; no passwords stored in plaintext]
+- **Scalability:** [e.g. designed for up to 1,000 users in v1]
+- **Language:** [e.g. English in v1, Spanish in v2]
+- **Accessibility:** [e.g. WCAG 2.1 AA on critical forms, or "not applicable in v1"]
+- **Compliance / privacy:** [e.g. GDPR if there are EU users, or "not applicable"]
 
 ---
 
 ## Open questions
 
-> Si quedan decisiones que no se pueden tomar ahora, lístalas aquí. **Cada open question debe tener un responsable y una fecha**, o se queda en limbo.
+> If there are decisions that cannot be made now, list them here. **Every open question must have an owner and a date**, or it stays in limbo.
 
-- [ ] [Pregunta abierta] — owner: [quien], deadline: [fecha]
+- [ ] [Open question] — owner: [who], deadline: [date]
 - [ ] ...
 
 ---
 
-*Cuando todas las secciones estén cerradas y los open questions resueltos (o explícitamente diferidos), pasa a `plan.md`.*
+*When all sections are closed and open questions resolved (or explicitly deferred), move to `plan.md`.*

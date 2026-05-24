@@ -1,6 +1,6 @@
 ---
 name: dominicode-sdd-creator
-description: Create a Spec-Driven Development specification (spec.md + plan.md + tasks.md with TDD) BEFORE writing any code, following the Dominicode SDD methodology by Bezael Pérez. Use this skill whenever the user wants to scaffold, plan, design, or specify a new feature, product, MVP, module, or project — including phrases like "create a spec", "spec this out", "write the spec for", "plan this feature", "I want to build X", "help me design X", "structure this project", "scaffold a new feature", "let's start a new project", or any request that would normally lead to coding a non-trivial feature. ALWAYS trigger this skill before generating implementation code for a new feature or product, even if the user did not explicitly ask for a spec — jumping straight to code without a spec is exactly what this methodology prevents. Produces a 6-section spec (Visión, Usuarios, Funcionalidades, Flujos, Arquitectura, NFRs) plus a technical plan and a TDD-ordered task list.
+description: Create a Spec-Driven Development specification (spec.md + plan.md + tasks.md with TDD) BEFORE writing any code, following the Dominicode SDD methodology by Bezael Pérez. Use this skill whenever the user wants to scaffold, plan, design, or specify a new feature, product, MVP, module, or project — including phrases like "create a spec", "spec this out", "write the spec for", "plan this feature", "I want to build X", "help me design X", "structure this project", "scaffold a new feature", "let's start a new project", or any request that would normally lead to coding a non-trivial feature. ALWAYS trigger this skill before generating implementation code for a new feature or product, even if the user did not explicitly ask for a spec — jumping straight to code without a spec is exactly what this methodology prevents. Produces a 6-section spec (Vision, Users, Features, Flows, Architecture, NFRs) plus a technical plan and a TDD-ordered task list.
 ---
 
 # Dominicode SDD Creator
@@ -55,7 +55,7 @@ Use the template at `templates/spec.md`. Fill all 6 sections in order. Strict ru
 3. **Section 3 (Funcionalidades)** — MUST use behavioral phrasing: `El usuario puede ...` or `El sistema permite ...`. Organize by module. This is non-negotiable — it forces thinking from behavior, not from code.
 4. **Section 4 (Flujos)** — Pick the 3–5 most important actions and write the exact steps. **Every flow must include at least one error/failure path**, not just the happy path.
 5. **Section 5 (Arquitectura)** — If the user has no preference, write `A decidir con el agente` and propose 2–3 reasonable stacks with trade-offs. Don't invent a stack silently.
-6. **Section 6 (NFRs)** — Always cover at minimum: rendimiento, seguridad, escalabilidad, idioma. Add others (offline, accesibilidad, compliance) if relevant.
+6. **Section 6 (NFRs)** — Always cover at minimum: performance, security, scalability, language. Add others (offline, accessibility, compliance) if relevant.
 
 After writing, **stop and ask the user to confirm**. Do not move to Step 3 without explicit go-ahead.
 
@@ -83,7 +83,7 @@ Inspect the project root (or ask the user if you have no filesystem access):
 3. **Classify**:
    - **A. Runner installed + tests exist** → use it. Don't propose another.
    - **B. Runner installed but no tests yet** → use it; first 🔴 task creates the test scaffold.
-   - **C. Project exists but no runner** → **stop**. Propose the ecosystem default (Vitest for Node-TS, pytest for Python, RSpec for Ruby, JUnit 5 for Java, xUnit for .NET — `cargo test` and `go test` are built-in). Confirm with the user. Setup tasks go in Fase 0 of `tasks.md`.
+   - **C. Project exists but no runner** → **stop**. Propose the ecosystem default (Vitest for Node-TS, pytest for Python, RSpec for Ruby, JUnit 5 for Java, xUnit for .NET — `cargo test` and `go test` are built-in). Confirm with the user. Setup tasks go in Phase 0 of `tasks.md`.
    - **D. Greenfield** → the runner must already be decided in `plan.md` § "Stack final → CI / Tests". If it's not, go back and close it before continuing.
    - **E. User refuses to have tests** → **the skill does not apply.** Tell the user honestly: SDD without TDD is half the methodology. Offer the fallback: produce `spec.md` + `plan.md` only, skip `tasks.md`. Do not silently switch to non-TDD tasks.
 
@@ -93,7 +93,7 @@ See `references/test-runner-detection.md` for the full matrix per ecosystem, def
 
 ### Step 4 — Write `tasks.md` (TDD-ordered task list)
 
-Use the template at `templates/tasks.md`. This is where SDD meets TDD. For every funcionalidad in Section 3 of the spec, generate tasks in this order:
+Use the template at `templates/tasks.md`. This is where SDD meets TDD. For every feature in Section 3 of the spec, generate tasks in this order:
 
 1. **Setup task** (only if needed — new file, new module, new dep)
 2. 🔴 **Red task**: write a failing test that encodes the acceptance criterion
@@ -136,7 +136,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ❌ Never write a flow with only the happy path
 - ❌ Never silently pick a stack in Section 5 if the user gave no preference — propose, don't impose
 - ❌ Never write a Green task before its Red task in `tasks.md`
-- ❌ Never skip Step 3.5 (test runner verification) — sin runner no hay TDD, y SDD-TDD pierde sentido
+- ❌ Never skip Step 3.5 (test runner verification) — without a runner there is no TDD
 - ✅ Always confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
 - ✅ Always update `spec.md` first when implementation reveals a gap, then update `plan.md` and `tasks.md`, then code
 
@@ -151,4 +151,4 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 
 ---
 
-*Skill by **Bezael Pérez · Dominicode** — Construye con IA: De la Idea al Producto con Claude y Specs.*
+*Skill by **Bezael Pérez · Dominicode** — Build with AI: From Idea to Product with Claude and Specs.*
