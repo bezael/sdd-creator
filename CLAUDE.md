@@ -1,30 +1,30 @@
 # CLAUDE.md — bezael/sdd-creator
 
-Este repo es un plugin de Claude Code con las skills de metodología Dominicode.
+This repo is a Claude Code plugin with Dominicode methodology skills.
 
-## Estructura
+## Structure
 
 ```
 skills/
-└── <categoría>/
-    ├── README.md                  ← índice de la categoría
-    └── <nombre-skill>/
-        ├── SKILL.md               ← instrucciones para Claude Code
-        ├── AGENTS.md              ← instrucciones para otros agentes (Codex, Cursor, Gemini…)
-        ├── templates/             ← plantillas que la skill usa
-        └── references/            ← material de referencia
+└── <category>/
+    ├── README.md                  ← category index
+    └── <skill-name>/
+        ├── SKILL.md               ← instructions for Claude Code
+        ├── AGENTS.md              ← instructions for other agents (Codex, Cursor, Gemini…)
+        ├── templates/             ← templates used by the skill
+        └── references/            ← reference material
 ```
 
-`.claude-plugin/plugin.json` lista las rutas de todas las skills activas.
+`.claude-plugin/plugin.json` lists the paths of all active skills.
 
-## Añadir una skill nueva
+## Adding a new skill
 
-1. Crea `skills/<categoría>/<nombre-skill>/` con al menos `SKILL.md`.
-2. Añade `"./skills/<categoría>/<nombre-skill>"` al array `skills` de `.claude-plugin/plugin.json`.
-3. Si es una categoría nueva, crea también `skills/<categoría>/README.md`.
-4. Actualiza el catálogo en el `README.md` raíz.
+1. Create `skills/<category>/<skill-name>/` with at least `SKILL.md`.
+2. Add `"./skills/<category>/<skill-name>"` to the `skills` array in `.claude-plugin/plugin.json`.
+3. If it's a new category, also create `skills/<category>/README.md`.
+4. Update the catalog in the root `README.md`.
 
-## Categorías actuales
+## Current categories
 
-- `engineering` — skills de desarrollo de software
-- *(prevista)* `marketing` — skills de copywriting y ofertas (sales-email, hormozi)
+- `engineering` — software development skills
+- *(planned)* `marketing` — copywriting and offer skills (sales-email, hormozi)

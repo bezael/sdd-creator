@@ -1,50 +1,50 @@
-# bezael/sdd-creator — Skills de Dominicode
+# bezael/sdd-creator — Dominicode Skills
 
-> [🇬🇧 English version](./README.en.md)
+> [🇪🇸 Versión en español](./README.es.md)
 
-> Genera specs siguiendo la metodología **Spec-Driven Development** de Dominicode (Bezael Pérez) en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
+> Generates specs following the **Spec-Driven Development** methodology by Dominicode (Bezael Pérez) in any AI agent: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
-> Antes de generar código, el agente produce `spec.md` (6 secciones), `plan.md` (decisiones técnicas) y `tasks.md` (lista TDD ordenada) bajo `specs/<feature-slug>/`.
+> Before generating code, the agent produces `spec.md` (6 sections), `plan.md` (technical decisions) and `tasks.md` (TDD-ordered task list) under `specs/<feature-slug>/`.
 
 ---
 
-## Catálogo de skills
+## Skills catalog
 
 ### Engineering
 
-| Skill | Descripción |
+| Skill | Description |
 |-------|-------------|
-| `dominicode-sdd-creator` | Spec-Driven Development — escribe spec antes de código. |
+| `dominicode-sdd-creator` | Spec-Driven Development — write the spec before writing code. |
 
 ---
 
-## Instalación rápida (recomendada)
+## Quick install (recommended)
 
 ```bash
 npx skills@latest add bezael/sdd-creator
 ```
 
-El CLI te pregunta qué skills instalar y en qué agentes (Claude Code, Cursor, Codex, etc.) y lo configura automáticamente.
+The CLI asks which skills to install and for which agents (Claude Code, Cursor, Codex, etc.) and configures everything automatically.
 
 ---
 
-## Instalación manual (fallback por agente)
+## Manual install (per-agent fallback)
 
 ### Claude Code (Anthropic)
 
-**Opción A — Skill global (recomendado):**
+**Option A — Global skill (recommended):**
 
 ```bash
-# Copia la skill a tu directorio de skills personales
+# Copy the skill to your personal skills directory
 cp -r skills/engineering/dominicode-sdd-creator ~/.claude/skills/
 
-# Verifica
+# Verify
 ls ~/.claude/skills/dominicode-sdd-creator/SKILL.md
 ```
 
-A partir de ahí, cualquier sesión de Claude Code tendrá la skill disponible.
+From that point on, every Claude Code session will have the skill available.
 
-**Opción B — Skill por proyecto:**
+**Option B — Per-project skill:**
 
 ```bash
 mkdir -p .claude/skills
@@ -53,13 +53,13 @@ cp -r skills/engineering/dominicode-sdd-creator .claude/skills/
 
 ### Claude.ai (web/desktop)
 
-1. Empaqueta la skill: `zip -r dominicode-sdd-creator.skill skills/engineering/dominicode-sdd-creator/`
-2. En Claude.ai → Settings → Skills → Upload skill → selecciona el `.skill`.
+1. Bundle the skill: `zip -r dominicode-sdd-creator.skill skills/engineering/dominicode-sdd-creator/`
+2. In Claude.ai → Settings → Skills → Upload skill → select the `.skill` file.
 
 ### Codex CLI (OpenAI)
 
 ```bash
-# En el root del proyecto
+# In the project root
 cp skills/engineering/dominicode-sdd-creator/AGENTS.md ./AGENTS.md
 cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
 cp -r skills/engineering/dominicode-sdd-creator/references ./references
@@ -74,11 +74,11 @@ cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
 cp -r skills/engineering/dominicode-sdd-creator/references ./references
 ```
 
-En la primera línea del `.mdc` añade el frontmatter de Cursor:
+Add the Cursor frontmatter at the top of the `.mdc` file:
 
 ```markdown
 ---
-description: Dominicode SDD Creator — escribe spec antes de código
+description: Dominicode SDD Creator — write spec before code
 alwaysApply: true
 ---
 ```
@@ -91,28 +91,28 @@ cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
 cp -r skills/engineering/dominicode-sdd-creator/references ./references
 ```
 
-### Aider, Continue y otros compatibles con AGENTS.md
+### Aider, Continue and other AGENTS.md-compatible tools
 
-Copia `AGENTS.md` al root del proyecto junto con `templates/` y `references/`.
+Copy `AGENTS.md` to the project root together with `templates/` and `references/`.
 
-### Agentes sin soporte de archivos de instrucciones
+### Agents without instruction-file support
 
-Pega el contenido de `AGENTS.md` al inicio de tu system prompt.
+Paste the contents of `AGENTS.md` at the beginning of your system prompt.
 
 ---
 
-## Estructura del repo
+## Repo structure
 
 ```
 bezael/sdd-creator
 ├── .claude-plugin/
-│   └── plugin.json               ← leído por el CLI npx skills y Claude Code
+│   └── plugin.json               ← read by the npx skills CLI and Claude Code
 ├── skills/
 │   └── engineering/
 │       ├── README.md
 │       └── dominicode-sdd-creator/
 │           ├── SKILL.md           ← Claude Code
-│           ├── AGENTS.md          ← otros agentes
+│           ├── AGENTS.md          ← other agents
 │           ├── templates/
 │           │   ├── spec.md
 │           │   ├── plan.md
@@ -128,40 +128,40 @@ bezael/sdd-creator
 
 ---
 
-## Cómo usar
+## How to use
 
-Una vez instalada, describe lo que quieres construir:
+Once installed, describe what you want to build:
 
 ```
-"quiero hacer una app para que freelancers gestionen facturas"
-"vamos a crear un dashboard de métricas de mi tienda"
-"diseña una feature de autenticación con magic links"
+"I want to build an app for freelancers to manage invoices"
+"let's create a metrics dashboard for my store"
+"design an authentication feature with magic links"
 ```
 
-El agente:
-1. Detectará el nivel de contexto (alto / medio / bajo)
-2. Te entrevistará o producirá un draft según el caso
-3. Generará `specs/<feature>/spec.md` con las 6 secciones
-4. Tras tu confirmación, generará `plan.md`
-5. Tras tu confirmación, generará `tasks.md` con TDD
-6. **Solo entonces** empezará a programar, tarea por tarea
+The agent will:
+1. Detect the context level (high / medium / low)
+2. Interview you or produce a draft accordingly
+3. Generate `specs/<feature>/spec.md` with the 6 sections
+4. After your confirmation, generate `plan.md`
+5. After your confirmation, generate `tasks.md` with TDD
+6. **Only then** start coding, task by task
 
 ---
 
-## Filosofía
+## Philosophy
 
-> **Spec → Plan → Tests → Código.** Código es lo último que pasa, no lo primero.
+> **Spec → Plan → Tests → Code.** Code is the last thing that happens, not the first.
 
-La metodología SDD está documentada en el libro y en los cursos de Dominicode:
+The SDD methodology is documented in the book and in Dominicode courses:
 
-- **Curso online** — [Construye con IA: de la idea al producto con Claude Code](https://www.udemy.com/course/construye-con-ia-de-la-idea-al-producto-con-claude-code/?referralCode=AECD9EA3796054DEDD5D) (Udemy)
-- **Libro digital** — [SDD: Construye con control](https://leanpub.com/sdd-spec-driven-development) (Leanpub)
-- **Libro físico** — [Spec-Driven Development: construir agentes proyecto](https://www.amazon.es/-/en/Spec-Driven-Development-construir-agentes-proyecto/dp/B0GW6HN48K/ref=tmm_pap_swatch_0?_encoding=UTF8&dib_tag=AUTHOR&dib=eyJ2IjoiMSJ9.8_Nr_CREQqyDdShal8UyRqcr3ftdcpnEePLWr8CRp8lfNCG-sv6OjDTMbGd3G2MP.d4mvOV0abTcNYbavuQe615dpMa41i88elPTIhzy2yRk) (Amazon)
+- **Online course** — [Build with AI: from idea to product with Claude Code](https://www.udemy.com/course/construye-con-ia-de-la-idea-al-producto-con-claude-code/?referralCode=AECD9EA3796054DEDD5D) (Udemy)
+- **Digital book** — [SDD: Build with control](https://leanpub.com/sdd-spec-driven-development) (Leanpub)
+- **Physical book** — [Spec-Driven Development: construir agentes proyecto](https://www.amazon.es/-/en/Spec-Driven-Development-construir-agentes-proyecto/dp/B0GW6HN48K/ref=tmm_pap_swatch_0?_encoding=UTF8&dib_tag=AUTHOR&dib=eyJ2IjoiMSJ9.8_Nr_CREQqyDdShal8UyRqcr3ftdcpnEePLWr8CRp8lfNCG-sv6OjDTMbGd3G2MP.d4mvOV0abTcNYbavuQe615dpMa41i88elPTIhzy2yRk) (Amazon)
 
 ---
 
-## Créditos
+## Credits
 
-Metodología: **Bezael Pérez** · [Dominicode](https://dominicode.com) · [YouTube](https://youtube.com/@dominicode)
+Methodology: **Bezael Pérez** · [Dominicode](https://dominicode.com) · [YouTube](https://youtube.com/@dominicode)
 
-Distribución libre bajo licencia MIT. Si la adaptas a tu equipo o producto, una mención es bienvenida.
+Freely distributed under the MIT license. If you adapt it for your team or product, a mention is welcome.
