@@ -1,6 +1,6 @@
 # Changelog
 
-Todas las novedades de este proyecto, siguiendo [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) y [SemVer](https://semver.org/).
+All notable changes to this project, following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and [SemVer](https://semver.org/).
 
 ## [Unreleased]
 
@@ -8,25 +8,25 @@ Todas las novedades de este proyecto, siguiendo [Keep a Changelog](https://keepa
 
 ### Added
 
-- Plan de implementación efímero: nuevo template `templates/implementation.md` e instrucciones en el Step 5 de `SKILL.md` y `AGENTS.md`. Al empezar cada sesión de implementación, el agente escribe `specs/<feature>/.work/implementation.md` (gitignored, desechable) con las tareas de la sesión, archivos a tocar, orden de ejecución y comando de test. Incluye regla de reflujo: toda decisión duradera vuelve a `spec.md`/`plan.md`/`tasks.md`.
-- Skill local `release-announcer`: genera el anuncio de cada release (hilo de X + post de LinkedIn, en español) a partir del `CHANGELOG.md`, sin inventar cambios.
+- Ephemeral implementation plan: new `templates/implementation.md` template plus Step 5 instructions in `SKILL.md` and `AGENTS.md`. At the start of each implementation session, the agent writes `specs/<feature>/.work/implementation.md` (gitignored, disposable) with the session's tasks, files to touch, execution order and test command. Includes the reflow rule: every durable decision goes back to `spec.md`/`plan.md`/`tasks.md`.
+- Project-local `release-announcer` skill: generates the announcement copy for each release (X thread + LinkedIn post, in Spanish) from `CHANGELOG.md`, never inventing changes.
 
 ### Changed
 
-- Atribución corregida en toda la documentación: SDD es una metodología de la industria; este repo distribuye la **adaptación de Dominicode** (Bezael Pérez). Los créditos pasan de "Methodology by" a "SDD adaptation by".
+- Attribution corrected across all documentation: SDD is an industry methodology; this repo distributes the **Dominicode adaptation** by Bezael Pérez. Credits change from "Methodology by" to "SDD adaptation by".
 
 ## [1.1.0] - 2026-05-24
 
 ### Added
 
-- README en español (`README.es.md`).
+- Spanish README (`README.es.md`).
 
 ### Changed
 
-- Toda la documentación del skill traducida al inglés (`SKILL.md`, `AGENTS.md`, templates y references) y `CLAUDE.md` ampliado.
+- All skill documentation translated to English (`SKILL.md`, `AGENTS.md`, templates and references); `CLAUDE.md` expanded.
 
 ## [1.0.0] - 2026-05-22
 
 ### Added
 
-- Versión inicial: repo reestructurado como colección de plugins instalable (`npx skills@latest add bezael/sdd-creator` + plugin de Claude Code) con el skill `dominicode-sdd-creator`, que genera `spec.md` + `plan.md` + `tasks.md` (TDD) antes de escribir código.
+- Initial release: repo restructured as an installable plugin collection (`npx skills@latest add bezael/sdd-creator` + Claude Code plugin) with the `dominicode-sdd-creator` skill, which generates `spec.md` + `plan.md` + `tasks.md` (TDD) before writing any code.
