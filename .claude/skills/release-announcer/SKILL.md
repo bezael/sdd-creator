@@ -9,7 +9,7 @@ This skill turns a **CHANGELOG entry** into copy that's ready to publish: a twee
 
 It is a **project-local** skill (lives in `.claude/skills/`, not in the distributable plugin). It exists to announce new versions of **this** repo.
 
-Methodology & voice by **Bezael Pérez · Dominicode**.
+Voice by **Bezael Pérez · Dominicode**.
 
 ## The one rule that matters
 

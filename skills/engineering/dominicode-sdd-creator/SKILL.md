@@ -1,13 +1,13 @@
 ---
 name: dominicode-sdd-creator
-description: Create a Spec-Driven Development specification (spec.md + plan.md + tasks.md with TDD) BEFORE writing any code, following the Dominicode SDD methodology by Bezael Pérez. Use this skill whenever the user wants to scaffold, plan, design, or specify a new feature, product, MVP, module, or project — including phrases like "create a spec", "spec this out", "write the spec for", "plan this feature", "I want to build X", "help me design X", "structure this project", "scaffold a new feature", "let's start a new project", or any request that would normally lead to coding a non-trivial feature. ALWAYS trigger this skill before generating implementation code for a new feature or product, even if the user did not explicitly ask for a spec — jumping straight to code without a spec is exactly what this methodology prevents. Produces a 6-section spec (Vision, Users, Features, Flows, Architecture, NFRs) plus a technical plan and a TDD-ordered task list.
+description: Create a Spec-Driven Development specification (spec.md + plan.md + tasks.md with TDD) BEFORE writing any code, following the Dominicode SDD adaptation by Bezael Pérez. Use this skill whenever the user wants to scaffold, plan, design, or specify a new feature, product, MVP, module, or project — including phrases like "create a spec", "spec this out", "write the spec for", "plan this feature", "I want to build X", "help me design X", "structure this project", "scaffold a new feature", "let's start a new project", or any request that would normally lead to coding a non-trivial feature. ALWAYS trigger this skill before generating implementation code for a new feature or product, even if the user did not explicitly ask for a spec — jumping straight to code without a spec is exactly what this methodology prevents. Produces a 6-section spec (Vision, Users, Features, Flows, Architecture, NFRs) plus a technical plan and a TDD-ordered task list.
 ---
 
 # Dominicode SDD Creator
 
 This skill turns a vague product idea into a Spec → Plan → Tasks pipeline that drives implementation through TDD. Code is the **last** thing that happens, not the first.
 
-Methodology by **Bezael Pérez · Dominicode**.
+SDD adaptation by **Bezael Pérez · Dominicode**.
 
 ## The methodology in one sentence
 
@@ -115,6 +115,17 @@ Tell the user:
 2. To start implementation, they (or the next agent run) should pick the first unchecked task in `tasks.md` and execute it — nothing else
 3. If a task surfaces a missing spec decision, **stop and update `spec.md` first**, don't paper over it in code
 
+#### Ephemeral implementation plan (`.work/`)
+
+The three SDD artifacts document **decisions**; execution deserves a plan too — but a disposable one. At the start of each implementation session (this one or a future agent run), before touching code:
+
+1. Create `specs/<feature-slug>/.work/implementation.md` from `templates/implementation.md`: which tasks from `tasks.md` this session covers, files to touch in attack order, execution order, and the exact test command.
+2. Ensure `specs/**/.work/` is in the project's `.gitignore` — add it if missing. This file is agent scratch, **never committed**: if persisted it goes stale and starts competing with `plan.md` as a source of truth.
+3. Granularity: one per **session or module/phase**, never per 🔴→🟢→🔵 micro-task. Skip it for trivial tasks — the task entry already says what to do.
+4. **Reflow rule:** if planning execution surfaces a durable decision (spec gap, missing contract, new risk), update `spec.md` → `plan.md` → `tasks.md` first, then regenerate the ephemeral plan. This feeds the existing rule 4 of `tasks.md`, it does not replace it.
+
+The benefit: the plan survives context compaction within the session, and is cheap to regenerate in the next one because it derives from `tasks.md`.
+
 ## Output structure
 
 Always produce exactly this layout under the project root:
@@ -124,7 +135,9 @@ specs/
 └── <feature-slug>/
     ├── spec.md
     ├── plan.md
-    └── tasks.md
+    ├── tasks.md
+    └── .work/
+        └── implementation.md   ← gitignored — ephemeral, regenerated each session
 ```
 
 If `specs/<feature-slug>/` already exists, **read it first** and propose updates rather than overwriting.
@@ -137,14 +150,16 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ❌ Never silently pick a stack in Section 5 if the user gave no preference — propose, don't impose
 - ❌ Never write a Green task before its Red task in `tasks.md`
 - ❌ Never skip Step 3.5 (test runner verification) — without a runner there is no TDD
+- ❌ Never commit `.work/` — the ephemeral implementation plan is agent scratch, not documentation
 - ✅ Always confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
-- ✅ Always update `spec.md` first when implementation reveals a gap, then update `plan.md` and `tasks.md`, then code
+- ✅ Always update `spec.md` first when implementation reveals a gap, then update `plan.md` and `tasks.md`, then code — a durable decision must never live only in `.work/implementation.md`
 
 ## Resources
 
 - `templates/spec.md` — the 6-section spec template (fill in directly)
 - `templates/plan.md` — technical plan template
 - `templates/tasks.md` — TDD task list template
+- `templates/implementation.md` — ephemeral implementation plan template (gitignored, per session)
 - `references/examples.md` — a fully worked example (feature: invoice generator)
 - `references/tdd-workflow.md` — TDD chaining details, naming conventions, common pitfalls
 - `references/test-runner-detection.md` — how to verify if the project has a test runner, defaults per ecosystem, smoke-test pattern

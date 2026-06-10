@@ -1,6 +1,6 @@
 # CLAUDE.md — bezael/sdd-creator
 
-This repo is a Claude Code plugin with Dominicode methodology skills.
+This repo is a Claude Code plugin with Dominicode skills. SDD (Spec-Driven Development) is an industry methodology — this repo distributes the **Dominicode adaptation** by Bezael Pérez, not the methodology's invention. Keep that framing in all docs and credits ("SDD adaptation by", never "methodology by").
 
 ## Structure
 

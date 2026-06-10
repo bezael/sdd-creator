@@ -2,7 +2,7 @@
 
 > [🇬🇧 English version](./README.md)
 
-> Genera specs siguiendo la metodología **Spec-Driven Development** de Dominicode (Bezael Pérez) en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
+> Genera specs siguiendo la metodología **Spec-Driven Development**, según la adaptación de Dominicode (Bezael Pérez), en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
 > Antes de generar código, el agente produce `spec.md` (6 secciones), `plan.md` (decisiones técnicas) y `tasks.md` (lista TDD ordenada) bajo `specs/<feature-slug>/`.
 
@@ -116,7 +116,8 @@ bezael/sdd-creator
 │           ├── templates/
 │           │   ├── spec.md
 │           │   ├── plan.md
-│           │   └── tasks.md
+│           │   ├── tasks.md
+│           │   └── implementation.md
 │           └── references/
 │               ├── examples.md
 │               ├── tdd-workflow.md
@@ -152,7 +153,7 @@ El agente:
 
 > **Spec → Plan → Tests → Código.** Código es lo último que pasa, no lo primero.
 
-La metodología SDD está documentada en el libro y en los cursos de Dominicode:
+La adaptación Dominicode de SDD está documentada en el libro y en los cursos de Dominicode:
 
 - **Curso online** — [Construye con IA: de la idea al producto con Claude Code](https://www.udemy.com/course/construye-con-ia-de-la-idea-al-producto-con-claude-code/?referralCode=AECD9EA3796054DEDD5D) (Udemy)
 - **Libro digital** — [SDD: Construye con control](https://leanpub.com/sdd-spec-driven-development) (Leanpub)
@@ -162,6 +163,6 @@ La metodología SDD está documentada en el libro y en los cursos de Dominicode:
 
 ## Créditos
 
-Metodología: **Bezael Pérez** · [Dominicode](https://dominicode.com) · [YouTube](https://youtube.com/@dominicode)
+Adaptación SDD: **Bezael Pérez** · [Dominicode](https://dominicode.com) · [YouTube](https://youtube.com/@dominicode)
 
 Distribución libre bajo licencia MIT. Si la adaptas a tu equipo o producto, una mención es bienvenida.

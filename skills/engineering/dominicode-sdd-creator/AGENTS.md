@@ -2,7 +2,7 @@
 
 > Mirror version of `SKILL.md` for agents that adopt the [AGENTS.md](https://agents.md) standard: Codex CLI, Cursor, Gemini CLI, Aider, Continue, and others. Equivalent content, without the Anthropic-specific YAML frontmatter.
 >
-> Methodology by **Bezael Pérez · Dominicode**.
+> SDD adaptation by **Bezael Pérez · Dominicode**.
 
 ---
 
@@ -100,6 +100,17 @@ Tell the user that:
 2. To implement, execute the first unchecked task in `tasks.md`, nothing else
 3. If a task surfaces a missing spec decision: update `spec.md` first, don't paper over it in code
 
+#### Ephemeral implementation plan (`.work/`)
+
+The three SDD artifacts document **decisions**; execution deserves a plan too — but a disposable one. At the start of each implementation session, before touching code:
+
+1. Create `specs/<feature-slug>/.work/implementation.md` from `templates/implementation.md`: which tasks from `tasks.md` this session covers, files to touch in attack order, execution order, and the exact test command.
+2. Ensure `specs/**/.work/` is in the project's `.gitignore` — add it if missing. This file is agent scratch, **never committed**: if persisted it goes stale and starts competing with `plan.md` as a source of truth.
+3. Granularity: one per **session or module/phase**, never per 🔴→🟢→🔵 micro-task. Skip it for trivial tasks — the task entry already says what to do.
+4. **Reflow rule:** if planning execution surfaces a durable decision (spec gap, missing contract, new risk), update `spec.md` → `plan.md` → `tasks.md` first, then regenerate the ephemeral plan.
+
+The benefit: the plan survives context compaction within the session, and is cheap to regenerate in the next one because it derives from `tasks.md`.
+
 ---
 
 ## Output structure
@@ -109,7 +120,9 @@ specs/
 └── <feature-slug>/
     ├── spec.md
     ├── plan.md
-    └── tasks.md
+    ├── tasks.md
+    └── .work/
+        └── implementation.md   ← gitignored — ephemeral, regenerated each session
 ```
 
 If `specs/<feature-slug>/` already exists, **read it first** and propose changes rather than overwriting.
@@ -124,8 +137,9 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 - ❌ Never silently pick a stack if the user gave no preference
 - ❌ Never write a Green task before its Red task
 - ❌ Never skip Step 3.5 (test runner verification) — without a runner there is no TDD
+- ❌ Never commit `.work/` — the ephemeral implementation plan is agent scratch, not documentation
 - ✅ Confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
-- ✅ If implementation reveals a gap: update `spec.md` → `plan.md` → `tasks.md` → then code
+- ✅ If implementation reveals a gap: update `spec.md` → `plan.md` → `tasks.md` → then code — a durable decision must never live only in `.work/implementation.md`
 
 ---
 
@@ -134,6 +148,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 - `templates/spec.md` — the 6-section spec template
 - `templates/plan.md` — technical plan template
 - `templates/tasks.md` — TDD task list template
+- `templates/implementation.md` — ephemeral implementation plan template (gitignored, per session)
 - `references/examples.md` — fully worked example
 - `references/tdd-workflow.md` — TDD detail and anti-patterns
 - `references/test-runner-detection.md` — how to verify the test runner, defaults per ecosystem, smoke test
