@@ -103,3 +103,60 @@ A web tool for freelancers to manage projects and generate invoices from a singl
 - **Open question** has an owner and deadline — it doesn't just float.
 
 This is the bar. If your spec falls short in any section, that section is not done.
+
+---
+
+## How the surrounding steps look on this example
+
+The spec above is the heart of the flow. These are the artifacts the other steps produce around it.
+
+### Step 0.5 — Project Context Snapshot
+
+This invoice tool is a new project, so the snapshot is the greenfield case:
+
+> **Project Context Snapshot:** greenfield — no existing manifest or specs detected. `specs/INDEX.md` is empty. Stack will be proposed from scratch in `plan.md` with trade-offs and confirmed with you.
+
+Had this been added to an existing repo, the snapshot would instead read something like *"Next.js 14 + TypeScript app, already uses Supabase and Tailwind, Jest installed with tests in `__tests__/` — I'll anchor the architecture on this"*, and Section 5 would inherit those choices rather than re-decide them.
+
+### Project memory — the `specs/INDEX.md` entry written at hand-off
+
+After this spec is confirmed, the skill records it in `specs/INDEX.md` (from `templates/specs-index.md`). The Shared decisions made here become reusable defaults for the next feature:
+
+```markdown
+## Shared decisions
+
+| Decision    | Value                    | Rationale (1 line)                         | First decided in    |
+|-------------|--------------------------|--------------------------------------------|---------------------|
+| Database    | PostgreSQL on Supabase   | auth + storage + DB in one provider        | `invoice-generator` |
+| Auth        | Supabase Auth            | email + Google OAuth out of the box        | `invoice-generator` |
+| Test runner | Vitest                   | fast, native TS, Jest-compatible API       | `invoice-generator` |
+| Hosting     | Vercel                   | first-class Next.js deploys                 | `invoice-generator` |
+
+## Specs
+
+| Slug                | Vision (1 line)                                          | Status | Key stack          | Related specs |
+|---------------------|----------------------------------------------------------|--------|--------------------|---------------|
+| `invoice-generator` | Freelancers manage projects and generate invoices in one place | active | Next.js + Supabase | —             |
+```
+
+When a later feature (say `expense-tracker`) starts, Step 0.5 reads this and proposes Supabase + Vitest as the default instead of re-litigating them — and flags `invoice-generator` as a related spec.
+
+### Coverage matrix — the hand-off gate (lives at the end of `tasks.md`)
+
+Every feature from Section 3 traced forward to a contract and to tasks. No empty task cell = no orphan feature:
+
+| spec §3 feature | plan contract/entity | task IDs (🔴/🟢) |
+|---|---|---|
+| The user can create projects with name, client, rate | `POST /projects` / `Project` | Phase 1 🔴+🟢 |
+| The user can edit and archive projects | `PATCH /projects/:id` / `Project.archivedAt` | Phase 1 🔴+🟢 |
+| The user can view logged-hours history per project | `GET /projects/:id/hours` / `HourEntry` | Phase 1 🔴+🟢 |
+| The user can log worked hours (date, duration, desc) | `POST /hours` / `HourEntry` | Phase 2 🔴+🟢 |
+| The system auto-calculates the project total | `Project.total` (derived) | Phase 2 🔴+🟢 |
+| The user can edit or delete hour entries | `PATCH/DELETE /hours/:id` / `HourEntry` | Phase 2 🔴+🟢 |
+| The user can create an invoice (project + range) | `POST /invoices` / `Invoice` | Phase 3 🔴+🟢 |
+| The system auto-fills client, hours, total | `Invoice` fill logic | Phase 3 🔴+🟢 |
+| The user can generate the invoice PDF | `GET /invoices/:id/pdf` | Phase 3 🔴+🟢 |
+| The user can mark an invoice paid/pending | `PATCH /invoices/:id` / `Invoice.status` | Phase 3 🔴+🟢 |
+| The system generates a public read-only link | `GET /i/:token` / `Invoice.token` | Phase 3 🔴+🟢 |
+
+**Also confirmed:** the 3 flows in Section 4 each get an E2E task with their error path (zero-duration, no-hours-to-invoice, revoked-link), and the measurable NFRs in Section 6 (dashboard < 2s, PDF < 5s, RLS isolation) each get a verification task. Every Section 3 bullet has a task → the list is ready to hand off.

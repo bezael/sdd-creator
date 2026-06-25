@@ -96,6 +96,19 @@
 
 ---
 
+## Coverage matrix
+
+> **The hand-off gate.** One row per feature in Section 3 of the spec, traced forward to a plan element and then to tasks. Build this **last, before hand-off**. If any feature's task cell is empty, it's an **orphan** — the task list is not done. Full method and the two-way gap check in `references/traceability.md`.
+
+| spec §3 feature | plan contract/entity | task IDs (🔴/🟢) |
+|---|---|---|
+| [literal feature from spec §3] | [`plan.md` §3 endpoint/component or §2 entity] | [e.g. Phase 1 🔴+🟢] |
+| [...] | [...] | [...] |
+
+**Also confirm:** every Section 4 flow has an E2E task (happy path **and** its error path), and every measurable Section 6 NFR has a verification task. Setup (⚙️), refactor (🔵), E2E and NFR tasks don't need a Section 3 row — they trace to phases, not to feature bullets.
+
+---
+
 ## Execution rules
 
 1. **One task at a time.** Do not open two in parallel in the same session.
@@ -103,3 +116,4 @@
 3. **Before marking 🔵 done:** run ALL tests and verify they stay green.
 4. **If a task reveals ambiguity in the spec:** stop execution, update `spec.md` and `plan.md`, and regenerate the affected tasks. Do not improvise in code.
 5. **Commits:** one per completed task. Suggested message: `[phase] feat(module): description — task #N`.
+6. **Do not hand off with an orphan feature:** the coverage matrix above must have a task for every Section 3 feature before implementation starts.

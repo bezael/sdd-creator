@@ -3,3 +3,4 @@ node_modules/
 *.log
 *.zip
 *.skill
+.claude/skills/

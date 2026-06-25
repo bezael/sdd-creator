@@ -4,6 +4,18 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-06-10
+
+### Added
+
+- **Project grounding (Step 0.5):** before writing the spec, the agent inspects the existing project — stack in use, conventions and prior specs — and states a one-paragraph "Project Context Snapshot". Architecture proposals now anchor on what already exists instead of inventing a stack, and Step 3.5 *confirms* the test runner from this snapshot rather than re-scanning. New reference `references/codebase-inspection.md`.
+- **Project memory (`specs/INDEX.md`):** a new committed index — a `Shared decisions` table (reusable cross-cutting choices) plus a per-spec table — maintained by the skill and read at Step 0.5 to avoid duplicating work and to reuse prior decisions. New template `templates/specs-index.md`. This is the zero-dependency, file-based stand-in for persistent semantic memory: no server and no embeddings, recall via the curated index plus `grep`/`Glob`.
+- **Completeness validation (coverage matrix):** `tasks.md` now ends with a `## Coverage matrix` tracing every Section 3 feature → plan contract/entity → tasks, and hand-off is gated on having no orphan features. `plan.md` §7 reinforces the spec → plan half. New reference `references/traceability.md`.
+
+### Changed
+
+- `SKILL.md` and `AGENTS.md` gained Step 0.5, the pre-hand-off coverage gate and the `specs/INDEX.md` update at hand-off, three new hard rules, and the new resource links. Step 3.5 reworded to confirm the runner from the Step 0.5 snapshot.
+
 ## [1.2.0] - 2026-06-10
 
 ### Added

@@ -81,10 +81,11 @@
 
 ## 7. Definition of done for the plan
 
-- [ ] All features from the spec appear in the data model or contracts
+- [ ] **Every Section 3 feature maps to a data-model entity or a contract** — list any feature that does NOT map here; an unmapped feature is a gap to close, not a footnote (this is the spec → plan half of traceability; `tasks.md` closes the plan → tasks half)
 - [ ] Every risk has a mitigation
 - [ ] The build order is clear and has no cycles
 - [ ] **The test runner (unit, and E2E if applicable) is decided and justified**
+- [ ] The stack is consistent with what the project already uses (per the Step 0.5 snapshot), or any divergence is stated explicitly
 - [ ] The user has confirmed the stack
 
-*When all 5 points are checked, move to Step 3.5 (runner verification) and then to `tasks.md`.*
+*When all 6 points are checked, move to Step 3.5 (runner verification) and then to `tasks.md`.*

@@ -5,6 +5,8 @@
 > Genera specs siguiendo la metodología **Spec-Driven Development**, según la adaptación de Dominicode (Bezael Pérez), en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
 > Antes de generar código, el agente produce `spec.md` (6 secciones), `plan.md` (decisiones técnicas) y `tasks.md` (lista TDD ordenada) bajo `specs/<feature-slug>/`.
+>
+> Primero **ancla el spec en tu proyecto existente** (stack, convenciones, specs previos), mantiene un **`specs/INDEX.md` como memoria del proyecto** y **verifica que cada funcionalidad llegue a una tarea** antes del hand-off — todo en Markdown plano, cero dependencias.
 
 ---
 
@@ -14,7 +16,7 @@
 
 | Skill | Descripción |
 |-------|-------------|
-| `dominicode-sdd-creator` | Spec-Driven Development — escribe spec antes de código. |
+| `dominicode-sdd-creator` | Spec-Driven Development — ancla el spec en tu proyecto, escribe spec/plan/tasks antes de código y mantiene una memoria `specs/INDEX.md`. |
 
 ---
 
@@ -117,11 +119,14 @@ bezael/sdd-creator
 │           │   ├── spec.md
 │           │   ├── plan.md
 │           │   ├── tasks.md
-│           │   └── implementation.md
+│           │   ├── implementation.md
+│           │   └── specs-index.md
 │           └── references/
 │               ├── examples.md
+│               ├── codebase-inspection.md
 │               ├── tdd-workflow.md
-│               └── test-runner-detection.md
+│               ├── test-runner-detection.md
+│               └── traceability.md
 ├── CLAUDE.md
 ├── LICENSE
 └── README.md
@@ -141,11 +146,13 @@ Una vez instalada, describe lo que quieres construir:
 
 El agente:
 1. Detectará el nivel de contexto (alto / medio / bajo)
-2. Te entrevistará o producirá un draft según el caso
-3. Generará `specs/<feature>/spec.md` con las 6 secciones
-4. Tras tu confirmación, generará `plan.md`
-5. Tras tu confirmación, generará `tasks.md` con TDD
-6. **Solo entonces** empezará a programar, tarea por tarea
+2. Anclará el spec en tu proyecto — detecta el stack en uso, convenciones y specs previos (un "Project Context Snapshot")
+3. Te entrevistará o producirá un draft según el caso
+4. Generará `specs/<feature>/spec.md` con las 6 secciones
+5. Tras tu confirmación, generará `plan.md`
+6. Tras tu confirmación, generará `tasks.md` con TDD — con una matriz de cobertura para que ninguna funcionalidad se quede sin tarea
+7. Registrará el spec en `specs/INDEX.md` (memoria del proyecto) y reutilizará sus decisiones compartidas la próxima vez
+8. **Solo entonces** empezará a programar, tarea por tarea
 
 ---
 
