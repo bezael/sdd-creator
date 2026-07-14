@@ -28,6 +28,8 @@ npx skills@latest add bezael/sdd-creator
 
 El CLI te pregunta qué skills instalar y en qué agentes (Claude Code, Cursor, Codex, etc.) y lo configura automáticamente.
 
+> 💡 **Cómo actualizar:** Para actualizar una instalación existente a la última versión, simplemente vuelve a ejecutar el comando de arriba. Para instalaciones manuales, vuelve a ejecutar los comandos de copia respectivos.
+
 ---
 
 ## Instalación manual (fallback por agente)
