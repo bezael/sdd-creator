@@ -4,9 +4,9 @@
 
 > Genera specs siguiendo la metodología **Spec-Driven Development**, según la adaptación de Dominicode (Bezael Pérez), en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
-> Antes de generar código, el agente produce `spec.md` (6 secciones), `plan.md` (decisiones técnicas) y `tasks.md` (lista TDD ordenada) bajo `specs/<feature-slug>/`.
+> Antes de generar código, el agente produce `spec.md` (6 secciones), `plan.md` (decisiones técnicas con estrategia de ejecución) y `tasks.md` (lista TDD ordenada) bajo `specs/<feature-slug>/`.
 >
-> Primero **ancla el spec en tu proyecto existente** (stack, convenciones, specs previos), mantiene un **`specs/INDEX.md` como memoria del proyecto** y **verifica que cada funcionalidad llegue a una tarea** antes del hand-off — todo en Markdown plano, cero dependencias.
+> Primero **ancla el spec en tu proyecto existente** (stack, convenciones, specs previos), mantiene un **`specs/INDEX.md` como memoria del proyecto**, **verifica que cada funcionalidad llegue a una tarea** y **ofrece estrategias de ejecución paso a paso o en bucle autónomo** antes del hand-off — todo en Markdown plano, cero dependencias.
 
 ---
 
@@ -152,7 +152,9 @@ El agente:
 5. Tras tu confirmación, generará `plan.md`
 6. Tras tu confirmación, generará `tasks.md` con TDD — con una matriz de cobertura para que ninguna funcionalidad se quede sin tarea
 7. Registrará el spec en `specs/INDEX.md` (memoria del proyecto) y reutilizará sus decisiones compartidas la próxima vez
-8. **Solo entonces** empezará a programar, tarea por tarea
+8. **Solo entonces** empezará a programar, seleccionando tu estrategia de ejecución preferida:
+   * **Turn-based (Paso a Paso):** Guías al agente tarea por tarea.
+   * **Bucle Autónomo (Goal-based Loop):** Ejecutas el comando `/goal` para permitir al agente implementar las tareas de forma autónoma.
 
 ---
 

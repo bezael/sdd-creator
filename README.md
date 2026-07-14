@@ -4,9 +4,9 @@
 
 > Generates specs following the **Spec-Driven Development** methodology, as adapted by Dominicode (Bezael Pérez), in any AI agent: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
-> Before generating code, the agent produces `spec.md` (6 sections), `plan.md` (technical decisions) and `tasks.md` (TDD-ordered task list) under `specs/<feature-slug>/`.
+> Before generating code, the agent produces `spec.md` (6 sections), `plan.md` (technical decisions with execution strategy) and `tasks.md` (TDD-ordered task list) under `specs/<feature-slug>/`.
 >
-> It first **grounds the spec in your existing project** (stack, conventions, prior specs), keeps a versioned **`specs/INDEX.md` as project memory**, and **verifies every feature traces to a task** before hand-off — all in plain Markdown, zero dependencies.
+> It first **grounds the spec in your existing project** (stack, conventions, prior specs), keeps a versioned **`specs/INDEX.md` as project memory**, **verifies every feature traces to a task**, and **offers turn-based or autonomous loop execution strategies** before hand-off — all in plain Markdown, zero dependencies.
 
 ---
 
@@ -152,7 +152,9 @@ The agent will:
 5. After your confirmation, generate `plan.md`
 6. After your confirmation, generate `tasks.md` with TDD — including a coverage matrix so no feature is left without a task
 7. Record the spec in `specs/INDEX.md` (project memory) and reuse its shared decisions next time
-8. **Only then** start coding, task by task
+8. **Only then** start coding, selecting your preferred execution strategy:
+   * **Turn-based (Paso a Paso):** Guide the agent task-by-task.
+   * **Autonomous Loop (Bucle Autónomo):** Trigger the `/goal` command to let the agent implement the tasks autonomously.
 
 ---
 

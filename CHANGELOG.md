@@ -4,6 +4,14 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-07-14
+
+### Added
+
+- **Loop execution option:** The user can now choose between **Turn-based (Paso a Paso)** and **Autonomous Loop (Bucle Autónomo)** execution strategy for implementing tasks.
+- **Plan strategy mapping:** Added the `Execution strategy` section in `plan.md` (Step 3) to explicitly document this choice.
+- **Handoff choice:** Modified Step 5 (Hand-off) in `SKILL.md` and `AGENTS.md` to recommend `/goal` command for autonomous execution.
+
 ## [1.3.0] - 2026-06-10
 
 ### Added

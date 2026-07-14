@@ -114,7 +114,9 @@ Full detail and anti-patterns in `references/tdd-workflow.md`.
 
 Then tell the user that:
 1. The 3 files are in `specs/<feature-slug>/`, and `specs/INDEX.md` is updated
-2. To implement, execute the first unchecked task in `tasks.md`, nothing else
+2. The options to start implementation:
+   - **Turn-based (Paso a Paso):** Tell you (or the next agent run) to pick a specific unchecked task in `tasks.md` and execute it (e.g. "Implementa la tarea T1").
+   - **Autonomous Loop (Bucle Autónomo):** Run the `/goal` command to implement tasks automatically: `/goal Implementa las tareas pendientes en specs/<feature-slug>/tasks.md y asegúrate de que todos los tests pasen.`
 3. If a task surfaces a missing spec decision: update `spec.md` first, don't paper over it in code
 
 #### Ephemeral implementation plan (`.work/`)
@@ -161,6 +163,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 - ✅ Confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
 - ✅ Always update `specs/INDEX.md` at hand-off and reuse its Shared decisions instead of re-deciding them
 - ✅ If implementation reveals a gap: update `spec.md` → `plan.md` → `tasks.md` → then code — a durable decision must never live only in `.work/implementation.md`
+- ✅ Always present the execution options (Turn-based vs. Autonomous Goal-based Loop) to the user during Step 5 (Hand-off), recommending the use of the `/goal` command for autonomous execution.
 
 ---
 

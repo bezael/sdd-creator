@@ -79,13 +79,23 @@
 
 ---
 
-## 7. Definition of done for the plan
+## 7. Execution strategy
+
+> How the agent will execute the task list in `tasks.md`. Select one.
+
+- [ ] **Modo Paso a Paso (Turn-based):** The user guides execution task-by-task.
+- [ ] **Modo Bucle Autónomo (Goal-based Loop):** The agent runs autonomously in a loop using a `/goal` command until the phase/tasks are complete and all tests pass.
+
+---
+
+## 8. Definition of done for the plan
 
 - [ ] **Every Section 3 feature maps to a data-model entity or a contract** — list any feature that does NOT map here; an unmapped feature is a gap to close, not a footnote (this is the spec → plan half of traceability; `tasks.md` closes the plan → tasks half)
 - [ ] Every risk has a mitigation
 - [ ] The build order is clear and has no cycles
 - [ ] **The test runner (unit, and E2E if applicable) is decided and justified**
+- [ ] **The execution strategy has been selected and documented**
 - [ ] The stack is consistent with what the project already uses (per the Step 0.5 snapshot), or any divergence is stated explicitly
 - [ ] The user has confirmed the stack
 
-*When all 6 points are checked, move to Step 3.5 (runner verification) and then to `tasks.md`.*
+*When all 7 points are checked, move to Step 3.5 (runner verification) and then to `tasks.md`.*
