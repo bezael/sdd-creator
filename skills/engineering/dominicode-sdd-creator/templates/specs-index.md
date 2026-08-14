@@ -26,6 +26,7 @@
 
 > One row per feature spec under `specs/`. `status` mirrors the lifecycle of the work, not the quality of the doc.
 > `status`: **draft** (spec being written / not confirmed) · **active** (confirmed, in implementation) · **archived** (shipped or abandoned).
+> Append `· no-TDD` to the status when the spec was built in no-TDD mode (case E) — e.g. `active · no-TDD`. It travels with the spec so a future session knows this feature has no safety net before touching it.
 
 | Slug | Vision (1 line) | Status | Key stack | Related specs |
 |------|-----------------|--------|-----------|---------------|

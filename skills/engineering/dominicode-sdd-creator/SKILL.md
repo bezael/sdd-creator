@@ -96,13 +96,30 @@ Use the test-runner facts already gathered in the **Step 0.5 snapshot** (re-insp
    - **B. Runner installed but no tests yet** → use it; first 🔴 task creates the test scaffold.
    - **C. Project exists but no runner** → **stop**. Propose the ecosystem default (Vitest for Node-TS, pytest for Python, RSpec for Ruby, JUnit 5 for Java, xUnit for .NET — `cargo test` and `go test` are built-in). Confirm with the user. Setup tasks go in Phase 0 of `tasks.md`.
    - **D. Greenfield** → the runner must already be decided in `plan.md` § "Stack final → CI / Tests". If it's not, go back and close it before continuing.
-   - **E. User refuses to have tests** → **the skill does not apply.** Tell the user honestly: SDD without TDD is half the methodology. Offer the fallback: produce `spec.md` + `plan.md` only, skip `tasks.md`. Do not silently switch to non-TDD tasks.
+   - **E. The user explicitly asked for no tests** → **no-TDD mode** (degraded). See the gate below. Cases A–D are the only outcomes you may reach on your own; E is reached **only** because the user asked for it.
 
 State the result of the detection to the user in one sentence before proceeding to Step 4 ("Detected pytest in `pyproject.toml`, using it" / "No runner found — proposing Vitest, please confirm").
 
 See `references/test-runner-detection.md` for the full matrix per ecosystem, defaults with rationale, and the smoke-test pattern.
 
+#### Case E gate — no-TDD mode
+
+No-TDD mode is **opt-in by the user and by nobody else.** Three conditions, all required:
+
+1. **The user said it, in their own words, unprompted** — "no quiero tests", "sin tests", "skip the tests", "don't write tests". If the words never appeared, the mode does not exist.
+2. **You never offered it.** Do not mention this mode as an option, do not list it among alternatives, do not hint at it when the project has no runner. Case C is "propose a runner", not "propose skipping tests".
+3. **You never inferred it.** Not from `hazlo rápido`, `es un prototipo`, `no hay tiempo`, `es solo una demo`, not from silence, and not from the absence of a runner in the repo. Speed pressure is not a request to drop tests.
+
+When all three hold:
+
+- **Separate "not now" from "never" with one question.** If the user means *not yet* (prototype, spike, demo with a deadline), that is **not** case E — stay in TDD mode, keep the runner in Phase 0, and offer to defer the 🔴 tasks. Case E is only for "no tests, period".
+- **State the cost once, in one sentence, without moralizing:** no regression detection, no confident refactoring, and every acceptance criterion gets verified by hand instead of by a runner.
+- **Ask for one explicit confirmation.** If the answer is hedged or ambiguous, you stay in TDD mode.
+- Then, and only then, go to Step 4-bis. Record the decision and its date in `plan.md` § "Stack final → CI / Tests" — that section gets closed with "no tests, requested by the user on [date]", never left blank.
+
 ### Step 4 — Write `tasks.md` (TDD-ordered task list)
+
+> **Branch:** in no-TDD mode (case E confirmed), use `templates/tasks-no-tdd.md` and follow Step 4-bis instead. In every other case, continue here — this is the default and the only mode you may choose by yourself.
 
 Use the template at `templates/tasks.md`. This is where SDD meets TDD. For every feature in Section 3 of the spec, generate tasks in this order:
 
@@ -121,11 +138,32 @@ See `references/tdd-workflow.md` for the full chaining detail and naming convent
 
 **Before hand-off — fill the coverage matrix.** At the end of `tasks.md`, build the `## Coverage matrix`: one row per Section 3 feature → its `plan.md` contract/entity → the task IDs that build and test it. If any feature has no task, it is an **orphan** — the task list is not done; close the gap before Step 5. See `references/traceability.md` for the method and the two-way gap check.
 
+### Step 4-bis — Write `tasks.md` in no-TDD mode (only after the Case E gate)
+
+Use `templates/tasks-no-tdd.md`. Same spec, same plan, same build order, same coverage matrix — the tests are replaced by written manual verifications, nothing else is dropped.
+
+For every feature in Section 3 of the spec:
+
+1. ⚙️ **Setup task** (only if needed)
+2. 🔨 **Build task**: implement the feature, carrying its acceptance criterion from `spec.md §3`
+3. ✅ **Verify task**: the manual check of that criterion, written as **Given / When / Then**, with a line to record the result
+4. 🔵 **Refactor task**: only if it improves clarity — and it re-runs every ✅ of the touched module
+5. 🔗 **Integration check** when the feature crosses modules
+
+Rules specific to this mode:
+
+- **Never use 🔴 or 🟢.** Those emojis mean "there is a test". A file that mixes them with manual checks is a file nobody can trust.
+- **Every criterion still gets a ✅**, including the error paths from Section 4. Dropping tests does not mean dropping criteria — that is the whole distinction between this mode and no methodology at all.
+- **Write each ✅ as Given / When / Then**, concrete enough to execute without thinking. This is what makes the file convertible: each ✅ becomes a 🔴 one-to-one if the user later adds a runner.
+- **Keep the banner at the top of the file**, with the date and the fact that the user requested this. Six months from now, nobody remembers whose decision it was.
+- **The coverage matrix is still mandatory**, with the task column reading 🔨/✅. It matters *more* here: with no runner, it is the only completeness signal left. A checked 🔨 whose ✅ was never run counts as an orphan too.
+- Phase 0 has no runner. Lint, typecheck and a boot smoke check become mandatory instead — they are the only automated signal left.
+
 ### Step 5 — Hand off
 
 **Gate before hand-off:** the coverage matrix is filled and has **no orphan features** (every Section 3 bullet traces to a task), and Section 4 flows + measurable Section 6 NFRs have their tasks. If not, don't hand off — close the gap first.
 
-**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row (slug, one-line vision, status, key stack, related specs) and promote any genuinely cross-cutting decision from `plan.md` into the **Shared decisions** table, citing this slug.
+**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row (slug, one-line vision, status, key stack, related specs) and promote any genuinely cross-cutting decision from `plan.md` into the **Shared decisions** table, citing this slug. In no-TDD mode, append `· no-TDD` to that row's status — project memory has to remember which specs shipped without a safety net.
 
 Then tell the user:
 1. The three files are in `specs/<feature-slug>/`, and `specs/INDEX.md` is updated
@@ -133,6 +171,12 @@ Then tell the user:
    - **Modo Paso a Paso (Turn-based):** They should tell you (or the next agent run) to pick a specific unchecked task in `tasks.md` and execute it (e.g. "Implementa la tarea T1").
    - **Modo Bucle Autónomo (Goal-based Loop):** They can run the `/goal` command to implement the tasks automatically: `/goal Implementa las tareas pendientes en specs/<feature-slug>/tasks.md y asegúrate de que todos los tests pasen.`
 3. If a task surfaces a missing spec decision, **stop and update `spec.md` first**, don't paper over it in code
+
+**In no-TDD mode, the hand-off changes:**
+
+4. 🔨 and ✅ are one unit — a Build task is not done until its Verify task has actually been **run**, not read
+5. **The autonomous loop cannot close a ✅.** Its stop condition is "all tests pass", and there are no tests: the most a loop can verify here is lint + typecheck + boot. Say so plainly and recommend turn-based. If they still want the loop, its goal must stop at the 🔨 tasks and leave every ✅ for a human — a loop that ticks its own manual verifications is just a loop marking its own homework
+6. The upgrade path is at the end of `tasks.md`: adding a runner later converts every ✅ into a 🔴 without rewriting the spec
 
 #### Ephemeral implementation plan (`.work/`)
 
@@ -171,6 +215,9 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ❌ Never propose a stack that conflicts with what the project already uses (per the Step 0.5 snapshot) without explicitly flagging it — anchor on what exists, don't override silently
 - ❌ Never write a Green task before its Red task in `tasks.md`
 - ❌ Never skip Step 3.5 (test runner verification) — without a runner there is no TDD
+- ❌ **Never propose, offer, hint at, or infer no-TDD mode.** It activates only when the user asks for it in their own words — never from time pressure, a prototype framing, or a repo with no runner
+- ❌ Never silently drop the TDD emojis: a `tasks.md` without 🔴/🟢 must carry the no-TDD banner saying who asked for it and when
+- ❌ Never drop an acceptance criterion or the coverage matrix in no-TDD mode — the criteria survive, only their verification changes hands
 - ❌ Never hand off with an orphan feature — every Section 3 feature must trace to a task in the coverage matrix
 - ❌ Never commit `.work/` — the ephemeral implementation plan is agent scratch, not documentation
 - ✅ Always confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
@@ -182,13 +229,14 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 
 - `templates/spec.md` — the 6-section spec template (fill in directly)
 - `templates/plan.md` — technical plan template
-- `templates/tasks.md` — TDD task list template (includes the coverage matrix)
+- `templates/tasks.md` — TDD task list template (includes the coverage matrix) — **the default**
+- `templates/tasks-no-tdd.md` — degraded task list: manual Given/When/Then verifications instead of tests. Only after the Case E gate
 - `templates/implementation.md` — ephemeral implementation plan template (gitignored, per session)
 - `templates/specs-index.md` — project memory index template (`specs/INDEX.md`: shared decisions + specs table)
 - `references/examples.md` — a fully worked example (feature: invoice generator)
 - `references/codebase-inspection.md` — how to ground the spec in the existing project (Step 0.5): what to read per ecosystem, the snapshot, the no-conflicting-stack rule
 - `references/tdd-workflow.md` — TDD chaining details, naming conventions, common pitfalls
-- `references/test-runner-detection.md` — how to verify if the project has a test runner, defaults per ecosystem, smoke-test pattern
+- `references/test-runner-detection.md` — how to verify if the project has a test runner, defaults per ecosystem, smoke-test pattern, and the full Case E protocol
 - `references/traceability.md` — the coverage matrix method (spec §3 → plan → tasks) and the hand-off gate
 
 ---

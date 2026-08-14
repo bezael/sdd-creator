@@ -121,6 +121,7 @@ bezael/sdd-creator
 │           │   ├── spec.md
 │           │   ├── plan.md
 │           │   ├── tasks.md
+│           │   ├── tasks-no-tdd.md
 │           │   ├── implementation.md
 │           │   └── specs-index.md
 │           └── references/
@@ -157,6 +158,16 @@ El agente:
 8. **Solo entonces** empezará a programar, seleccionando tu estrategia de ejecución preferida:
    * **Turn-based (Paso a Paso):** Guías al agente tarea por tarea.
    * **Bucle Autónomo (Goal-based Loop):** Ejecutas el comando `/goal` para permitir al agente implementar las tareas de forma autónoma.
+
+---
+
+## Si no quieres tests
+
+Puedes decidirlo — pero tienes que **pedirlo**. Di con tus palabras que no quieres tests ("sin tests", "no quiero tests") y el agente cambia a **modo sin TDD**: el mismo `spec.md`, el mismo `plan.md`, la misma matriz de cobertura, y un `tasks.md` donde cada criterio de aceptación se verifica a mano (Given / When / Then) en vez de con un runner.
+
+Dos cosas que el agente nunca hará: proponerte ese modo por su cuenta, o inferirlo porque dijiste "hazlo rápido" o "es un prototipo". La prisa es motivo para recortar alcance, no verificación.
+
+El archivo degradado está escrito para convertirse, no para tirarse: añade un runner más adelante y cada comprobación manual se convierte en un test que falla, una a una, sin reescribir el spec.
 
 ---
 

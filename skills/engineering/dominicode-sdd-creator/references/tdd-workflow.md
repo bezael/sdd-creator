@@ -1,6 +1,8 @@
 # TDD Workflow — chaining Spec → Plan → Tests → Code
 
 > Detail for Step 4 of the workflow. Defines how the features from Section 3 of the spec are translated into executable TDD tasks.
+>
+> **This file does not apply in no-TDD mode** (case E — the user explicitly asked for no tests). That mode is Step 4-bis: see `test-runner-detection.md` § "Case E" and `templates/tasks-no-tdd.md`.
 
 ---
 

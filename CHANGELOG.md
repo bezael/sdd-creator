@@ -4,6 +4,23 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-08-14
+
+### Added
+
+- **No-TDD mode (case E), opt-in only:** a user who explicitly asks for no tests now gets a complete, executable task list instead of being left with `spec.md` + `plan.md` and nothing to run. New template `templates/tasks-no-tdd.md`: each Section 3 criterion becomes a 🔨 Build task paired with a ✅ Verify task written as **Given / When / Then**, with a line to record the result. Phase 0 replaces the runner with lint + typecheck + boot smoke — the only automated signals left. The file carries a banner with the date and the fact that the user requested it.
+- **Case E gate (Step 3.5) — three conditions, all required:** the user says it in their own words, unprompted; the agent never offers the mode; the agent never infers it from `hazlo rápido`, `es un prototipo`, a deadline, or a repo with no runner. Plus one mandatory question separating *"not now"* (stay in TDD, defer the 🔴 tasks) from *"never"* (case E), the cost stated once without moralizing, and a single explicit confirmation — anything hedged keeps TDD. Full protocol in `references/test-runner-detection.md` § "Case E".
+- **Step 4-bis** in `SKILL.md` and `AGENTS.md`: how to write the degraded task list, plus the hand-off note that an autonomous `/goal` loop **cannot close a ✅** — its stop condition is "all tests pass" and there are none, so turn-based is the recommendation.
+- **Upgrade path** at the end of `tasks-no-tdd.md`: every ✅ converts 1:1 into a 🔴 (Given = fixture, When = call, Then = assertion) without rewriting the spec. The 🔴 tasks that don't go green immediately are the bugs shipped while there were no tests.
+
+### Changed
+
+- **Case E stops being an exit and becomes a mode.** Until now it declared the skill inapplicable and dropped `tasks.md` entirely, which pushed the user into improvising exactly the execution this methodology exists to prevent. The acceptance criteria now survive; only who verifies them changes.
+- **The coverage matrix still gates hand-off in no-TDD mode** (task column reads 🔨/✅) and gains one rule: a checked 🔨 whose ✅ was never run is also an orphan. With no runner, that matrix is the only completeness signal left. Reflected in `references/traceability.md`.
+- `specs/INDEX.md` rows carry a `· no-TDD` marker on their status, so project memory remembers which specs shipped without a safety net.
+- `templates/plan.md` § "Stack final → CI / Tests" accepts `none — no tests, requested by the user on [date]` as the only alternative to a runner: a recorded decision, never a blank.
+- Three new hard rules in `SKILL.md` and `AGENTS.md`: never propose/offer/infer the mode, never ship a `tasks.md` without 🔴/🟢 and without the banner, never drop a criterion or the coverage matrix.
+
 ## [1.4.0] - 2026-07-14
 
 ### Added

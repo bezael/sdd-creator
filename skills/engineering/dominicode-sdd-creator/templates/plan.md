@@ -14,7 +14,7 @@
 - **Database:** [technology] — [why]
 - **Authentication:** [provider / pattern] — [why]
 - **Hosting:** [where] — [why]
-- **Test runner (unit):** [vitest / jest / pytest / rspec / cargo test / go test / junit / xunit / ...] — [why]. **Mandatory decision — without a runner there is no TDD.**
+- **Test runner (unit):** [vitest / jest / pytest / rspec / cargo test / go test / junit / xunit / ...] — [why]. **Mandatory decision — without a runner there is no TDD.** The only alternative value is `none — no tests, requested by the user on [YYYY-MM-DD]` (case E): a recorded decision, never a blank.
 - **Test runner (E2E, if applicable):** [playwright / cypress / ...] — [why]
 - **CI:** [GitHub Actions / GitLab CI / none for now] — [when it connects]
 
@@ -93,7 +93,7 @@
 - [ ] **Every Section 3 feature maps to a data-model entity or a contract** — list any feature that does NOT map here; an unmapped feature is a gap to close, not a footnote (this is the spec → plan half of traceability; `tasks.md` closes the plan → tasks half)
 - [ ] Every risk has a mitigation
 - [ ] The build order is clear and has no cycles
-- [ ] **The test runner (unit, and E2E if applicable) is decided and justified**
+- [ ] **The test runner (unit, and E2E if applicable) is decided and justified** — or the no-tests decision is recorded with its date
 - [ ] **The execution strategy has been selected and documented**
 - [ ] The stack is consistent with what the project already uses (per the Step 0.5 snapshot), or any divergence is stated explicitly
 - [ ] The user has confirmed the stack

@@ -121,6 +121,7 @@ bezael/sdd-creator
 │           │   ├── spec.md
 │           │   ├── plan.md
 │           │   ├── tasks.md
+│           │   ├── tasks-no-tdd.md
 │           │   ├── implementation.md
 │           │   └── specs-index.md
 │           └── references/
@@ -157,6 +158,16 @@ The agent will:
 8. **Only then** start coding, selecting your preferred execution strategy:
    * **Turn-based (Paso a Paso):** Guide the agent task-by-task.
    * **Autonomous Loop (Bucle Autónomo):** Trigger the `/goal` command to let the agent implement the tasks autonomously.
+
+---
+
+## If you don't want tests
+
+You can decide that — but you have to **say** it. Ask for no tests in your own words ("sin tests", "no quiero tests") and the agent switches to **no-TDD mode**: same `spec.md`, same `plan.md`, same coverage matrix, and a `tasks.md` where every acceptance criterion is verified by hand (Given / When / Then) instead of by a runner.
+
+Two things the agent will never do: propose that mode on its own, or infer it because you said "hazlo rápido" or "es un prototipo". Speed pressure is a reason to cut scope, not verification.
+
+The degraded file is written to be converted, not thrown away: add a runner later and every manual check becomes a failing test, one to one, without rewriting the spec.
 
 ---
 

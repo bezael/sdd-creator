@@ -16,6 +16,8 @@ Work **from the spec, not from the tasks** — the spec is the source of truth, 
 | **plan contract/entity** | the `plan.md` §3 endpoint/component or §2 entity that realizes it |
 | **task IDs** | the `tasks.md` tasks that build + test it — at minimum one 🔴 and one 🟢 |
 
+In **no-TDD mode** (case E) the matrix is unchanged except for the last column, which reads 🔨/✅ instead of 🔴/🟢. It matters *more* there, not less: with no runner, this matrix is the only completeness signal left — and a checked 🔨 whose ✅ was never run counts as an orphan too.
+
 Example:
 
 | spec §3 feature | plan contract/entity | task IDs (🔴/🟢) |
