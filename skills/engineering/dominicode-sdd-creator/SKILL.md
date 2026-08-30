@@ -170,7 +170,7 @@ Rules specific to this mode:
 
 **Gate before hand-off:** the coverage matrix is filled and has **no orphan features** (every Section 3 bullet traces to a task), and Section 4 flows + measurable Section 6 NFRs have their tasks. If not, don't hand off — close the gap first.
 
-**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row (slug, one-line vision, status, key stack, related specs) and promote any genuinely cross-cutting decision from `plan.md` into the **Shared decisions** table, citing this slug. Once `tasks.md` exists, its status is canonical and the index mirrors `not started`, `in progress` or `completed`. In no-TDD mode, append `· no-TDD` to that row's status.
+**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row (slug, one-line vision, status, key stack, related specs) and promote any genuinely cross-cutting decision — from `plan.md`, or surfaced as a durable learning by Code Review or Final Verify (decision confirmed/overturned, alternative rejected, risk materialized) — into the **Shared decisions** table, citing this slug. Once `tasks.md` exists, its status is canonical and the index mirrors `not started`, `in progress` or `completed`. In no-TDD mode, append `· no-TDD` to that row's status.
 
 Then tell the user:
 1. The three files are in `specs/<feature-slug>/`, and `specs/INDEX.md` is updated
@@ -202,7 +202,7 @@ For each pending task, read its Criterion, Files, Verify and Done when contract;
 
 #### Code Review
 
-After implementation/module verification, review the source Issue (when present), `spec.md`, `plan.md`, `tasks.md`, the real diff, tests and verification results. Review requirements compliance first, then correctness, security, performance, tests and maintainability. The reviewer must be conceptually independent from the implementer. Follow `references/code-review.md` and resolve blockers before the final gate.
+After implementation/module verification, review the source Issue (when present), `spec.md`, `plan.md`, `tasks.md`, the real diff, tests and verification results. Review requirements compliance first, then correctness, security, performance, tests and maintainability. Requirements compliance closes with an explicit **alignment verdict** — `Exact`, `Tangling`, `Missing` or `Missing and Tangling` — and only `Exact` (or a deviation the user accepted and reflowed into the spec) can be part of a PASS. The reviewer must be conceptually independent from the implementer. Close the review by listing its **durable learnings** (decision confirmed or overturned, alternative rejected, risk materialized) for the hand-off's `specs/INDEX.md` update. Follow `references/code-review.md` and resolve blockers before the final gate.
 
 #### Final Verify
 
@@ -250,6 +250,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ✅ Always update `specs/INDEX.md` at hand-off and reuse its Shared decisions instead of re-deciding them
 - ✅ Always update `spec.md` first when implementation reveals a gap, then update `plan.md` and `tasks.md`, then code — a durable decision must never live only in `.work/implementation.md`
 - ✅ Always review the real diff against the Issue/spec/plan/tasks and current verification results
+- ✅ Always close Code Review with an alignment verdict (Exact / Tangling / Missing / Missing and Tangling) and promote its durable learnings to `specs/INDEX.md` at hand-off
 - ✅ Always recheck applicable previously passed evidence during Final Verify before PR/handoff
 - ✅ Always keep `tasks.md` status and the corresponding `specs/INDEX.md` row synchronized
 - ✅ Always present Turn-based and Autonomous Loop execution options at implementation hand-off, describing host-specific commands only as optional examples.

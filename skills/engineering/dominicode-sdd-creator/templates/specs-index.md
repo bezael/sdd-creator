@@ -8,7 +8,7 @@
 
 ## Shared decisions
 
-> Project-wide technical choices that any new spec should reuse instead of re-deciding. Each row records the decision, a one-line rationale, and the spec where it was first made. Promote a decision here the moment a second feature would otherwise re-litigate it.
+> Project-wide technical choices that any new spec should reuse instead of re-deciding. Each row records the decision, a one-line rationale, and the spec where it was first made. Promote a decision here the moment a second feature would otherwise re-litigate it — including durable learnings surfaced by code review or final verification (decision confirmed or overturned, alternative rejected, risk materialized).
 
 | Decision | Value | Rationale (1 line) | First decided in |
 |----------|-------|--------------------|------------------|
