@@ -1,7 +1,7 @@
 {
   "name": "dominicode-sdd-creator",
   "description": "Lifecycle SDD de Dominicode: spec, plan, tasks, implementación con evidencia, review y verificación final antes del PR.",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "author": { "name": "Bezael Pérez", "url": "https://dominicode.com" },
   "skills": [
     "./skills/engineering/dominicode-sdd-creator"

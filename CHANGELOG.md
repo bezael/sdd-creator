@@ -4,6 +4,8 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-08-30
+
 ### Added
 
 - Explicit lifecycle status in both task templates: `Not Started`, `In Progress` and `Completed`. `tasks.md` is canonical once created and `specs/INDEX.md` mirrors it; `Completed` requires task evidence, no coverage orphans, a non-blocking Code Review and Final Verification PASS.
