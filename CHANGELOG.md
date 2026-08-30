@@ -4,6 +4,19 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-08-30
+
+### Added
+
+- **Alignment verdict in Code Review:** requirements compliance now closes with an explicit PR-issue alignment classification — `Exact`, `Tangling`, `Missing` or `Missing and Tangling` (taxonomy from Isik et al., via *"Rethinking Code Review in the Age of AI"*, arXiv:2605.17548). The recommended review output carries an `Alignment:` line next to `Status:`, and a verdict other than `Exact` cannot be part of a PASS unless the user explicitly accepted the deviation and it was reflowed into the spec first — out-of-scope code is removed or specced, missing work is completed or descoped in writing.
+- **Review retrospective feeding project memory:** a review now closes by listing its durable learnings — a cross-cutting decision confirmed or overturned, an alternative rejected with its reason, a risk that materialized in a specific module. The Step 5 hand-off promotes the genuinely cross-cutting ones into `specs/INDEX.md` § Shared decisions, citing the slug, so the next review starts from what this one taught instead of rediscovering it. New "Review retrospective" section in `references/code-review.md`; `templates/specs-index.md` documents the promotion.
+- **Risk-prioritized review depth:** when git history is available, review depth goes first to files with high churn and fix history — the strongest deterministic predictors of where defects cluster. A file with no history is new code (unknown risk, not low), and the signal orders the review without ever being a finding itself.
+- New hard rule in `SKILL.md` and `AGENTS.md`: always close Code Review with an alignment verdict and promote its durable learnings to `specs/INDEX.md` at hand-off.
+
+### Changed
+
+- Evidence in review findings is now mandatory, not aspirational: every finding cites the affected criterion/task and a file or diff location — a claim that cannot be anchored to the diff is an observation, not a finding — and any verification not executed is reported as *not run*, never assumed PASS.
+
 ## [1.6.0] - 2026-08-30
 
 ### Added
