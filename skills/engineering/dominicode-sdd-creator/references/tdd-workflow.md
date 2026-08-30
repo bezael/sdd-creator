@@ -93,21 +93,29 @@ Unit tests cover isolated features. Integration tests cover flows. **Don't confu
 Each task in `tasks.md` follows this format:
 
 ```markdown
-- [ ] 🔴 **Test: the user logs hours with date, duration and description**
-      Files: `tests/hours/register.test.ts`
-      Criterion: spec.md §3 → "The user can log worked hours with date, duration and description"
-      Must fail when the test is run.
+- [ ] TASK-10 — 🔴 **Test: the user logs hours with date, duration and description**
+  Criterion: spec.md §3 → "The user can log worked hours with date, duration and description"
+  Files: `tests/hours/register.test.ts`
+  Verify: `npm test -- hours/register`
+  Done when: the test fails for the missing behavior, not for syntax/import/configuration
+  Evidence: [expected failure summary]
 
-- [ ] 🟢 **Implement hour logging**
-      Files: `src/hours/register.ts`, `src/hours/types.ts`
-      Makes the previous red test pass. Do not add validation the test doesn't require.
+- [ ] TASK-11 — 🟢 **Implement hour logging**
+  Criterion: same `spec.md §3` criterion
+  Files: `src/hours/register.ts`, `src/hours/types.ts`
+  Verify: `npm test -- hours/register`
+  Done when: verification exits 0; do not add validation the test does not require
+  Evidence: [command + PASS result]
 
-- [ ] 🔵 **Refactor: extract validation to `validators.ts`**  (optional)
-      Files: `src/hours/register.ts`, `src/hours/validators.ts`
-      Only if the next red test (duration <= 0 validation) will duplicate logic.
+- [ ] TASK-12 — 🔵 **Refactor: extract validation to `validators.ts`** (optional)
+  Criterion: N/A — behavior unchanged
+  Files: `src/hours/register.ts`, `src/hours/validators.ts`
+  Verify: `npm test -- hours`
+  Done when: module tests remain green
+  Evidence: [command + PASS result]
 ```
 
-Three non-negotiable fields: files it touches, criterion it satisfies (with spec citation), and the expected state when run.
+Non-negotiable for a verifiable task: stable ID, files, criterion (or N/A with a reason), Verify, Done when and concise Evidence after execution. See `references/verification-loop.md`.
 
 ---
 

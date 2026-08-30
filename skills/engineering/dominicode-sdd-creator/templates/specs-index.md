@@ -24,13 +24,13 @@
 
 ## Specs
 
-> One row per feature spec under `specs/`. `status` mirrors the lifecycle of the work, not the quality of the doc.
-> `status`: **draft** (spec being written / not confirmed) · **active** (confirmed, in implementation) · **archived** (shipped or abandoned).
-> Append `· no-TDD` to the status when the spec was built in no-TDD mode (case E) — e.g. `active · no-TDD`. It travels with the spec so a future session knows this feature has no safety net before touching it.
+> One row per feature spec under `specs/`. `status` mirrors the lifecycle of the work, not the quality of the document.
+> Before `tasks.md` exists, use **draft** for a spec that is not yet confirmed. Once tasks exist, mirror the canonical status from that feature's `tasks.md`: **not started**, **in progress**, or **completed**. Use **archived** only for abandoned or superseded work.
+> Append `· no-TDD` when the spec uses no-TDD mode — e.g. `in progress · no-TDD`. The suffix does not change the status transition rules.
 
 | Slug | Vision (1 line) | Status | Key stack | Related specs |
 |------|-----------------|--------|-----------|---------------|
-| `[feature-slug]` | [the Section 1 vision, compressed to one line] | draft | [e.g. Next.js + Supabase] | [`other-slug`, or `—`] |
+| `[feature-slug]` | [the Section 1 vision, compressed to one line] | not started | [e.g. Next.js + Supabase] | [`other-slug`, or `—`] |
 
 ---
 

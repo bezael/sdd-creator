@@ -84,7 +84,7 @@
 > How the agent will execute the task list in `tasks.md`. Select one.
 
 - [ ] **Modo Paso a Paso (Turn-based):** The user guides execution task-by-task.
-- [ ] **Modo Bucle Autónomo (Goal-based Loop):** The agent runs autonomously in a loop using a `/goal` command until the phase/tasks are complete and all tests pass.
+- [ ] **Modo Bucle Autónomo (Goal-based Loop):** The agent uses the host's loop/goal capability, when available, until the selected tasks are complete and their verification passes.
 
 ---
 

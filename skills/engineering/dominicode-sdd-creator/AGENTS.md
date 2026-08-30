@@ -8,7 +8,9 @@
 
 ## Purpose
 
-This file instructs the agent to **before generating code** for any non-trivial feature or product, execute the Dominicode Spec-Driven Development flow: produce `spec.md`, `plan.md` and `tasks.md` (with TDD) under `specs/<feature-slug>/`.
+This file instructs the agent to run the complete Dominicode Spec-Driven Development lifecycle for non-trivial work: Understand → Spec → Plan → Tasks → Implement → Verify (Fix → Verify on failure) → Code Review → Final Verify → PR / Handoff.
+
+The durable sources of truth remain `spec.md`, `plan.md` and `tasks.md`. Evidence and review prove completion; `.work/implementation.md` remains disposable scratch.
 
 ## When to activate this flow
 
@@ -56,7 +58,7 @@ Ask for or infer a kebab-case name (e.g. `invoice-generator`). All artifacts go 
 
 ### Step 2 — Write `spec.md` (6 sections, in order)
 
-Use the template at `templates/spec.md`. Strict rules:
+Use the template at `templates/spec.md`. If the feature comes from a GitHub Issue, preserve repository, issue number and URL in the optional `source` block, then express the accepted requirements in the six sections. A link does not replace the spec. Strict rules:
 
 1. **Vision** — Maximum 2 sentences. If it doesn't fit, the idea is not clear yet.
 2. **Users** — Concrete actions per role, not marketing personas. Format: `User [role]: action 1, action 2, action 3`.
@@ -121,6 +123,10 @@ Template at `templates/tasks.md`. For each feature in Section 3:
 
 Full detail and anti-patterns in `references/tdd-workflow.md`.
 
+Every task that changes observable behavior, code, configuration or data uses a stable `TASK-XX` ID and an explicit completion contract: Criterion, Files, Verify, Done when and Evidence. Never check a task because the implementer claims it is finished; execute the stated test, lint, typecheck, build, command, query, HTTP request, observable behavior or precise manual check first. TDD stays the default where it adds value.
+
+Initialize `tasks.md` with `Status: Not Started`. Change it to `In Progress` when the first implementation task is actually attempted. Use `Completed` only after every required task has PASS evidence, the Coverage Matrix has no orphans, Code Review has no blockers and Final Verification is PASS.
+
 **Before hand-off — fill the coverage matrix.** At the end of `tasks.md`, build the `## Coverage matrix`: one row per Section 3 feature → its `plan.md` contract/entity → the task IDs that build and test it. If any feature has no task, it is an **orphan** — the task list is not done; close the gap before Step 5. See `references/traceability.md`.
 
 ### Step 4-bis — `tasks.md` in no-TDD mode (only after the Case E gate)
@@ -142,23 +148,23 @@ Rules for this mode:
 - **The coverage matrix is still mandatory** (task column reads 🔨/✅), and a checked 🔨 whose ✅ never ran counts as an orphan
 - Phase 0 has no runner: lint, typecheck and a boot smoke check become mandatory instead
 
-### Step 5 — Hand off
+### Step 5 — Implement, verify and close the lifecycle
 
 **Gate before hand-off:** the coverage matrix is filled and has **no orphan features** (every Section 3 bullet traces to a task), and Section 4 flows + measurable Section 6 NFRs have their tasks. If not, don't hand off — close the gap first.
 
-**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row (slug, one-line vision, status, key stack, related specs) and promote any genuinely cross-cutting decision from `plan.md` into the **Shared decisions** table, citing this slug. In no-TDD mode, append `· no-TDD` to that row's status — project memory has to remember which specs shipped without a safety net.
+**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row and shared decisions. Once `tasks.md` exists, its status is canonical and the index mirrors `not started`, `in progress` or `completed`. In no-TDD mode, append `· no-TDD`.
 
 Then tell the user that:
 1. The 3 files are in `specs/<feature-slug>/`, and `specs/INDEX.md` is updated
 2. The options to start implementation:
    - **Turn-based (Paso a Paso):** Tell you (or the next agent run) to pick a specific unchecked task in `tasks.md` and execute it (e.g. "Implementa la tarea T1").
-   - **Autonomous Loop (Bucle Autónomo):** Run the `/goal` command to implement tasks automatically: `/goal Implementa las tareas pendientes en specs/<feature-slug>/tasks.md y asegúrate de que todos los tests pasen.`
+   - **Autonomous Loop (Bucle Autónomo):** Use the host agent's loop/goal capability, when available, to implement pending tasks and stop only when verification passes.
 3. If a task surfaces a missing spec decision: update `spec.md` first, don't paper over it in code
 
 **In no-TDD mode, the hand-off changes:**
 
 4. 🔨 and ✅ are one unit — a Build task is not done until its Verify has been **run**, not read
-5. **The autonomous loop cannot close a ✅.** Its stop condition is "all tests pass", and there are no tests: the most a loop can verify here is lint + typecheck + boot. Say so plainly and recommend turn-based. If they still want the loop, its goal must stop at the 🔨 tasks and leave every ✅ for a human
+5. **An autonomous loop cannot close a human-only ✅.** With no tests, the most it can prove automatically is lint + typecheck + boot. Recommend turn-based; otherwise automation must stop at 🔨 tasks and leave human-only checks for a person.
 6. The upgrade path at the end of `tasks.md` converts every ✅ into a 🔴 if a runner is added later
 
 #### Ephemeral implementation plan (`.work/`)
@@ -171,6 +177,22 @@ The three SDD artifacts document **decisions**; execution deserves a plan too �
 4. **Reflow rule:** if planning execution surfaces a durable decision (spec gap, missing contract, new risk), update `spec.md` → `plan.md` → `tasks.md` first, then regenerate the ephemeral plan.
 
 The benefit: the plan survives context compaction within the session, and is cheap to regenerate in the next one because it derives from `tasks.md`.
+
+### Implement → Verify → Fix
+
+For each pending task, read Criterion, Files, Verify and Done when; set status to `In Progress` when implementation actually starts; implement only that scope; execute Verify; and record evidence before checking it off. On FAIL, leave it unchecked and keep `In Progress`, diagnose, apply the smallest in-scope fix and run the same Verify again. If the failure reveals a durable requirement or architecture gap, stop and reflow `spec.md` → `plan.md` → `tasks.md`, then regenerate `.work/implementation.md`. Full rules: `references/verification-loop.md`.
+
+### Code Review
+
+Review the source Issue when present, `spec.md`, `plan.md`, `tasks.md`, the real implementation diff, tests and verification results. Review in this order: requirements compliance, correctness, security, performance, tests, maintainability. The reviewer must be conceptually independent from the implementer. Use `references/code-review.md` and resolve blockers before the final gate.
+
+### Final Verify
+
+Before PR/handoff, follow `references/final-verification.md`: recheck previously passed evidence that later work may have invalidated; run every applicable test, integration/E2E, lint, typecheck, build and NFR check; confirm all acceptance criteria are covered, the Coverage Matrix has no orphans and review has zero Critical blockers. Only then set `tasks.md` to `Completed` and mirror it in `specs/INDEX.md`.
+
+### PR / Handoff
+
+Only after Final Verification is PASS, create or hand off the Pull Request with the source Issue, SDD artifacts, concise evidence and review result linked. GitHub automation is optional. The methodology must remain usable in Claude Code, Codex, Gemini, Cursor and other agents without depending on host-specific syntax.
 
 ---
 
@@ -205,10 +227,16 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 - ❌ Never drop an acceptance criterion or the coverage matrix in no-TDD mode — the criteria survive, only their verification changes hands
 - ❌ Never hand off with an orphan feature — every Section 3 feature must trace to a task in the coverage matrix
 - ❌ Never commit `.work/` — the ephemeral implementation plan is agent scratch, not documentation
+- ❌ Never mark a task complete without executing Verify and recording evidence
+- ❌ Never set status to `Completed` from checkbox count or implementer assertion alone
+- ❌ Never use review or final verification as a competing requirements source
 - ✅ Confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
 - ✅ Always update `specs/INDEX.md` at hand-off and reuse its Shared decisions instead of re-deciding them
 - ✅ If implementation reveals a gap: update `spec.md` → `plan.md` → `tasks.md` → then code — a durable decision must never live only in `.work/implementation.md`
-- ✅ Always present the execution options (Turn-based vs. Autonomous Goal-based Loop) to the user during Step 5 (Hand-off), recommending the use of the `/goal` command for autonomous execution.
+- ✅ Review the real diff against the Issue/spec/plan/tasks and current evidence
+- ✅ Recheck applicable previously passed evidence during Final Verify before PR/handoff
+- ✅ Keep `tasks.md` status and the corresponding `specs/INDEX.md` row synchronized
+- ✅ Always present Turn-based and Autonomous Loop options at implementation hand-off, treating host-specific commands as optional examples.
 
 ---
 
@@ -225,6 +253,9 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 - `references/tdd-workflow.md` — TDD detail and anti-patterns
 - `references/test-runner-detection.md` — how to verify the test runner, defaults per ecosystem, smoke test, full Case E protocol
 - `references/traceability.md` — the coverage matrix method (spec §3 → plan → tasks) and the hand-off gate
+- `references/verification-loop.md` — evidence-based completion, Fix/retry and reflow rules
+- `references/code-review.md` — requirements-first review using artifacts, diff and results
+- `references/final-verification.md` — final regression gate before PR/handoff
 
 Load them only when needed (progressive disclosure), not all at once.
 

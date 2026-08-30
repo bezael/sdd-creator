@@ -4,9 +4,9 @@
 
 > Genera specs siguiendo la metodología **Spec-Driven Development**, según la adaptación de Dominicode (Bezael Pérez), en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
-> Antes de generar código, el agente produce `spec.md` (6 secciones), `plan.md` (decisiones técnicas con estrategia de ejecución) y `tasks.md` (lista TDD ordenada) bajo `specs/<feature-slug>/`.
+> Antes de generar código, el agente produce `spec.md` (6 secciones y provenance opcional del Issue), `plan.md` (decisiones técnicas) y `tasks.md` (tareas TDD con evidencia objetiva de finalización) bajo `specs/<feature-slug>/`.
 >
-> Primero **ancla el spec en tu proyecto existente** (stack, convenciones, specs previos), mantiene un **`specs/INDEX.md` como memoria del proyecto**, **verifica que cada funcionalidad llegue a una tarea** y **ofrece estrategias de ejecución paso a paso o en bucle autónomo** antes del hand-off — todo en Markdown plano, cero dependencias.
+> Después dirige Implement → Verify → Fix, Code Review contra requisitos y Final Verification antes del PR/hand-off. Mantiene **`specs/INDEX.md` como memoria del proyecto**, conserva la trazabilidad completa y sigue siendo Markdown plano, agnóstico de herramienta y sin dependencias.
 
 ---
 
@@ -16,7 +16,7 @@
 
 | Skill | Descripción |
 |-------|-------------|
-| `dominicode-sdd-creator` | Spec-Driven Development — ancla el spec en tu proyecto, escribe spec/plan/tasks antes de código y mantiene una memoria `specs/INDEX.md`. |
+| `dominicode-sdd-creator` | Lifecycle completo de Spec-Driven Development — Issue/understanding, spec/plan/tasks, implementación con evidencia, review, verificación final y PR/hand-off. |
 
 ---
 
@@ -129,7 +129,10 @@ bezael/sdd-creator
 │               ├── codebase-inspection.md
 │               ├── tdd-workflow.md
 │               ├── test-runner-detection.md
-│               └── traceability.md
+│               ├── traceability.md
+│               ├── verification-loop.md
+│               ├── code-review.md
+│               └── final-verification.md
 ├── CLAUDE.md
 ├── LICENSE
 └── README.md
@@ -154,10 +157,14 @@ El agente:
 4. Generará `specs/<feature>/spec.md` con las 6 secciones
 5. Tras tu confirmación, generará `plan.md`
 6. Tras tu confirmación, generará `tasks.md` con TDD — con una matriz de cobertura para que ninguna funcionalidad se quede sin tarea
+   - `tasks.md` incluye el estado de implementación del spec: **Not Started**, **In Progress** o **Completed**. Para completarse exige evidencia, review y Final Verification PASS.
 7. Registrará el spec en `specs/INDEX.md` (memoria del proyecto) y reutilizará sus decisiones compartidas la próxima vez
 8. **Solo entonces** empezará a programar, seleccionando tu estrategia de ejecución preferida:
    * **Turn-based (Paso a Paso):** Guías al agente tarea por tarea.
-   * **Bucle Autónomo (Goal-based Loop):** Ejecutas el comando `/goal` para permitir al agente implementar las tareas de forma autónoma.
+   * **Bucle Autónomo (Goal-based Loop):** Usa la capacidad de loop/goal del agente anfitrión cuando exista.
+9. Para cada tarea, ejecutará `Verify`; si falla aplicará el fix mínimo válido y verificará otra vez. Un checkbox exige evidencia.
+10. Ejecutará un Code Review independiente, empezando por requisitos y usando Issue, artefactos, diff real y resultados.
+11. Ejecutará Final Verification, incluida la revalidación de evidencia previamente aprobada, antes del PR/hand-off.
 
 ---
 
@@ -173,7 +180,7 @@ El archivo degradado está escrito para convertirse, no para tirarse: añade un 
 
 ## Filosofía
 
-> **Spec → Plan → Tests → Código.** Código es lo último que pasa, no lo primero.
+> **Understand → Spec → Plan → Tasks → Implement → Verify → Review → Final Verify → PR.** Las decisiones durables permanecen en spec, plan y tasks; la finalización exige evidencia.
 
 La adaptación Dominicode de SDD está documentada en el libro y en los cursos de Dominicode:
 

@@ -1,0 +1,62 @@
+# Final verification — release gate
+
+> Final verification runs after code review and before a feature is considered complete or ready for PR/handoff. Its purpose is to catch regressions introduced by later tasks and to prove that the implemented feature still matches the durable SDD artifacts.
+
+## Required gate
+
+Run every applicable check defined by the project, plan and tasks:
+
+- task-level Verify commands, especially evidence that later changes could invalidate;
+- unit tests;
+- integration tests;
+- E2E tests or defined manual flow checks;
+- lint;
+- typecheck;
+- build/package validation;
+- relevant measurable NFR checks;
+- acceptance-criteria coverage;
+- Coverage Matrix with no orphan requirements;
+- code review with zero unresolved Critical blockers.
+
+“Applicable” means the check exists or the artifacts require it. Do not invent a tool solely to fill a row, but do not omit an existing project gate because it is slow or previously passed.
+
+## Recheck previously passed evidence
+
+Task evidence is historical: it proves a task passed at a point in time. Later work can invalidate it. Final verification must **recheck previously passed evidence** when tasks touch shared modules, contracts, schemas, build configuration, dependencies or flows.
+
+Prefer the broadest authoritative project commands at this gate (for example the full suite rather than only filtered tests). Re-run manual checks whose observable behavior could have changed and identify the build/environment used.
+
+## Procedure
+
+1. Derive the checklist from `plan.md`, `tasks.md`, the Coverage Matrix and the project's existing commands.
+2. Confirm the review status and enumerate unresolved findings.
+3. Run applicable automated checks and required manual observations.
+4. Map every acceptance criterion to current PASS evidence.
+5. Confirm there are no orphan requirements, skipped blockers or stale results.
+6. Produce the summary below.
+7. On PASS, set `tasks.md` status to `Completed` and mirror `completed` in `specs/INDEX.md`. On FAIL, keep both as `In Progress` / `in progress`.
+
+On any failure, set the gate to FAIL. Apply the smallest fix only when the expected behavior and plan are still valid, then repeat the affected task/module checks and the complete final gate. If the failure exposes a durable gap, reflow `spec.md` → `plan.md` → `tasks.md` before implementation resumes.
+
+## Recommended output
+
+```markdown
+Final Verification: PASS | FAIL
+
+- Task-level evidence rechecked: PASS | FAIL | N/A
+- Unit tests: PASS | FAIL | N/A
+- Integration tests: PASS | FAIL | N/A
+- E2E: PASS | FAIL | N/A
+- Lint: PASS | FAIL | N/A
+- Typecheck: PASS | FAIL | N/A
+- Build: PASS | FAIL | N/A
+- Relevant NFR checks: PASS | FAIL | N/A
+- Acceptance criteria: 8/8 covered
+- Orphan requirements: 0
+- Critical review findings: 0
+- Evidence: [CI/PR URL or concise command results]
+```
+
+`PASS` is allowed only when every applicable line passes, all acceptance criteria have current evidence, the Coverage Matrix has no orphans and review has no Critical blockers. Only this PASS can close the task list as `Completed`; checked tasks alone cannot. Final verification is a gate and evidence summary, not a new source of truth.
+
+Store the summary in the existing CI/PR/handoff channel. Keep only concise stable links in durable artifacts; do not commit full logs or add a parallel verification-memory system unless project policy explicitly requires it.

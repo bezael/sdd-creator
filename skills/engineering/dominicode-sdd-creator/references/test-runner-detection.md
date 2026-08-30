@@ -146,14 +146,15 @@ Two possible paths — **choose one** based on the detection result:
 
 **Route A — Runner already exists:**
 ```markdown
-- [x] ⚙️ Test runner verified: [name] — command: `[command]`. (No installation required.)
+- [x] TASK-00 — ⚙️ Runner detected: [name] in [manifest]. Evidence: [discovery].
+- [ ] TASK-01 — ⚙️ Confirm runner execution. Verify: `[command]`. Done when: the runner exits successfully. Evidence: [result].
 ```
 
 **Route B — Needs to be installed:**
 ```markdown
-- [ ] ⚙️ **Install [runner]** — `npm install -D vitest @vitest/ui` (or equivalent).
-- [ ] ⚙️ **Configure [runner]** — add `vitest.config.ts`, script `"test": "vitest"` in `package.json`.
-- [ ] ⚙️ **Smoke test the runner** — create `tests/smoke.test.ts` with an `expect(true).toBe(true)`, run `npm test`, verify it passes.
+- [ ] TASK-01 — ⚙️ **Install [runner]** — Verify: `[version/manifest query]`. Done when: the runner resolves. Evidence: [...].
+- [ ] TASK-02 — ⚙️ **Configure [runner]** — Files: `[config + manifest]`. Verify: `[config command]`. Done when: configuration loads. Evidence: [...].
+- [ ] TASK-03 — ⚙️ **Smoke test the runner** — Files: `tests/smoke.test.ts`. Verify: `[scoped test command]`. Done when: it exits 0. Evidence: [...].
 ```
 
 The **runner smoke test** is not optional. If you don't verify the runner executes before starting TDD, the first 🔴 task may fail due to broken config and you won't know whether the implementation works.

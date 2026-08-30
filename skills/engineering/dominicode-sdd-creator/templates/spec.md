@@ -5,6 +5,22 @@
 
 ---
 
+## Source (optional)
+
+> Preserve where the feature came from. Omit this block when there is no external source. This is provenance, not a second requirements document: the acceptance criteria below remain the source of truth for the feature.
+
+```yaml
+source:
+  type: github_issue
+  repository: owner/repo
+  issue: 123
+  url: https://github.com/owner/repo/issues/123
+```
+
+> Copy relevant requirements from the source into Sections 3, 4 and 6. A link alone is not a specification.
+
+---
+
 ## SECTION 1 — Product Vision
 
 > The shortest, clearest description of what you are building. **One or two sentences maximum**. If you cannot explain it in two sentences, it's not clear yet — think it through before continuing.

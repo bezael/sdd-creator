@@ -4,9 +4,9 @@
 
 > Generates specs following the **Spec-Driven Development** methodology, as adapted by Dominicode (Bezael Pérez), in any AI agent: Claude, Codex, Gemini, Cursor, Aider, Continue.
 >
-> Before generating code, the agent produces `spec.md` (6 sections), `plan.md` (technical decisions with execution strategy) and `tasks.md` (TDD-ordered task list) under `specs/<feature-slug>/`.
+> Before generating code, the agent produces `spec.md` (6 sections plus optional Issue provenance), `plan.md` (technical decisions) and `tasks.md` (TDD-ordered tasks with objective completion evidence) under `specs/<feature-slug>/`.
 >
-> It first **grounds the spec in your existing project** (stack, conventions, prior specs), keeps a versioned **`specs/INDEX.md` as project memory**, **verifies every feature traces to a task**, and **offers turn-based or autonomous loop execution strategies** before hand-off — all in plain Markdown, zero dependencies.
+> It then drives Implement → Verify → Fix, requirements-first Code Review and Final Verification before PR/handoff. It keeps **`specs/INDEX.md` as project memory**, preserves end-to-end traceability and remains plain Markdown, tool-agnostic and dependency-free.
 
 ---
 
@@ -16,7 +16,7 @@
 
 | Skill | Description |
 |-------|-------------|
-| `dominicode-sdd-creator` | Spec-Driven Development — grounds the spec in your project, writes spec/plan/tasks before code, and keeps a `specs/INDEX.md` project memory. |
+| `dominicode-sdd-creator` | Full Spec-Driven Development lifecycle — Issue/understanding, spec/plan/tasks, evidence-based implementation, review, final verification and PR/handoff. |
 
 ---
 
@@ -129,7 +129,10 @@ bezael/sdd-creator
 │               ├── codebase-inspection.md
 │               ├── tdd-workflow.md
 │               ├── test-runner-detection.md
-│               └── traceability.md
+│               ├── traceability.md
+│               ├── verification-loop.md
+│               ├── code-review.md
+│               └── final-verification.md
 ├── CLAUDE.md
 ├── LICENSE
 └── README.md
@@ -154,10 +157,14 @@ The agent will:
 4. Generate `specs/<feature>/spec.md` with the 6 sections
 5. After your confirmation, generate `plan.md`
 6. After your confirmation, generate `tasks.md` with TDD — including a coverage matrix so no feature is left without a task
+   - `tasks.md` carries the spec's implementation status: **Not Started**, **In Progress**, or **Completed**. Completion requires evidence, review and Final Verification PASS.
 7. Record the spec in `specs/INDEX.md` (project memory) and reuse its shared decisions next time
 8. **Only then** start coding, selecting your preferred execution strategy:
    * **Turn-based (Paso a Paso):** Guide the agent task-by-task.
-   * **Autonomous Loop (Bucle Autónomo):** Trigger the `/goal` command to let the agent implement the tasks autonomously.
+   * **Autonomous Loop (Bucle Autónomo):** Use the host agent's loop/goal capability when available.
+9. For each task, execute its `Verify`; on failure apply the smallest valid fix and verify again. A checkbox requires evidence.
+10. Run an independent, requirements-first Code Review against the Issue, artifacts, real diff and verification results.
+11. Run Final Verification, including rechecking previously passed evidence, before PR/handoff.
 
 ---
 
@@ -173,7 +180,7 @@ The degraded file is written to be converted, not thrown away: add a runner late
 
 ## Philosophy
 
-> **Spec → Plan → Tests → Code.** Code is the last thing that happens, not the first.
+> **Understand → Spec → Plan → Tasks → Implement → Verify → Review → Final Verify → PR.** Durable decisions stay in spec, plan and tasks; completion is evidence-based.
 
 The Dominicode adaptation of SDD is documented in the book and in Dominicode courses:
 

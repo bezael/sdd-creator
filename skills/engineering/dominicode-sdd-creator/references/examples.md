@@ -1,162 +1,235 @@
-# Worked example — Invoice generator for freelancers
+# End-to-end example — vote and unvote a feedback item
 
-> This is a real, complete spec designed to show you how to fill in the 6 sections without abstractions. Use it as your calibration bar.
+> This compact example shows the complete lifecycle. It is documentation, not a sample application and not a second artifact system.
 
----
+## 1. Source Issue
+
+```text
+Repository: acme/feedback
+Issue: #123 — Let signed-in users vote on feedback
+Request: A user can vote for an item and remove their vote. Show the current count.
+```
+
+The Issue provides provenance and initial context. It does not yet answer enough questions to implement safely.
+
+## 2. Understand / clarification grill
+
+Questions and resolved answers:
+
+1. Can anonymous visitors vote? **No; they can see counts but must sign in to vote.**
+2. Can one user add multiple votes to one item? **No; at most one active vote per user/item.**
+3. What happens when two users vote concurrently? **Both unique votes count; duplicate requests from the same user remain idempotent.**
+4. Is unvote a delete or a toggle endpoint? **Use explicit vote and unvote actions; the UI may render one toggle control.**
+5. What happens if the item does not exist? **Return not found and do not create a vote.**
+
+## 3. Spec
+
+````markdown
+# Spec — Feedback voting
+
+## Source (optional)
+
+```yaml
+source:
+  type: github_issue
+  repository: acme/feedback
+  issue: 123
+  url: https://github.com/acme/feedback/issues/123
+```
 
 ## SECTION 1 — Product Vision
 
-A web tool for freelancers to manage projects and generate invoices from a single place, without having to maintain separate spreadsheets.
-
----
+Signed-in users can support a feedback item with one vote and remove that vote, while everyone can see an accurate count.
 
 ## SECTION 2 — Users and Use Cases
 
-**Freelancer user:** creates projects, logs worked hours, generates PDF invoices and marks them as paid.
-
-**Client user (read-only):** accesses a public invoice via a shared link, views it and downloads the PDF.
-
----
+**Signed-in user:** views vote counts, votes once, removes their own vote.
+**Visitor:** views vote counts and is prompted to sign in before voting.
 
 ## SECTION 3 — Features
 
-**Projects module:**
-- The user can create projects with name, client and hourly rate.
-- The user can edit and archive projects.
-- The user can view the history of logged hours per project.
-
-**Hours module:**
-- The user can log worked hours with date, duration and description.
-- The system automatically calculates the accumulated total for the project.
-- The user can edit or delete hour entries.
-
-**Invoicing module:**
-- The user can create an invoice by selecting a project and a date range.
-- The system automatically fills in client, hours and total.
-- The user can generate the invoice as a PDF.
-- The user can mark an invoice as paid or pending.
-- The system generates a public read-only link for each invoice.
-
----
+**Feedback voting:**
+- The user can vote for a feedback item once.
+- The user can remove their vote from a feedback item.
+- The system shows the current vote count for each item.
+- The system requires authentication before changing a vote.
 
 ## SECTION 4 — User Flows
 
-**Flow — Log hours:**
-1. The user goes to the project from the dashboard.
-2. Clicks "Add hours".
-3. Enters date, duration (in hours) and an optional description.
-4. The system saves the entry and updates the project total.
-- **Error:** if the duration is 0 or negative, the system shows "Duration must be greater than 0" and does not save the entry.
+**Flow — Vote:**
+1. The signed-in user selects Vote.
+2. The system stores one vote and increments the visible count.
+- **Error:** if the item does not exist, the system returns not found and changes nothing.
 
-**Flow — Create an invoice:**
-1. The user goes to "Invoices" in the menu.
-2. Clicks "New invoice".
-3. Selects the project; the system automatically fills in client, unbilled hours and total.
-4. The user reviews the total and can edit it manually.
-5. Clicks "Generate PDF".
-6. The system produces the PDF and generates a public link.
-- **Error:** if the project has no hours logged in the range, the system warns "No hours to invoice" and does not allow generating the invoice.
+**Flow — Unvote:**
+1. The user selects the active Vote control.
+2. The system removes that user's vote and decrements the count.
+- **Error:** if no vote exists, the operation remains successful and the count does not go below zero.
 
-**Flow — Client accesses a public invoice:**
-1. The client receives a link by email.
-2. Opens the link in the browser.
-3. The system shows the invoice in HTML and a "Download PDF" button.
-- **Error:** if the link was revoked by the freelancer, the system shows "This invoice is no longer available".
-
----
+**Flow — Visitor attempts to vote:**
+1. The visitor selects Vote.
+2. The system does not change data and asks the visitor to sign in.
+- **Error:** if sign-in is unavailable, the current count remains visible and unchanged.
 
 ## SECTION 5 — Architecture
 
-- **Frontend:** Next.js (App Router) — SSR for public invoice links and basic SEO.
-- **Backend:** Next.js API Routes — sufficient for v1, no separate server.
-- **Database:** PostgreSQL on Supabase — includes auth and storage in the same provider.
-- **Authentication:** Supabase Auth (email + Google OAuth).
-- **Hosting:** Vercel for the app, Supabase for data.
-- **PDF generation:** `@react-pdf/renderer` on the server.
-
----
+- Extend the existing feedback API, database and authentication conventions.
+- Add a unique `(feedback_item_id, user_id)` vote constraint.
+- Expose explicit vote/unvote handlers and return the resulting count.
 
 ## SECTION 6 — Non-functional Requirements
 
-- **Performance:** initial dashboard load < 2s on a 4G connection; PDF generation < 5s.
-- **Security:** each freelancer sees only their own projects, hours and invoices (RLS in Supabase). Public invoice links use UUID v4 tokens, not incremental IDs.
-- **Scalability:** designed for up to 500 active users in v1; PDF is generated on demand, not stored.
-- **Language:** English in v1, Spanish in v2.
-- **Accessibility:** forms with associated labels and keyboard navigation in the create-invoice flow.
-- **Compliance:** GDPR — "Export my data" and "Delete my account" buttons in settings.
+- **Performance:** vote/unvote API p95 < 300 ms under the existing expected load.
+- **Security:** only an authenticated user may create or remove their own vote.
+- **Consistency:** duplicate vote/unvote requests are idempotent; count never becomes negative.
+- **Language:** reuse the application's existing UI language and messages.
+````
 
----
-
-## Open questions
-
-- [ ] Are multi-currency invoices allowed in v1, or only USD? — owner: Bezael, deadline: before starting the Invoicing module.
-
----
-
-## Notes on why this spec works
-
-- **Section 1**: a single sentence, identifies product + user + problem.
-- **Section 3**: every bullet starts with "The user can" or "The system". No mention of technology (no "component", "table", "endpoint"). That lives in the plan.
-- **Section 4**: every flow has an error path. The public client flow may seem to need no errors, but "revoked link" covers the real case.
-- **Section 5**: concrete stack with a 1-line justification per decision.
-- **Section 6**: every NFR is **measurable**. "Fast" is not an NFR; "< 2s on 4G" is.
-- **Open question** has an owner and deadline — it doesn't just float.
-
-This is the bar. If your spec falls short in any section, that section is not done.
-
----
-
-## How the surrounding steps look on this example
-
-The spec above is the heart of the flow. These are the artifacts the other steps produce around it.
-
-### Step 0.5 — Project Context Snapshot
-
-This invoice tool is a new project, so the snapshot is the greenfield case:
-
-> **Project Context Snapshot:** greenfield — no existing manifest or specs detected. `specs/INDEX.md` is empty. Stack will be proposed from scratch in `plan.md` with trade-offs and confirmed with you.
-
-Had this been added to an existing repo, the snapshot would instead read something like *"Next.js 14 + TypeScript app, already uses Supabase and Tailwind, Jest installed with tests in `__tests__/` — I'll anchor the architecture on this"*, and Section 5 would inherit those choices rather than re-decide them.
-
-### Project memory — the `specs/INDEX.md` entry written at hand-off
-
-After this spec is confirmed, the skill records it in `specs/INDEX.md` (from `templates/specs-index.md`). The Shared decisions made here become reusable defaults for the next feature:
+## 4. Plan
 
 ```markdown
-## Shared decisions
+# Technical Plan — Feedback voting
 
-| Decision    | Value                    | Rationale (1 line)                         | First decided in    |
-|-------------|--------------------------|--------------------------------------------|---------------------|
-| Database    | PostgreSQL on Supabase   | auth + storage + DB in one provider        | `invoice-generator` |
-| Auth        | Supabase Auth            | email + Google OAuth out of the box        | `invoice-generator` |
-| Test runner | Vitest                   | fast, native TS, Jest-compatible API       | `invoice-generator` |
-| Hosting     | Vercel                   | first-class Next.js deploys                 | `invoice-generator` |
+## Data model
+- `FeedbackVote(feedbackItemId, userId, createdAt)` with a unique composite key.
 
-## Specs
+## Contracts
+- `PUT /feedback/:id/vote` — authenticated, idempotently creates the caller's vote; returns `{ voted: true, count }`.
+- `DELETE /feedback/:id/vote` — authenticated, idempotently removes the caller's vote; returns `{ voted: false, count }`.
+- `VoteButton` — renders count and state; asks visitors to sign in.
 
-| Slug                | Vision (1 line)                                          | Status | Key stack          | Related specs |
-|---------------------|----------------------------------------------------------|--------|--------------------|---------------|
-| `invoice-generator` | Freelancers manage projects and generate invoices in one place | active | Next.js + Supabase | —             |
+## Risks
+- Concurrent duplicate votes inflate counts. Mitigation: database uniqueness plus count from persisted rows.
+- A user removes another user's vote. Mitigation: delete scoped by item and authenticated user.
+
+## Build order
+1. Persistence constraint and service behavior.
+2. API authorization/contracts.
+3. UI state and flows.
 ```
 
-When a later feature (say `expense-tracker`) starts, Step 0.5 reads this and proposes Supabase + Vitest as the default instead of re-litigating them — and flags `invoice-generator` as a related spec.
+The plan reuses the project's existing stack and runner detected during codebase inspection; it does not introduce a parallel framework.
 
-### Coverage matrix — the hand-off gate (lives at the end of `tasks.md`)
+## 5. Tasks and coverage
 
-Every feature from Section 3 traced forward to a contract and to tasks. No empty task cell = no orphan feature:
+```markdown
+**Status:** Not Started
 
-| spec §3 feature | plan contract/entity | task IDs (🔴/🟢) |
+- [ ] TASK-10 — 🔴 Test: one vote per user/item
+
+  Criterion: spec.md §3 → "The user can vote for a feedback item once."
+
+  Files:
+  - tests/feedback/vote.test.ts
+
+  Verify: npm test -- feedback/vote
+
+  Done when: the new behavior test fails because vote persistence is not implemented, not because the runner is broken
+
+  Evidence: [expected Red failure]
+
+- [ ] TASK-11 — 🟢 Implement idempotent vote
+
+  Criterion: spec.md §3 → "The user can vote for a feedback item once."
+
+  Files:
+  - src/feedback/vote-service.ts
+  - tests/feedback/vote.test.ts
+
+  Verify: npm test -- feedback/vote
+
+  Done when: the command exits 0 for first vote and duplicate-vote cases
+
+  Evidence: [PASS result]
+
+- [ ] TASK-20 — 🔴 Test: user removes only their vote
+  Criterion: spec.md §3 → "The user can remove their vote from a feedback item."
+  Files: `tests/feedback/unvote.test.ts`
+  Verify: `npm test -- feedback/unvote`
+  Done when: it fails for the expected missing unvote behavior
+  Evidence: [expected Red failure]
+
+- [ ] TASK-21 — 🟢 Implement idempotent unvote
+  Criterion: spec.md §3 → "The user can remove their vote from a feedback item."
+  Files: `src/feedback/vote-service.ts`, `tests/feedback/unvote.test.ts`
+  Verify: `npm test -- feedback/unvote`
+  Done when: the command exits 0 and repeated unvote keeps count at zero
+  Evidence: [PASS result]
+
+## Coverage matrix
+
+| spec §3 feature | plan contract/entity | task IDs (build + verification) |
 |---|---|---|
-| The user can create projects with name, client, rate | `POST /projects` / `Project` | Phase 1 🔴+🟢 |
-| The user can edit and archive projects | `PATCH /projects/:id` / `Project.archivedAt` | Phase 1 🔴+🟢 |
-| The user can view logged-hours history per project | `GET /projects/:id/hours` / `HourEntry` | Phase 1 🔴+🟢 |
-| The user can log worked hours (date, duration, desc) | `POST /hours` / `HourEntry` | Phase 2 🔴+🟢 |
-| The system auto-calculates the project total | `Project.total` (derived) | Phase 2 🔴+🟢 |
-| The user can edit or delete hour entries | `PATCH/DELETE /hours/:id` / `HourEntry` | Phase 2 🔴+🟢 |
-| The user can create an invoice (project + range) | `POST /invoices` / `Invoice` | Phase 3 🔴+🟢 |
-| The system auto-fills client, hours, total | `Invoice` fill logic | Phase 3 🔴+🟢 |
-| The user can generate the invoice PDF | `GET /invoices/:id/pdf` | Phase 3 🔴+🟢 |
-| The user can mark an invoice paid/pending | `PATCH /invoices/:id` / `Invoice.status` | Phase 3 🔴+🟢 |
-| The system generates a public read-only link | `GET /i/:token` / `Invoice.token` | Phase 3 🔴+🟢 |
+| Vote once | `FeedbackVote` / `PUT .../vote` | TASK-10, TASK-11 |
+| Remove own vote | `DELETE .../vote` | TASK-20, TASK-21 |
+| Show current count | vote/unvote responses / `VoteButton` | TASK-11, TASK-21, TASK-30 |
+| Require authentication | API auth guard / `VoteButton` | TASK-40, TASK-41 |
+```
 
-**Also confirmed:** the 3 flows in Section 4 each get an E2E task with their error path (zero-duration, no-hours-to-invoice, revoked-link), and the measurable NFRs in Section 6 (dashboard < 2s, PDF < 5s, RLS isolation) each get a verification task. Every Section 3 bullet has a task → the list is ready to hand off.
+The remaining API/UI tasks use the same contract. The matrix is built from every Section 3 bullet, so no requirement is silently dropped.
+
+When implementation begins, the header changes to `Status: In Progress`. It does not become `Completed` merely because all task checkboxes are checked.
+
+## 6. Implementation loop
+
+Session scratch selects `TASK-21` and copies its contract into `.work/implementation.md`.
+
+1. The implementer scopes deletion by `feedbackItemId` but forgets `userId`.
+2. `npm test -- feedback/unvote` returns FAIL: user A can remove user B's vote.
+3. The task remains unchecked; evidence is not recorded as PASS.
+4. The implementer applies the minimum fix: delete by both item and authenticated user.
+5. The same Verify command passes, relevant vote regression tests also pass, and concise evidence is written into `TASK-21`.
+
+If the failure had exposed an undecided rule—such as whether moderators may remove votes—implementation would stop and reflow `spec.md` → `plan.md` → `tasks.md` before continuing.
+
+## 7. Code Review
+
+```markdown
+# Code Review
+
+Status: PASS
+
+## Critical
+- None.
+
+## Important
+- None unresolved. The first diff allowed cross-user deletion; fixed in TASK-21 and covered by behavior test.
+
+## Suggestions
+- Consider a shared response type for vote/unvote handlers.
+
+## Acceptance criteria coverage
+- 4/4 criteria map to implementation and executed evidence.
+
+## Verification gaps
+- Performance NFR still requires the planned load check before Final Verify.
+```
+
+The reviewer used Issue #123, spec, plan, tasks/evidence, the real diff and test results, and was independent from the implementation context.
+
+## 8. Final Verify
+
+Later UI work touched shared vote state, so previously passed service and API evidence is rechecked.
+
+```markdown
+Final Verification: PASS
+
+- Task-level evidence rechecked: PASS
+- Unit tests: PASS
+- Integration tests: PASS
+- E2E: PASS
+- Lint: PASS
+- Typecheck: PASS
+- Build: PASS
+- Relevant NFR checks: PASS
+- Acceptance criteria: 4/4 covered
+- Orphan requirements: 0
+- Critical review findings: 0
+- Evidence: CI run linked from the Pull Request
+```
+
+## 9. Pull Request / handoff
+
+The PR links Issue #123, `spec.md`, `plan.md`, `tasks.md`, the review and final-verification result. The PR description summarizes evidence; it does not copy full test logs into the repository. The feature is complete only after the final gate is PASS.
+
+At that point, and only then, `tasks.md` changes to `Status: Completed` and the `specs/INDEX.md` row mirrors `completed`.

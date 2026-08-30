@@ -1,8 +1,21 @@
-# Traceability — closing the spec → plan → tasks loop
+# Traceability — Issue → Spec → Plan → Tasks → Evidence → Review → PR
 
 > **The silent failure of SDD is a feature in the spec that never becomes a task.** Three documents, written in sequence, drift: a feature gets dropped between `spec.md` and `plan.md`, or a contract in `plan.md` never gets a test. Traceability is the check that catches this *before* hand-off, while it's cheap to fix.
 
-The mechanism is a **coverage matrix**: one row per feature in Section 3 of the spec, traced forward to a plan element and then to concrete tasks. It lives at the end of `tasks.md` (template section `## Coverage matrix`) and is filled in Step 4, verified at the Step 5 gate.
+The core mechanism remains the **coverage matrix**: one row per feature in Section 3 of the spec, traced forward to a plan element and then to concrete tasks. It lives at the end of `tasks.md`. Evidence and review extend that same chain; they do not introduce a second requirements store.
+
+## End-to-end chain
+
+| Link | Durable record | Traceability rule |
+|---|---|---|
+| Issue → Spec | optional `source` block in `spec.md` | preserve provenance, but copy accepted requirements into the spec |
+| Spec → Plan | `plan.md` entities/contracts and DoD | every feature maps to a technical realization |
+| Plan → Tasks | Coverage Matrix in `tasks.md` | every feature maps to stable task IDs |
+| Tasks → Evidence | task `Verify`, `Done when`, `Evidence` | no checkbox closes from assertion alone |
+| Evidence → Review | code review criteria coverage and verification gaps | reviewer checks artifacts, real diff and results |
+| Review → PR | review status + final-verification summary | PR/handoff only after the final gate passes |
+
+The Issue and PR may live in GitHub or another tracker/forge. Automatic integration is optional; stable identifiers and URLs are enough for the artifact model.
 
 ---
 
@@ -14,7 +27,7 @@ Work **from the spec, not from the tasks** — the spec is the source of truth, 
 |---|---|
 | **spec §3 feature** | the literal feature bullet (compressed) |
 | **plan contract/entity** | the `plan.md` §3 endpoint/component or §2 entity that realizes it |
-| **task IDs** | the `tasks.md` tasks that build + test it — at minimum one 🔴 and one 🟢 |
+| **task IDs** | the stable `TASK-XX` entries that build and verify it — at minimum one 🔴 and one 🟢 in TDD mode |
 
 In **no-TDD mode** (case E) the matrix is unchanged except for the last column, which reads 🔨/✅ instead of 🔴/🟢. It matters *more* there, not less: with no runner, this matrix is the only completeness signal left — and a checked 🔨 whose ✅ was never run counts as an orphan too.
 
@@ -22,8 +35,8 @@ Example:
 
 | spec §3 feature | plan contract/entity | task IDs (🔴/🟢) |
 |---|---|---|
-| "The user can create projects with name, client, rate" | `POST /projects` / `Project` | Phase 1 🔴+🟢 |
-| "The system generates a public read-only link" | `GET /i/:token` / `Invoice.token` | Phase 3 🔴+🟢 |
+| "The user can create projects with name, client, rate" | `POST /projects` / `Project` | TASK-10 + TASK-11 |
+| "The system generates a public read-only link" | `GET /i/:token` / `Invoice.token` | TASK-30 + TASK-31 |
 
 ---
 
@@ -51,6 +64,8 @@ Before telling the user the spec is ready to implement (Step 5):
 
 If any check fails, **do not hand off**. Name the gap to the user and close it by going back to the right document — usually `tasks.md`, but if a feature was genuinely missed, back to `spec.md` → `plan.md` → `tasks.md` in order (never patch only the downstream file).
 
+This is the **implementation hand-off gate**, not the final release gate. After implementation, `references/code-review.md` checks the real diff against this chain, and `references/final-verification.md` rechecks applicable evidence before PR/handoff.
+
 ---
 
 ## Relationship to the other gates
@@ -65,4 +80,6 @@ If any check fails, **do not hand off**. Name the gap to the user and close it b
 - ✅ Rows come from the spec. The spec defines what must exist; tasks must rise to meet it.
 - ✅ A feature with no task is a blocker, not a footnote — fix it before hand-off.
 - ✅ Setup / refactor / NFR / E2E tasks are exempt from the backward check; they trace to phases, not to Section 3 bullets.
+- ✅ Keep Issue and PR URLs as provenance pointers; do not duplicate their full discussion in the artifacts.
+- ✅ Review and final verification consume the durable artifacts and evidence; they do not redefine requirements.
 - ❌ Never close the matrix by deleting a feature from the spec to make it "covered" — that hides the decision. Drop scope explicitly, with the user.

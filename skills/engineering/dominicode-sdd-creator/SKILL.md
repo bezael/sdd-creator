@@ -1,17 +1,19 @@
 ---
 name: dominicode-sdd-creator
-description: Create a Spec-Driven Development specification (spec.md + plan.md + tasks.md with TDD) BEFORE writing any code, following the Dominicode SDD adaptation by Bezael Pérez. Use this skill whenever the user wants to scaffold, plan, design, or specify a new feature, product, MVP, module, or project — including phrases like "create a spec", "spec this out", "write the spec for", "plan this feature", "I want to build X", "help me design X", "structure this project", "scaffold a new feature", "let's start a new project", or any request that would normally lead to coding a non-trivial feature. ALWAYS trigger this skill before generating implementation code for a new feature or product, even if the user did not explicitly ask for a spec — jumping straight to code without a spec is exactly what this methodology prevents. Produces a 6-section spec (Vision, Users, Features, Flows, Architecture, NFRs) plus a technical plan and a TDD-ordered task list.
+description: "Run the Dominicode Spec-Driven Development lifecycle for non-trivial features and products: understand the request or Issue, create spec.md + plan.md + evidence-based tasks.md before code, then guide implementation, verification/fix, code review, final verification and PR/handoff. Use when users ask to build, scaffold, plan, design or specify a feature, MVP, module or project. TDD remains the default; durable decisions stay in spec, plan and tasks."
 ---
 
 # Dominicode SDD Creator
 
-This skill turns a vague product idea into a Spec → Plan → Tasks pipeline that drives implementation through TDD. Code is the **last** thing that happens, not the first.
+This skill turns a vague product idea or issue into a complete, evidence-driven SDD lifecycle. Code still starts only after Spec → Plan → Tasks, and completion requires verification, review and a final regression gate.
 
 SDD adaptation by **Bezael Pérez · Dominicode**.
 
 ## The methodology in one sentence
 
-You write the spec → the spec drives the plan → the plan drives the tests → the tests drive the implementation.
+Understand → Spec → Plan → Tasks → Implement → Verify (Fix → Verify on failure) → Code Review → Final Verify → PR / Handoff.
+
+`spec.md`, `plan.md` and `tasks.md` are the durable sources of truth. Evidence, review and final verification prove those decisions were satisfied; `.work/implementation.md` remains disposable execution scratch.
 
 ## When to use this skill
 
@@ -59,7 +61,7 @@ Ask for or infer a short kebab-case name (e.g. `invoice-generator`, `user-auth`)
 
 ### Step 2 — Write `spec.md` (the 6 sections)
 
-Use the template at `templates/spec.md`. Fill all 6 sections in order. Strict rules:
+Use the template at `templates/spec.md`. When the request comes from a GitHub Issue, preserve its repository, number and URL in the optional `source` block, then copy the accepted requirements into the six sections. A source link never replaces the spec. Fill all 6 sections in order. Strict rules:
 
 1. **Section 1 (Visión)** — Must fit in 1–2 sentences. If you cannot express it that briefly, the idea is not clear yet → loop back with the user, do not proceed.
 2. **Section 2 (Usuarios)** — List concrete actions per role, not marketing personas. Format: `Usuario [rol]: acción 1, acción 2, acción 3`.
@@ -130,9 +132,14 @@ Use the template at `templates/tasks.md`. This is where SDD meets TDD. For every
 5. **Integration test** (only when the funcionalidad crosses modules)
 
 Each task is a checkbox. Each task has:
-- A short title
-- The file(s) it touches
-- The acceptance test it satisfies (or "N/A" for setup/refactor)
+- A stable `TASK-XX` ID and short title
+- Criterion and files in scope
+- An objective `Verify` instruction and `Done when` result
+- A concise Evidence field populated only after execution
+
+Never mark a task done because an agent reports completion. Any task that changes observable behavior, code, configuration or data needs objective evidence. TDD remains the default where it adds value; use the most relevant test, lint, typecheck, build, command, query, HTTP, observable or precisely defined manual verification for other work.
+
+Initialize the `tasks.md` header as `Status: Not Started`. It becomes `In Progress` when the first implementation task is actually attempted. `Completed` is reserved for the final completion gate: all required tasks have PASS evidence, the Coverage Matrix has no orphans, Code Review has no blockers and Final Verification is PASS.
 
 See `references/tdd-workflow.md` for the full chaining detail and naming conventions.
 
@@ -159,23 +166,23 @@ Rules specific to this mode:
 - **The coverage matrix is still mandatory**, with the task column reading 🔨/✅. It matters *more* here: with no runner, it is the only completeness signal left. A checked 🔨 whose ✅ was never run counts as an orphan too.
 - Phase 0 has no runner. Lint, typecheck and a boot smoke check become mandatory instead — they are the only automated signal left.
 
-### Step 5 — Hand off
+### Step 5 — Implement, verify and close the lifecycle
 
 **Gate before hand-off:** the coverage matrix is filled and has **no orphan features** (every Section 3 bullet traces to a task), and Section 4 flows + measurable Section 6 NFRs have their tasks. If not, don't hand off — close the gap first.
 
-**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row (slug, one-line vision, status, key stack, related specs) and promote any genuinely cross-cutting decision from `plan.md` into the **Shared decisions** table, citing this slug. In no-TDD mode, append `· no-TDD` to that row's status — project memory has to remember which specs shipped without a safety net.
+**Update project memory.** Create or update `specs/INDEX.md` (from `templates/specs-index.md` if it doesn't exist yet): add or refresh this spec's row (slug, one-line vision, status, key stack, related specs) and promote any genuinely cross-cutting decision from `plan.md` into the **Shared decisions** table, citing this slug. Once `tasks.md` exists, its status is canonical and the index mirrors `not started`, `in progress` or `completed`. In no-TDD mode, append `· no-TDD` to that row's status.
 
 Then tell the user:
 1. The three files are in `specs/<feature-slug>/`, and `specs/INDEX.md` is updated
 2. The options to start implementation:
    - **Modo Paso a Paso (Turn-based):** They should tell you (or the next agent run) to pick a specific unchecked task in `tasks.md` and execute it (e.g. "Implementa la tarea T1").
-   - **Modo Bucle Autónomo (Goal-based Loop):** They can run the `/goal` command to implement the tasks automatically: `/goal Implementa las tareas pendientes en specs/<feature-slug>/tasks.md y asegúrate de que todos los tests pasen.`
+   - **Modo Bucle Autónomo (Goal-based Loop):** They can use the host agent's autonomous loop/goal capability, when available, to implement pending tasks and stop only when verification passes.
 3. If a task surfaces a missing spec decision, **stop and update `spec.md` first**, don't paper over it in code
 
 **In no-TDD mode, the hand-off changes:**
 
 4. 🔨 and ✅ are one unit — a Build task is not done until its Verify task has actually been **run**, not read
-5. **The autonomous loop cannot close a ✅.** Its stop condition is "all tests pass", and there are no tests: the most a loop can verify here is lint + typecheck + boot. Say so plainly and recommend turn-based. If they still want the loop, its goal must stop at the 🔨 tasks and leave every ✅ for a human — a loop that ticks its own manual verifications is just a loop marking its own homework
+5. **An autonomous loop cannot close a human-only ✅.** With no tests, the most it can prove automatically is lint + typecheck + boot. Say so plainly and recommend turn-based. If the user still wants automation, it must stop at the 🔨 tasks and leave human-only checks for a person.
 6. The upgrade path is at the end of `tasks.md`: adding a runner later converts every ✅ into a 🔴 without rewriting the spec
 
 #### Ephemeral implementation plan (`.work/`)
@@ -188,6 +195,22 @@ The three SDD artifacts document **decisions**; execution deserves a plan too �
 4. **Reflow rule:** if planning execution surfaces a durable decision (spec gap, missing contract, new risk), update `spec.md` → `plan.md` → `tasks.md` first, then regenerate the ephemeral plan. This feeds the existing rule 4 of `tasks.md`, it does not replace it.
 
 The benefit: the plan survives context compaction within the session, and is cheap to regenerate in the next one because it derives from `tasks.md`.
+
+#### Implement → Verify → Fix
+
+For each pending task, read its Criterion, Files, Verify and Done when contract; set the task-list status to `In Progress` when implementation actually starts; implement only that scope; execute Verify; and record evidence before checking it off. On failure, keep it unchecked and keep status `In Progress`, diagnose, apply the smallest valid fix and run the same verification again. Stop and reflow `spec.md` → `plan.md` → `tasks.md` whenever the failure exposes a durable requirements or architecture gap. Full stopping rules are in `references/verification-loop.md`.
+
+#### Code Review
+
+After implementation/module verification, review the source Issue (when present), `spec.md`, `plan.md`, `tasks.md`, the real diff, tests and verification results. Review requirements compliance first, then correctness, security, performance, tests and maintainability. The reviewer must be conceptually independent from the implementer. Follow `references/code-review.md` and resolve blockers before the final gate.
+
+#### Final Verify
+
+Before PR/handoff, run `references/final-verification.md`: recheck previously passed evidence where later tasks could have caused regressions; run all applicable tests, integration/E2E, lint, typecheck, build and NFR checks; confirm complete acceptance-criteria coverage, no coverage-matrix orphans and zero Critical review blockers. Only then set `tasks.md` to `Completed` and mirror that status in `specs/INDEX.md`.
+
+#### PR / Handoff
+
+Only after Final Verification is PASS, create or hand off the Pull Request with links to the source Issue, spec artifacts, concise verification evidence and review result. GitHub automation is optional; the lifecycle is tool-agnostic and works with any agent or forge that can read and write the Markdown artifacts.
 
 ## Output structure
 
@@ -220,10 +243,16 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ❌ Never drop an acceptance criterion or the coverage matrix in no-TDD mode — the criteria survive, only their verification changes hands
 - ❌ Never hand off with an orphan feature — every Section 3 feature must trace to a task in the coverage matrix
 - ❌ Never commit `.work/` — the ephemeral implementation plan is agent scratch, not documentation
+- ❌ Never mark a task complete without executing its verification and recording evidence
+- ❌ Never set the spec/task status to `Completed` from checkbox count or implementer assertion alone
+- ❌ Never treat code review or final verification as a new source of requirements
 - ✅ Always confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
 - ✅ Always update `specs/INDEX.md` at hand-off and reuse its Shared decisions instead of re-deciding them
 - ✅ Always update `spec.md` first when implementation reveals a gap, then update `plan.md` and `tasks.md`, then code — a durable decision must never live only in `.work/implementation.md`
-- ✅ Always present the execution options (Turn-based vs. Autonomous Goal-based Loop) to the user during Step 5 (Hand-off), recommending the use of the `/goal` command for autonomous execution.
+- ✅ Always review the real diff against the Issue/spec/plan/tasks and current verification results
+- ✅ Always recheck applicable previously passed evidence during Final Verify before PR/handoff
+- ✅ Always keep `tasks.md` status and the corresponding `specs/INDEX.md` row synchronized
+- ✅ Always present Turn-based and Autonomous Loop execution options at implementation hand-off, describing host-specific commands only as optional examples.
 
 ## Resources
 
@@ -238,6 +267,9 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - `references/tdd-workflow.md` — TDD chaining details, naming conventions, common pitfalls
 - `references/test-runner-detection.md` — how to verify if the project has a test runner, defaults per ecosystem, smoke-test pattern, and the full Case E protocol
 - `references/traceability.md` — the coverage matrix method (spec §3 → plan → tasks) and the hand-off gate
+- `references/verification-loop.md` — evidence-based task completion, Fix/retry and reflow stopping rules
+- `references/code-review.md` — requirements-first review using the Issue, artifacts, real diff and verification results
+- `references/final-verification.md` — final regression gate before PR/handoff
 
 ---
 

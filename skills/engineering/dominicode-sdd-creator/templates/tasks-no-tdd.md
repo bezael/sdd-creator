@@ -1,5 +1,16 @@
 # Tasks — [Feature/Product Name] · MODE: NO TDD
 
+**Status:** Not Started
+
+> Allowed values: **Not Started** · **In Progress** · **Completed**.
+> This is the canonical implementation status for this spec. `specs/INDEX.md` mirrors it.
+>
+> - **Not Started:** no Build or manual Verify task has been executed.
+> - **In Progress:** implementation or manual verification has started, but the final completion gate has not passed.
+> - **Completed:** every required Build/Verify pair has recorded PASS evidence, the Coverage Matrix has no orphans, Code Review has no blocking findings, and Final Verification is PASS.
+>
+> A failed or pending manual check keeps the status **In Progress**. Never infer **Completed** from Build checkboxes alone.
+
 > ⚠️ **DEGRADED MODE — NO AUTOMATED TESTS.**
 > The user explicitly requested no tests on `[YYYY-MM-DD]`. This is **not** full Dominicode SDD.
 > **What is lost:** the safety net. No regression detection, no confident refactoring, no proof
@@ -23,7 +34,9 @@
   - 🔵 Refactor — cleanup without changing behavior
   - 🔗 Integration check — manual check that crosses modules
 - **🔨 and ✅ always travel in pairs.** A Build task is never checked off on its own.
-- **Each task lists** the files it touches and the criterion it satisfies
+- **Task IDs** use `TASK-XX` and remain stable when tasks are checked or reordered
+- **Each verifiable task carries:** Criterion, Files, Verify, Done when and Evidence
+- `Verify` may be an automated command or a precisely defined manual Given / When / Then check. `[x]` always means the check was executed and passed, never that an agent asserted completion.
 
 ---
 
@@ -32,11 +45,11 @@
 > There is no test runner in this mode. That makes the linter, the type checker and the boot
 > smoke check the **only automated feedback left** — so they are mandatory here, not optional.
 
-- [ ] ⚙️ **Initialize project if greenfield** — `package.json`, `tsconfig.json` or other manifests.
-- [ ] ⚙️ **Configure linter / formatter** — [eslint, prettier, biome, ruff, rustfmt...]. Verify: the lint command exits clean on the current repo.
-- [ ] ⚙️ **Enable strict type checking** (typed languages only) — [`strict: true`, mypy, sorbet...]. Verify: the typecheck command exits clean.
-- [ ] ⚙️ **Create folder structure per `plan.md` section 3.**
-- [ ] ⚙️ **Boot smoke check** — start the app / import the module. It must come up without errors. This is the floor of "it works" in this mode.
+- [ ] TASK-01 — ⚙️ **Initialize project if greenfield** — Criterion: Phase 0. Files: `[manifests]`. Verify: `[tool query]`. Done when: the manifest is recognized. Evidence: [...].
+- [ ] TASK-02 — ⚙️ **Configure linter / formatter** — Criterion: Phase 0. Files: `[config]`. Verify: `[lint command]`. Done when: lint exits 0. Evidence: [...].
+- [ ] TASK-03 — ⚙️ **Enable strict type checking** — Criterion: Phase 0, when applicable. Files: `[config]`. Verify: `[typecheck command]`. Done when: typecheck exits 0. Evidence: [...].
+- [ ] TASK-04 — ⚙️ **Create folder structure per `plan.md` §3** — Criterion: Phase 0. Files: `[paths]`. Verify: `[tree/import command]`. Done when: required paths resolve. Evidence: [...].
+- [ ] TASK-05 — ⚙️ **Boot smoke check** — Criterion: Phase 0. Files: [if changed]. Verify: `[start/import command]`. Done when: the app/module starts without errors. Evidence: [...].
 
 > Do not advance to Phase 1 until lint, typecheck and boot all pass.
 
@@ -46,27 +59,49 @@
 
 ### Feature: [copy literal from Section 3 of the spec]
 
-- [ ] 🔨 **Build: [feature]** — files: `src/[module]/[file].ts`. Criterion: `spec.md §3 → "The user can [X]"`.
-- [ ] ✅ **Verify: [feature]** — criterion: `spec.md §3 → "The user can [X]"`.
+- [ ] TASK-10 — 🔨 **Build: [feature]**
+
+  Criterion: `spec.md §3 → "The user can [X]"`
+
+  Files:
+  - `src/[module]/[file].ts`
+
+  Verify: execute `TASK-11` immediately after the change
+
+  Done when: `TASK-11` has been executed and passed; the Build task is never closed independently
+
+  Evidence: see `TASK-11`
+
+- [ ] TASK-11 — ✅ **Verify: [feature]**
+
+  Criterion: `spec.md §3 → "The user can [X]"`
+
+  Files: none, unless the check produces an approved fixture or script
+
+  Verify: perform the following manual observation
   - **Given:** [starting state — e.g. logged-in user, empty database]
   - **When:** [exact action — e.g. submits the form with amount `0`]
   - **Then:** [observable result — e.g. inline error "Amount must be greater than 0", no record created]
-  - Result: `pass / fail` — checked on `[YYYY-MM-DD]` by `[who]`
+
+  Done when: the observed result matches Then exactly and no contradictory behavior is observed
+
+  Evidence: `PASS / FAIL` — checked on `[YYYY-MM-DD]` by `[who]`; [short observation or link]
 
 ### Feature: [error path from the same flow]
 
 > Section 4 of the spec requires at least one failure path per flow. In this mode that path
 > still gets its own ✅ — an unverified error path is the first thing that breaks in production.
 
-- [ ] ✅ **Verify: [error case]** — criterion: `spec.md §4 → flow "[name]", error branch`.
+- [ ] TASK-12 — ✅ **Verify: [error case]** — Criterion: `spec.md §4 → flow "[name]", error branch`. Files: none. Verify: perform the Given / When / Then below.
   - **Given:** [...]
   - **When:** [...]
   - **Then:** [...]
-  - Result: `pass / fail` — checked on `[YYYY-MM-DD]` by `[who]`
+  - Done when: Then is observed exactly.
+  - Evidence: `PASS / FAIL` — checked on `[YYYY-MM-DD]` by `[who]`; [observation/link]
 
 ### Module close
 
-- [ ] 🔗 **Integration check: [module]** — manually exercise the module's features end to end in one sitting. List the steps as Given / When / Then, same format as ✅.
+- [ ] TASK-19 — 🔗 **Integration check: [module]** — Criterion: covered `spec.md §3/§4` behaviors. Files: none. Verify: execute the listed Given / When / Then sequence. Done when: all module behaviors pass together. Evidence: [date/verifier/result].
 
 ---
 
@@ -74,8 +109,8 @@
 
 ### Feature: [...]
 
-- [ ] 🔨 **Build: [...]** — ...
-- [ ] ✅ **Verify: [...]** — ...
+- [ ] TASK-20 — 🔨 **Build: [...]** — Criterion: [...]. Files: [...]. Verify: execute TASK-21. Done when: TASK-21 passes. Evidence: see TASK-21.
+- [ ] TASK-21 — ✅ **Verify: [...]** — Criterion: [...]. Files: none. Verify: [Given / When / Then]. Done when: Then is observed. Evidence: [date/verifier/result].
 
 > Repeat build → verify for each feature of each module, in the order defined in `plan.md` section 6.
 
@@ -85,8 +120,8 @@
 
 > One manual walkthrough per flow from Section 4 of the spec — happy path **and** its error branch.
 
-- [ ] 🔗 **Flow: [name]** — happy path. Given / When / Then. Result: `pass / fail`
-- [ ] 🔗 **Flow: [name]** — error case defined in the spec. Given / When / Then. Result: `pass / fail`
+- [ ] TASK-90 — 🔗 **Flow: [name] — happy path** — Criterion: `spec.md §4`. Files: none. Verify: [Given / When / Then]. Done when: Then is observed. Evidence: [date/verifier/result].
+- [ ] TASK-91 — 🔗 **Flow: [name] — error path** — Criterion: `spec.md §4`. Files: none. Verify: [Given / When / Then]. Done when: the defined error result is observed. Evidence: [date/verifier/result].
 
 ---
 
@@ -94,9 +129,9 @@
 
 > For each verifiable NFR from Section 6 of the spec, one manual check.
 
-- [ ] 🔗 **NFR performance: [criterion]** — how it is measured: [devtools, `time`, load tool]. Threshold: [...]
-- [ ] 🔗 **NFR security: [criterion]** — how it is checked: [manual audit, `npm audit`, headers review]
-- [ ] ⚙️ **NFR language: [criterion]** — i18n configured, strings extracted.
+- [ ] TASK-95 — 🔗 **NFR performance: [criterion]** — Criterion: `spec.md §6`. Files: [if any]. Verify: [measurement procedure]. Done when: threshold passes. Evidence: [measurement].
+- [ ] TASK-96 — 🔗 **NFR security: [criterion]** — Criterion: `spec.md §6`. Files: [if any]. Verify: [audit/command]. Done when: defined expectation passes. Evidence: [result].
+- [ ] TASK-97 — ⚙️ **NFR language: [criterion]** — Criterion: `spec.md §6`. Files: `[i18n paths]`. Verify: [command/observation]. Done when: no required string is missing. Evidence: [result].
 
 ---
 
@@ -109,7 +144,7 @@
 
 | spec §3 feature | plan contract/entity | task IDs (🔨/✅) |
 |---|---|---|
-| [literal feature from spec §3] | [`plan.md` §3 endpoint/component or §2 entity] | [e.g. Phase 1 🔨+✅] |
+| [literal feature from spec §3] | [`plan.md` §3 endpoint/component or §2 entity] | [e.g. TASK-10 + TASK-11] |
 | [...] | [...] | [...] |
 
 **Also confirm:** every Section 4 flow has a 🔗 walkthrough (happy path **and** its error path), and every measurable Section 6 NFR has a verification task. Setup (⚙️), refactor (🔵), flow and NFR tasks don't need a Section 3 row — they trace to phases, not to feature bullets.
@@ -120,14 +155,15 @@
 
 ## Execution rules
 
-1. **One task at a time.** Do not open two in parallel in the same session.
-2. **🔨 and ✅ are one unit.** Never check a Build task until its Verify task has actually been run.
-3. **Never check ✅ from reading the code.** Run it. In this mode, reading the code and believing it works is precisely the failure mode that tests exist to prevent.
-4. **Write the result down.** There is no CI log here — the `Result:` line in each ✅ is the only record that the criterion was ever checked.
-5. **Refactor costs more here.** Before checking a 🔵, re-run **every ✅ of the touched module**. If that feels like too much work, that is the actual price of having no tests — pay it or skip the refactor; do not skip the re-verification.
-6. **If a task reveals ambiguity in the spec:** stop, update `spec.md` and `plan.md`, regenerate the affected tasks. Do not improvise in code.
-7. **Commits:** one per completed task. Suggested message: `[phase] feat(module): description — task #N`.
-8. **Do not hand off with an orphan feature** — or with a 🔨 whose ✅ was never run.
+1. **Update status on evidence.** Keep **Not Started** until the first Build/manual Verify is attempted; then set **In Progress**. Set **Completed** only after the final completion gate passes.
+2. **One task at a time.** Do not open two in parallel in the same session.
+3. **🔨 and ✅ are one unit.** Never check a Build task until its Verify task has actually been run.
+4. **Never check ✅ from reading the code.** Run it. In this mode, reading the code and believing it works is precisely the failure mode that tests exist to prevent.
+5. **Write the result down.** There is no CI log here — the `Evidence:` line in each ✅ is the only record that the criterion was ever checked.
+6. **Refactor costs more here.** Before checking a 🔵, re-run **every ✅ of the touched module**. If that feels like too much work, that is the actual price of having no tests — pay it or skip the refactor; do not skip the re-verification.
+7. **If Verify fails:** keep both 🔨 and ✅ unchecked, keep status **In Progress**, diagnose, apply the smallest in-scope fix, and repeat the defined check. If the expected behavior or architecture is unclear, reflow `spec.md` → `plan.md` → `tasks.md` before continuing.
+8. **Commits:** one per completed task when the repository workflow calls for it. Suggested message: `[phase] feat(module): description — TASK-XX`.
+9. **Do not hand off with an orphan feature** — or with a 🔨 whose ✅ was never run.
 
 ---
 

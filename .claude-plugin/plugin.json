@@ -1,6 +1,6 @@
 {
   "name": "dominicode-sdd-creator",
-  "description": "Spec-Driven Development, adaptación de Dominicode — genera spec.md + plan.md + tasks.md (TDD) antes de escribir código.",
+  "description": "Lifecycle SDD de Dominicode: spec, plan, tasks, implementación con evidencia, review y verificación final antes del PR.",
   "version": "1.5.0",
   "author": { "name": "Bezael Pérez", "url": "https://dominicode.com" },
   "skills": [

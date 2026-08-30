@@ -4,6 +4,22 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Added
+
+- Explicit lifecycle status in both task templates: `Not Started`, `In Progress` and `Completed`. `tasks.md` is canonical once created and `specs/INDEX.md` mirrors it; `Completed` requires task evidence, no coverage orphans, a non-blocking Code Review and Final Verification PASS.
+- Evidence-based task contracts in both TDD and no-TDD templates: stable `TASK-XX` IDs plus Criterion, Files, Verify, Done when and concise Evidence. Tasks can no longer be closed from an implementer's assertion alone.
+- `references/verification-loop.md`: tool-agnostic Implement → Verify → Fix behavior, stopping/reflow rules, manual checks, false-positive prevention and task/module/final verification levels.
+- `references/code-review.md`: requirements-first review using the source Issue, SDD artifacts, real diff and verification results, with an independent-reviewer expectation.
+- `references/final-verification.md`: the pre-PR gate, including the explicit requirement to recheck previously passed evidence.
+- Optional GitHub Issue provenance block in `templates/spec.md` and an end-to-end vote/unvote example covering Issue through PR.
+
+### Changed
+
+- The official lifecycle now closes the full loop: Understand → Spec → Plan → Tasks → Implement → Verify/Fix → Code Review → Final Verify → PR/Handoff.
+- Traceability now extends from Issue through Evidence and Review to PR without adding a new source of truth.
+- `.work/implementation.md` now drives one-task-at-a-time Verify/Fix retries while remaining ephemeral scratch.
+- Autonomous execution is described in host-agnostic terms; `/goal` remains an optional host capability, not a methodology dependency.
+
 ## [1.5.0] - 2026-08-14
 
 ### Added
