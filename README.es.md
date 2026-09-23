@@ -136,8 +136,9 @@ bezael/sdd-creator
 │               ├── code-review.md
 │               └── final-verification.md
 ├── announcements/                ← copy de anuncios de releases (español)
+├── AGENTS.md                     ← instrucciones del proyecto para cualquier agente
 ├── CHANGELOG.md
-├── CLAUDE.md
+├── CLAUDE.md                     ← importa AGENTS.md para Claude Code
 ├── LICENSE
 ├── README.md
 └── README.es.md
