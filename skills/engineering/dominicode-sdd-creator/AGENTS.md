@@ -10,7 +10,7 @@
 
 This file instructs the agent to run the complete Dominicode Spec-Driven Development lifecycle for non-trivial work: Understand → Spec → Plan → Tasks → Implement → Verify (Fix → Verify on failure) → Code Review → Final Verify → PR / Handoff.
 
-The durable sources of truth remain `spec.md`, `plan.md` and `tasks.md`. Evidence and review prove completion; `.work/implementation.md` remains disposable scratch.
+The durable sources of truth are `spec.md`, `plan.md` and `tasks.md`. Evidence and review prove completion; `.work/implementation.md` is disposable scratch.
 
 ## When to activate this flow
 
@@ -37,7 +37,7 @@ Activate the SDD flow at the **start** of any non-trivial coding work, even if t
 |-------|-------|--------|
 | **HIGH** | Detailed PRD, ticket, or 3+ paragraphs | Full draft + "Open questions" list |
 | **MEDIUM** | 1–2 sentences with a clear goal | Draft with `[NEEDS CONFIRMATION: ...]` on unknowns |
-| **LOW** | "I want to make an app for X" | Interview the user **one section at a time** — do NOT dump all 6 questions at once |
+| **LOW** | "I want to make an app for X" | Interview the user **one section at a time**, not all 6 questions at once |
 
 Tell the user which mode you detected before starting.
 

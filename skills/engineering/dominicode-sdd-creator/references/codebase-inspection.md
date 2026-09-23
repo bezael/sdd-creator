@@ -2,7 +2,7 @@
 
 > **A spec written in a vacuum proposes a stack the project doesn't use.** Before writing `spec.md`, look at what already exists. The goal is not to redesign the project — it's to make sure the spec and plan *fit* the project they will live in.
 
-This is run as **Step 0.5**, right after detecting the context level and before choosing the slug. It is broader than the test-runner check (`references/test-runner-detection.md`), which is now a subset of it: Step 0.5 gathers the raw facts once, and Step 3.5 reuses them to **confirm** the runner instead of re-scanning.
+This is run as **Step 0.5**, right after detecting the context level and before choosing the slug. It is broader than the test-runner check (`references/test-runner-detection.md`), which is a subset of it: Step 0.5 gathers the raw facts once, and Step 3.5 reuses them to **confirm** the runner instead of re-scanning.
 
 If you have filesystem access (Claude Code, Cursor, Codex), inspect the files. If not (Claude.ai web, a pasted system prompt), ask the user the same questions and proceed with what they tell you.
 
@@ -57,7 +57,7 @@ For a greenfield or no-filesystem case:
 |---|---|
 | Framework / runtime in use | `spec.md` Section 5 and `plan.md` §1 **anchor on it** — don't propose an alternative silently |
 | DB / Auth in use | reused as defaults; if `specs/INDEX.md` has them under Shared decisions, cite that |
-| Test runner installed | carried into **Step 3.5**, which now *confirms* rather than re-scans |
+| Test runner installed | carried into **Step 3.5**, which *confirms* rather than re-scans |
 | Conventions (folders, naming) | `tasks.md` file paths mirror them |
 | Related prior spec | offered to the user as "extend vs new" before Step 1 |
 

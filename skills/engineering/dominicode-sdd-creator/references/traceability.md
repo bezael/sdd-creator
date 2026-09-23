@@ -2,7 +2,7 @@
 
 > **The silent failure of SDD is a feature in the spec that never becomes a task.** Three documents, written in sequence, drift: a feature gets dropped between `spec.md` and `plan.md`, or a contract in `plan.md` never gets a test. Traceability is the check that catches this *before* hand-off, while it's cheap to fix.
 
-The core mechanism remains the **coverage matrix**: one row per feature in Section 3 of the spec, traced forward to a plan element and then to concrete tasks. It lives at the end of `tasks.md`. Evidence and review extend that same chain; they do not introduce a second requirements store.
+The core mechanism is the **coverage matrix**: one row per feature in Section 3 of the spec, traced forward to a plan element and then to concrete tasks. It lives at the end of `tasks.md`. Evidence and review extend that same chain; they do not introduce a second requirements store.
 
 ## End-to-end chain
 

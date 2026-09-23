@@ -1,11 +1,11 @@
 ---
 name: dominicode-sdd-creator
-description: "Run the Dominicode Spec-Driven Development lifecycle for non-trivial features and products: understand the request or Issue, create spec.md + plan.md + evidence-based tasks.md before code, then guide implementation, verification/fix, code review, final verification and PR/handoff. Use when users ask to build, scaffold, plan, design or specify a feature, MVP, module or project. TDD remains the default; durable decisions stay in spec, plan and tasks."
+description: "Run the Dominicode Spec-Driven Development lifecycle for non-trivial features and products: understand the request or Issue, create spec.md + plan.md + evidence-based tasks.md before code, then guide implementation, verification/fix, code review, final verification and PR/handoff. Use when users ask to build, scaffold, plan, design or specify a feature, MVP, module or project. TDD is the default; durable decisions stay in spec, plan and tasks."
 ---
 
 # Dominicode SDD Creator
 
-This skill turns a vague product idea or issue into a complete, evidence-driven SDD lifecycle. Code still starts only after Spec → Plan → Tasks, and completion requires verification, review and a final regression gate.
+This skill turns a vague product idea or issue into a complete, evidence-driven SDD lifecycle. Code starts only after Spec → Plan → Tasks, and completion requires verification, review and a final regression gate.
 
 SDD adaptation by **Bezael Pérez · Dominicode**.
 
@@ -13,7 +13,7 @@ SDD adaptation by **Bezael Pérez · Dominicode**.
 
 Understand → Spec → Plan → Tasks → Implement → Verify (Fix → Verify on failure) → Code Review → Final Verify → PR / Handoff.
 
-`spec.md`, `plan.md` and `tasks.md` are the durable sources of truth. Evidence, review and final verification prove those decisions were satisfied; `.work/implementation.md` remains disposable execution scratch.
+`spec.md`, `plan.md` and `tasks.md` are the durable sources of truth. Evidence, review and final verification prove those decisions were satisfied; `.work/implementation.md` is disposable execution scratch.
 
 ## When to use this skill
 
@@ -40,7 +40,7 @@ Look at the conversation so far and classify what the user has given you:
 |-------|--------|--------|
 | **HIGH** | Detailed PRD, ticket, doc, or 3+ paragraphs of context | Produce a full draft of the 6 sections + list "Open questions" at the end |
 | **MEDIUM** | 1–2 sentences with clear goal but missing detail | Produce a draft, mark unknowns with `[NEEDS CONFIRMATION: ...]` inline |
-| **LOW** | Vague request ("quiero hacer una app de X") | Interview the user **one section at a time** — do NOT dump all 6 questions at once |
+| **LOW** | Vague request ("quiero hacer una app de X") | Interview the user **one section at a time**, not all 6 questions at once |
 
 Tell the user which mode you detected and why, in one sentence, before proceeding.
 
@@ -137,7 +137,7 @@ Each task is a checkbox. Each task has:
 - An objective `Verify` instruction and `Done when` result
 - A concise Evidence field populated only after execution
 
-Never mark a task done because an agent reports completion. Any task that changes observable behavior, code, configuration or data needs objective evidence. TDD remains the default where it adds value; use the most relevant test, lint, typecheck, build, command, query, HTTP, observable or precisely defined manual verification for other work.
+Never mark a task done because an agent reports completion. Any task that changes observable behavior, code, configuration or data needs objective evidence. TDD is the default where it adds value; use the most relevant test, lint, typecheck, build, command, query, HTTP, observable or precisely defined manual verification for other work.
 
 Initialize the `tasks.md` header as `Status: Not Started`. It becomes `In Progress` when the first implementation task is actually attempted. `Completed` is reserved for the final completion gate: all required tasks have PASS evidence, the Coverage Matrix has no orphans, Code Review has no blockers and Final Verification is PASS.
 
@@ -246,7 +246,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ❌ Never mark a task complete without executing its verification and recording evidence
 - ❌ Never set the spec/task status to `Completed` from checkbox count or implementer assertion alone
 - ❌ Never treat code review or final verification as a new source of requirements
-- ✅ Always confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
+- ✅ Always get explicit confirmation after `spec.md` (Step 2), after `plan.md` (Step 3), and before setting up a proposed test runner (Step 3.5, case C)
 - ✅ Always update `specs/INDEX.md` at hand-off and reuse its Shared decisions instead of re-deciding them
 - ✅ Always update `spec.md` first when implementation reveals a gap, then update `plan.md` and `tasks.md`, then code — a durable decision must never live only in `.work/implementation.md`
 - ✅ Always review the real diff against the Issue/spec/plan/tasks and current verification results
@@ -263,7 +263,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - `templates/tasks-no-tdd.md` — degraded task list: manual Given/When/Then verifications instead of tests. Only after the Case E gate
 - `templates/implementation.md` — ephemeral implementation plan template (gitignored, per session)
 - `templates/specs-index.md` — project memory index template (`specs/INDEX.md`: shared decisions + specs table)
-- `references/examples.md` — a fully worked example (feature: invoice generator)
+- `references/examples.md` — a compact end-to-end lifecycle example (feature: vote / unvote a feedback item)
 - `references/codebase-inspection.md` — how to ground the spec in the existing project (Step 0.5): what to read per ecosystem, the snapshot, the no-conflicting-stack rule
 - `references/tdd-workflow.md` — TDD chaining details, naming conventions, common pitfalls
 - `references/test-runner-detection.md` — how to verify if the project has a test runner, defaults per ecosystem, smoke-test pattern, and the full Case E protocol
