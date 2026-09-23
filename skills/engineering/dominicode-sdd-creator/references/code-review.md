@@ -11,9 +11,10 @@ Review all available inputs:
 - `plan.md`;
 - `tasks.md`, including its coverage matrix and evidence;
 - the real implementation diff against the intended base;
-- tests and verification results.
+- tests and verification results;
+- the lane: the repository's `AGENTS.md` (harness, conventions, boundaries), when present.
 
-If a required input is unavailable, record it as a verification gap. The diff is mandatory: reviewing only a description cannot detect out-of-scope implementation.
+If a required input is unavailable, record it as a verification gap. The diff is mandatory: reviewing only a description cannot detect out-of-scope implementation. A change that crosses a lane boundary (files outside the task scope, new dependencies, migrations, infrastructure) without recorded permission is at least an Important finding.
 
 ## Review order
 
@@ -72,13 +73,21 @@ Tangling code creates noise that hides defects and can block approval of the val
 
 Do not bury requirements or correctness findings under style suggestions. Every finding must cite the affected criterion/task and a file or diff location — a claim that cannot be anchored to the diff is an observation, not a finding. Report any verification you did not execute as *not run*; never assume PASS.
 
-## Recommended output
+## Recommended output — the Verdict
+
+In CBRM terms (`references/cbrm.md`), the review output is the **Verdict**: what a human reads instead of the diff. It leads with status, alignment and per-criterion evidence; findings come after.
 
 ```markdown
-# Code Review
+# Verdict
 
 Status: PASS | CHANGES REQUIRED
 Alignment: Exact | Tangling | Missing | Missing and Tangling
+
+| # | Acceptance criterion | Status | Evidence |
+|---|----------------------|--------|----------|
+| 1 | [spec.md §3 → ...]   | PASS   | `command` -> result / TASK-XX |
+
+Out-of-scope changes: none | [list with justification]
 
 ## Critical
 - [blocking correctness, security, data-loss or unmet requirement]
@@ -88,9 +97,6 @@ Alignment: Exact | Tangling | Missing | Missing and Tangling
 
 ## Suggestions
 - [non-blocking improvement]
-
-## Acceptance criteria coverage
-- [criterion → implementation/tests/evidence]
 
 ## Verification gaps
 - [missing, stale, skipped or non-reproducible evidence]

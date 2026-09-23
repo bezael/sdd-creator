@@ -17,6 +17,7 @@
 | Skill | Descripción |
 |-------|-------------|
 | `dominicode-sdd-creator` | Lifecycle completo de Spec-Driven Development — Issue/understanding, spec/plan/tasks, implementación con evidencia, review, verificación final y PR/hand-off. |
+| `dominicode-harness-init` | Prepara el carril para trabajar con agentes: audita los comandos de verificación reales del repo y genera un `AGENTS.md` con las secciones Contract, Lane y Verdict, más plantillas de spec y PR. |
 
 ---
 
@@ -43,6 +44,7 @@ El CLI te pregunta qué skills instalar y en qué agentes (Claude Code, Cursor, 
 ```bash
 # Copia la skill a tu directorio de skills personales
 cp -r skills/engineering/dominicode-sdd-creator ~/.claude/skills/
+cp -r skills/engineering/dominicode-harness-init ~/.claude/skills/
 
 # Verifica
 ls ~/.claude/skills/dominicode-sdd-creator/SKILL.md
@@ -116,6 +118,15 @@ bezael/sdd-creator
 ├── skills/
 │   └── engineering/
 │       ├── README.md
+│       ├── dominicode-harness-init/
+│       │   ├── SKILL.md           ← Claude Code
+│       │   ├── AGENTS.md          ← otros agentes
+│       │   ├── templates/
+│       │   │   ├── AGENTS.template.md
+│       │   │   ├── spec.template.md
+│       │   │   └── pr.template.md
+│       │   └── references/
+│       │       └── generic-prompt.md
 │       └── dominicode-sdd-creator/
 │           ├── SKILL.md           ← Claude Code
 │           ├── AGENTS.md          ← otros agentes
@@ -133,6 +144,7 @@ bezael/sdd-creator
 │               ├── test-runner-detection.md
 │               ├── traceability.md
 │               ├── verification-loop.md
+│               ├── cbrm.md
 │               ├── code-review.md
 │               └── final-verification.md
 ├── announcements/                ← copy de anuncios de releases (español)
@@ -171,6 +183,23 @@ El agente:
 9. Para cada tarea, ejecutará `Verify`; si falla aplicará el fix mínimo válido y verificará otra vez. Un checkbox exige evidencia.
 10. Ejecutará un Code Review independiente, empezando por requisitos y usando Issue, artefactos, diff real y resultados.
 11. Ejecutará Final Verification, incluida la revalidación de evidencia previamente aprobada, antes del PR/hand-off.
+
+---
+
+## Contract Based Review Method (CBRM)
+
+No te fías del código de la IA porque te parezca bien. Lo revisas contra un contrato.
+
+```
+Issue  ->  Contrato  ->  Carril  ->  Veredicto  ->  PR
+          (criterios)  (harness)   (evidencia)
+```
+
+- **Contrato**: los criterios de aceptación de la spec, cada uno con el comando que lo prueba. Para features no triviales lo escribe `dominicode-sdd-creator`, y para Issues pequeños basta una plantilla ligera.
+- **Carril**: dónde puede trabajar el agente y cómo se comprueba a sí mismo, es decir, el harness (loop corto y loop largo), los rojos conocidos, las convenciones y los límites. Lo genera `dominicode-harness-init` como el `AGENTS.md` del repo, solo con comandos que ha ejecutado de verdad.
+- **Veredicto**: evidencia por criterio y un veredicto de alineación (`Exact`, `Tangling`, `Missing`) que se entrega en la PR. Tú lees el contrato y el veredicto, y solo abres el diff donde el veredicto está en rojo.
+
+Método completo: [`references/cbrm.md`](./skills/engineering/dominicode-sdd-creator/references/cbrm.md).
 
 ---
 

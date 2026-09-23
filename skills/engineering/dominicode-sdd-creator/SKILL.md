@@ -15,6 +15,16 @@ Understand → Spec → Plan → Tasks → Implement → Verify (Fix → Verify 
 
 `spec.md`, `plan.md` and `tasks.md` are the durable sources of truth. Evidence, review and final verification prove those decisions were satisfied; `.work/implementation.md` is disposable execution scratch.
 
+## CBRM — contract, lane, verdict
+
+This lifecycle is how the **Contract Based Review Method (CBRM)** takes an Issue to a verified PR. You don't trust the agent's code because it looks right; you review it against a contract.
+
+- **Contract** — the acceptance criteria: `spec.md` §3/§4/§6 turned into `tasks.md` Criterion + Verify + Done when.
+- **Lane** — where the agent may work and how it checks itself: the repository's `AGENTS.md` (harness, conventions, boundaries), `plan.md` and each task's `Files`. If the repo has no lane, recommend `dominicode-harness-init` before implementation.
+- **Verdict** — task Evidence → Code Review → Final Verify, delivered in the PR as status, alignment and a criterion → evidence table.
+
+Full method, mapping and the light-contract rule for small Issues: `references/cbrm.md`.
+
 ## When to use this skill
 
 Trigger this skill at the **start** of any non-trivial coding work, even if the user did not say the word "spec". Signals:
@@ -202,7 +212,7 @@ For each pending task, read its Criterion, Files, Verify and Done when contract;
 
 #### Code Review
 
-After implementation/module verification, review the source Issue (when present), `spec.md`, `plan.md`, `tasks.md`, the real diff, tests and verification results. Review requirements compliance first, then correctness, security, performance, tests and maintainability. Requirements compliance closes with an explicit **alignment verdict** — `Exact`, `Tangling`, `Missing` or `Missing and Tangling` — and only `Exact` (or a deviation the user accepted and reflowed into the spec) can be part of a PASS. The reviewer must be conceptually independent from the implementer. Close the review by listing its **durable learnings** (decision confirmed or overturned, alternative rejected, risk materialized) for the hand-off's `specs/INDEX.md` update. Follow `references/code-review.md` and resolve blockers before the final gate.
+After implementation/module verification, review the source Issue (when present), `spec.md`, `plan.md`, `tasks.md`, the real diff, tests and verification results. Review requirements compliance first, then correctness, security, performance, tests and maintainability. Requirements compliance closes with an explicit **alignment verdict** — `Exact`, `Tangling`, `Missing` or `Missing and Tangling` — and only `Exact` (or a deviation the user accepted and reflowed into the spec) can be part of a PASS. The reviewer must be conceptually independent from the implementer. Close the review by listing its **durable learnings** (decision confirmed or overturned, alternative rejected, risk materialized) for the hand-off's `specs/INDEX.md` update. Follow `references/code-review.md` and resolve blockers before the final gate. Read the lane (the repository's `AGENTS.md` boundaries and harness, when present) as scope input, and deliver the result as a CBRM **Verdict**: status, alignment and a criterion → status → evidence table.
 
 #### Final Verify
 
@@ -210,7 +220,7 @@ Before PR/handoff, run `references/final-verification.md`: recheck previously pa
 
 #### PR / Handoff
 
-Only after Final Verification is PASS, create or hand off the Pull Request with links to the source Issue, spec artifacts, concise verification evidence and review result. GitHub automation is optional; the lifecycle is tool-agnostic and works with any agent or forge that can read and write the Markdown artifacts.
+Only after Final Verification is PASS, create or hand off the Pull Request with links to the source Issue, spec artifacts, concise verification evidence and review result. The PR description carries the verdict, so the reviewer reads contract and verdict first and opens the diff only where the verdict is red. GitHub automation is optional; the lifecycle is tool-agnostic and works with any agent or forge that can read and write the Markdown artifacts.
 
 ## Output structure
 
@@ -253,6 +263,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ✅ Always close Code Review with an alignment verdict (Exact / Tangling / Missing / Missing and Tangling) and promote its durable learnings to `specs/INDEX.md` at hand-off
 - ✅ Always recheck applicable previously passed evidence during Final Verify before PR/handoff
 - ✅ Always keep `tasks.md` status and the corresponding `specs/INDEX.md` row synchronized
+- ✅ Always deliver Code Review and the PR as a CBRM verdict against the contract (criterion → evidence), never as a summary of what the implementer did
 - ✅ Always present Turn-based and Autonomous Loop execution options at implementation hand-off, describing host-specific commands only as optional examples.
 
 ## Resources
@@ -269,6 +280,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - `references/test-runner-detection.md` — how to verify if the project has a test runner, defaults per ecosystem, smoke-test pattern, and the full Case E protocol
 - `references/traceability.md` — the coverage matrix method (spec §3 → plan → tasks) and the hand-off gate
 - `references/verification-loop.md` — evidence-based task completion, Fix/retry and reflow stopping rules
+- `references/cbrm.md` — Contract Based Review Method: contract, lane and verdict mapped onto this lifecycle, Issue → PR sequence, full vs light contract
 - `references/code-review.md` — requirements-first review using the Issue, artifacts, real diff and verification results
 - `references/final-verification.md` — final regression gate before PR/handoff
 

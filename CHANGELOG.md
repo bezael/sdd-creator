@@ -4,6 +4,21 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-09-23
+
+### Added
+
+- **Contract Based Review Method (CBRM):** the repo now names the method it ships, which takes a GitHub Issue to a verified PR as `Issue → Contract → Lane → Verdict → PR`. The **contract** is the spec's acceptance criteria, each with the command that proves it. The **lane** is where the agent may work and how it checks itself (harness, known reds, conventions, boundaries). The **verdict** is per-criterion evidence plus an alignment verdict, delivered in the PR so the reviewer opens the diff only where it is red. New reference `references/cbrm.md` maps the SDD lifecycle onto the three pieces and sets the full-vs-light contract rule.
+- **New skill `dominicode-harness-init`:** audits a repository's real verification mechanisms (build, type check, tests, lint, CI, E2E), runs every candidate command, and generates an `AGENTS.md` with three top-level sections: **Contract**, **Lane** and **Verdict**. It also generates a light spec template for small Issues and a PR template with Contract, Lane and Verdict sections. It reports the harness level (0–4) with gaps ordered by impact. It never writes a command it has not run.
+- New hard rule in `SKILL.md` and `AGENTS.md`: always deliver Code Review and the PR as a CBRM verdict against the contract, never as a summary of what the implementer did.
+
+### Changed
+
+- `references/code-review.md`: the recommended output is now the **Verdict**. It leads with status, alignment and a criterion → status → evidence table, followed by out-of-scope changes and then findings. The review reads the repository's `AGENTS.md` as scope input, and a change that crosses a lane boundary without recorded permission is at least an Important finding.
+- `references/final-verification.md`: when the repo has a lane, its long loop is the authoritative command set for the gate, and any red not on the known-reds list fails it.
+- `SKILL.md` / `AGENTS.md`: a new CBRM section maps the lifecycle onto contract, lane and verdict, and recommends `dominicode-harness-init` when the repo has no lane. The PR hand-off now carries the verdict.
+- `plugin.json` lists both skills and its description reflects CBRM.
+
 ## [1.7.0] - 2026-08-30
 
 ### Added
