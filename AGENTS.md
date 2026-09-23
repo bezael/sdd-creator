@@ -2,6 +2,8 @@
 
 This repo is a Claude Code plugin with Dominicode skills. SDD (Spec-Driven Development) is an industry methodology — this repo distributes the **Dominicode adaptation** by Bezael Pérez, not the methodology's invention. Keep that framing in all docs and credits ("SDD adaptation by", never "methodology by").
 
+CBRM (Contract Based Review Method) is Bezael Pérez's own named method, so its credit reads "CBRM by Bezael Pérez · Dominicode". Do not rewrite it as an adaptation, and do not rewrite SDD credits to match it.
+
 ## Language conventions
 
 - **English**: all documentation — `SKILL.md`, `AGENTS.md`, templates, references, `CHANGELOG.md`, GitHub release notes, `README.md` (with `README.es.md` as the Spanish mirror).

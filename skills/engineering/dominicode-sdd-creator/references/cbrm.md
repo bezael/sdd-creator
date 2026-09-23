@@ -49,9 +49,9 @@ SDD produces the contract; the lane constrains the implementation; review and fi
 | Use | When |
 |---|---|
 | **Full SDD contract** (`specs/<slug>/spec.md` + `plan.md` + `tasks.md`) | Any non-trivial feature: more than one module, layer or screen, or more than ~100 lines of change. The SDD skill's own trigger rules decide. |
-| **Light contract** (`.dominicode/spec.template.md` from harness-init) | Work the SDD skill explicitly skips: a bug with a clear repro, a single-file refactor, a small change with obvious scope. |
+| **Light contract** (a copy of harness-init's `.dominicode/spec.template.md` at `.dominicode/specs/<issue-number>-<slug>.md`) | Work the SDD skill explicitly skips: a bug with a clear repro, a single-file refactor, a small change with obvious scope. |
 
-Never write both for the same Issue. If a light contract grows past two pages or starts needing architecture decisions, promote it to a full SDD spec.
+Both formats coexist in the same repo: features under `specs/`, small Issues under `.dominicode/specs/`. Never write both for the same Issue. If a light contract grows past two pages or starts needing architecture decisions, promote it to a full SDD spec.
 
 ## Rules
 

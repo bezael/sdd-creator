@@ -7,6 +7,8 @@
 > Antes de generar código, el agente produce `spec.md` (6 secciones y provenance opcional del Issue), `plan.md` (decisiones técnicas) y `tasks.md` (tareas TDD con evidencia objetiva de finalización) bajo `specs/<feature-slug>/`.
 >
 > Después dirige Implement → Verify → Fix, Code Review contra requisitos y Final Verification antes del PR/hand-off. Mantiene **`specs/INDEX.md` como memoria del proyecto**, conserva la trazabilidad completa y sigue siendo Markdown plano, agnóstico de herramienta y sin dependencias.
+>
+> Las dos skills juntas implementan el **Contract Based Review Method (CBRM)**: `Issue → Contrato → Carril → Veredicto → PR`. `dominicode-sdd-creator` escribe el contrato (criterios de aceptación con el comando que prueba cada uno), `dominicode-harness-init` prepara el carril (el `AGENTS.md` del repo con comandos de verificación reales) y la review entrega un veredicto con evidencia en lugar de "parece que está bien".
 
 ---
 
@@ -31,6 +33,8 @@ El CLI te pregunta qué skills instalar y en qué agentes (Claude Code, Cursor, 
 
 > 💡 **Cómo actualizar:** Para actualizar una instalación existente a la última versión, simplemente vuelve a ejecutar el comando de arriba. Para instalaciones manuales, vuelve a ejecutar los comandos de copia respectivos.
 >
+> **Actualizar desde 1.7.x en agentes que no son Claude:** la 1.8.0 mueve las skills a `.agents/<skill>/`. Volver a ejecutar los comandos de copia no borra los archivos antiguos, así que elimina (o mueve a `.agents/dominicode-sdd-creator/`) el `AGENTS.md` raíz copiado de la skill SDD, `GEMINI.md`, `.cursor/rules/dominicode-sdd-creator.mdc`, `./templates` y `./references`. Después sigue [Otros agentes](#otros-agentes-codex-cursor-gemini-cli-aider-continue) para construir el carril.
+>
 > Nota: el número de versión que imprime el CLI `skills` al arrancar es la versión del propio CLI, no la de esta skill. La versión de la skill instalada se comprueba en `CHANGELOG.md` o en las releases de GitHub.
 
 ---
@@ -48,64 +52,56 @@ cp -r skills/engineering/dominicode-harness-init ~/.claude/skills/
 
 # Verifica
 ls ~/.claude/skills/dominicode-sdd-creator/SKILL.md
+ls ~/.claude/skills/dominicode-harness-init/SKILL.md
 ```
 
-A partir de ahí, cualquier sesión de Claude Code tendrá la skill disponible.
+A partir de ahí, cualquier sesión de Claude Code tendrá las dos skills disponibles.
 
 **Opción B — Skill por proyecto:**
 
 ```bash
 mkdir -p .claude/skills
 cp -r skills/engineering/dominicode-sdd-creator .claude/skills/
+cp -r skills/engineering/dominicode-harness-init .claude/skills/
 ```
 
 ### Claude.ai (web/desktop)
 
-1. Empaqueta la skill: `zip -r dominicode-sdd-creator.skill skills/engineering/dominicode-sdd-creator/`
-2. En Claude.ai → Settings → Skills → Upload skill → selecciona el `.skill`.
+1. Empaqueta cada skill:
+   - `zip -r dominicode-sdd-creator.skill skills/engineering/dominicode-sdd-creator/`
+   - `zip -r dominicode-harness-init.skill skills/engineering/dominicode-harness-init/`
+2. En Claude.ai → Settings → Skills → Upload skill → selecciona cada `.skill`.
 
-### Codex CLI (OpenAI)
+### Otros agentes (Codex, Cursor, Gemini CLI, Aider, Continue…)
 
-```bash
-# En el root del proyecto
-cp skills/engineering/dominicode-sdd-creator/AGENTS.md ./AGENTS.md
-cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
-cp -r skills/engineering/dominicode-sdd-creator/references ./references
-```
-
-### Cursor
+Los agentes que no son Claude leen un único archivo de instrucciones en la raíz del proyecto. Con CBRM, ese `AGENTS.md` raíz pertenece al **carril** (harness, convenciones y límites de tu repo), así que las skills viven en su propia carpeta y el archivo raíz apunta a ellas:
 
 ```bash
-mkdir -p .cursor/rules
-cp skills/engineering/dominicode-sdd-creator/AGENTS.md .cursor/rules/dominicode-sdd-creator.mdc
-cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
-cp -r skills/engineering/dominicode-sdd-creator/references ./references
+# En el root del proyecto: instala las dos skills una al lado de la otra, nunca encima de la raíz
+mkdir -p .agents
+cp -r skills/engineering/dominicode-sdd-creator .agents/
+cp -r skills/engineering/dominicode-harness-init .agents/
 ```
 
-En la primera línea del `.mdc` añade el frontmatter de Cursor:
+1. **Primero construye el carril.** Pide a tu agente que siga `.agents/dominicode-harness-init/AGENTS.md`. Audita el repo y propone el `AGENTS.md` raíz (Contract / Lane / Verdict). Si ya tienes uno, propone un diff en vez de sobrescribirlo.
+2. **Apunta el carril a la skill SDD.** La sección Contract generada referencia `.agents/dominicode-sdd-creator/AGENTS.md` para el trabajo de features. Si escribes el archivo raíz a mano, añade esa línea tú.
+3. **Conecta tu agente al archivo raíz:**
+   - **Codex CLI, Aider, Continue:** leen `AGENTS.md` de la raíz. No hay que hacer nada más.
+   - **Cursor:** crea `.cursor/rules/dominicode.mdc` con el frontmatter de abajo y un cuerpo que diga: `Follow AGENTS.md at the project root.`
+   - **Gemini CLI:** crea `GEMINI.md` con una sola línea: `@AGENTS.md`
 
 ```markdown
 ---
-description: Dominicode SDD Creator — escribe spec antes de código
+description: Dominicode CBRM — contrato, carril, veredicto
 alwaysApply: true
 ---
 ```
 
-### Gemini CLI (Google)
-
-```bash
-cp skills/engineering/dominicode-sdd-creator/AGENTS.md ./GEMINI.md
-cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
-cp -r skills/engineering/dominicode-sdd-creator/references ./references
-```
-
-### Aider, Continue y otros compatibles con AGENTS.md
-
-Copia `AGENTS.md` al root del proyecto junto con `templates/` y `references/`.
+Los `templates/` y `references/` de cada skill se quedan dentro de su carpeta `.agents/<skill>/`, así que las dos skills nunca se sobrescriben.
 
 ### Agentes sin soporte de archivos de instrucciones
 
-Pega el contenido de `AGENTS.md` al inicio de tu system prompt.
+Pega el contenido de `.agents/dominicode-harness-init/references/generic-prompt.md` para construir el carril. Para trabajo de features, pega `.agents/dominicode-sdd-creator/AGENTS.md` al inicio de tu system prompt.
 
 ---
 
@@ -160,7 +156,9 @@ bezael/sdd-creator
 
 ## Cómo usar
 
-Una vez instalada, describe lo que quieres construir:
+**Una vez por repositorio: prepara el carril.** Pide al agente que ejecute `dominicode-harness-init` ("prepara el harness", "prepara mi repo para agentes"). Ejecuta tus comandos reales de build, type check, tests y lint, propone un `AGENTS.md` con las secciones Contract, Lane y Verdict, y te dice tu nivel de harness (0–4) y el siguiente hueco que cerrar.
+
+**En cada feature: escribe el contrato y construye contra él.** Describe lo que quieres construir:
 
 ```
 "quiero hacer una app para que freelancers gestionen facturas"
@@ -183,6 +181,9 @@ El agente:
 9. Para cada tarea, ejecutará `Verify`; si falla aplicará el fix mínimo válido y verificará otra vez. Un checkbox exige evidencia.
 10. Ejecutará un Code Review independiente, empezando por requisitos y usando Issue, artefactos, diff real y resultados.
 11. Ejecutará Final Verification, incluida la revalidación de evidencia previamente aprobada, antes del PR/hand-off.
+12. Abrirá la PR con el **veredicto**: estado, alineación y una tabla de criterio → evidencia, para que quien revise solo abra el diff donde está en rojo.
+
+Para un Issue pequeño (un bug con repro claro, un cambio de un solo archivo), la spec completa sobra: el agente copia la plantilla de contrato ligero a `.dominicode/specs/<issue-number>-<slug>.md` y entrega el mismo veredicto.
 
 ---
 
@@ -197,7 +198,7 @@ Issue  ->  Contrato  ->  Carril  ->  Veredicto  ->  PR
 
 - **Contrato**: los criterios de aceptación de la spec, cada uno con el comando que lo prueba. Para features no triviales lo escribe `dominicode-sdd-creator`, y para Issues pequeños basta una plantilla ligera.
 - **Carril**: dónde puede trabajar el agente y cómo se comprueba a sí mismo, es decir, el harness (loop corto y loop largo), los rojos conocidos, las convenciones y los límites. Lo genera `dominicode-harness-init` como el `AGENTS.md` del repo, solo con comandos que ha ejecutado de verdad.
-- **Veredicto**: evidencia por criterio y un veredicto de alineación (`Exact`, `Tangling`, `Missing`) que se entrega en la PR. Tú lees el contrato y el veredicto, y solo abres el diff donde el veredicto está en rojo.
+- **Veredicto**: evidencia por criterio y un veredicto de alineación (`Exact`, `Tangling`, `Missing`, `Missing and Tangling`) que se entrega en la PR. Tú lees el contrato y el veredicto, y solo abres el diff donde el veredicto está en rojo.
 
 Método completo: [`references/cbrm.md`](./skills/engineering/dominicode-sdd-creator/references/cbrm.md).
 
@@ -216,6 +217,8 @@ El archivo degradado está escrito para convertirse, no para tirarse: añade un 
 ## Filosofía
 
 > **Understand → Spec → Plan → Tasks → Implement → Verify → Review → Final Verify → PR.** Las decisiones durables permanecen en spec, plan y tasks; la finalización exige evidencia.
+>
+> **Issue → Contrato → Carril → Veredicto → PR.** No te fías del código del agente porque te parezca bien; lo compruebas contra un contrato.
 
 La adaptación Dominicode de SDD está documentada en el libro y en los cursos de Dominicode:
 
@@ -228,5 +231,7 @@ La adaptación Dominicode de SDD está documentada en el libro y en los cursos d
 ## Créditos
 
 Adaptación SDD: **Bezael Pérez** · [Dominicode](https://dominicode.com) · [YouTube](https://youtube.com/@dominicode)
+
+CBRM (Contract Based Review Method) por **Bezael Pérez** · [Dominicode](https://dominicode.com)
 
 Distribución libre bajo licencia MIT. Si la adaptas a tu equipo o producto, una mención es bienvenida.

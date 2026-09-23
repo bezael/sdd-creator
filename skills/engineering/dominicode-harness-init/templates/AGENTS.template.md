@@ -17,7 +17,9 @@
 Work starts from a contract, never from a vague request. The contract is the list of
 acceptance criteria in the task's spec, and each criterion has the command that proves it.
 
-- **Where the contract lives:** {{SPEC_LOCATION: e.g. `specs/<slug>/spec.md` + `tasks.md` for features, `.dominicode/spec.template.md` for small fixes}}
+- **Where the contract lives:**
+  - Features: `specs/<slug>/spec.md` + `tasks.md` (Dominicode SDD){{SDD_SKILL_POINTER: non-Claude installs: ", following `.agents/dominicode-sdd-creator/AGENTS.md`"; Claude Code installs: ", using the `dominicode-sdd-creator` skill"; omit if the SDD skill is not installed}}
+  - Small Issues (clear bug, single-file change): a copy of `.dominicode/spec.template.md` at `.dominicode/specs/<issue-number>-<slug>.md`. Never fill the template in place.
 - **No contract, no code.** If the task has no acceptance criteria, write them and get them approved before touching code.
 - **The contract is the only source of scope.** If implementing it requires a decision the contract does not make, stop and update the contract first.
 
@@ -108,6 +110,7 @@ Alignment: Exact | Tangling | Missing | Missing and Tangling
 Long loop: {{summarized output}}
 New reds: none | {{list}}
 Out-of-scope changes: none | {{list with justification}}
+Not run: none | {{checks that were not executed, and why}}
 ```
 
 - **Exact**: the change covers every criterion and nothing else. **Tangling**: it includes code no criterion asks for. **Missing**: a criterion is not satisfied. **Missing and Tangling**: both.

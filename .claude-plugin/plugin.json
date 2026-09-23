@@ -2,10 +2,7 @@
   "name": "dominicode-sdd-creator",
   "description": "Método CBRM de Dominicode: de un Issue a una PR verificada con contrato (spec), carril (harness) y veredicto (evidencia). Incluye el lifecycle SDD y el setup del harness.",
   "version": "1.8.0",
-  "author": {
-    "name": "Bezael Pérez",
-    "url": "https://dominicode.com"
-  },
+  "author": { "name": "Bezael Pérez", "url": "https://dominicode.com" },
   "skills": [
     "./skills/engineering/dominicode-sdd-creator",
     "./skills/engineering/dominicode-harness-init"

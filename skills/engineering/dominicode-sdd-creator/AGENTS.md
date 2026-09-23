@@ -270,6 +270,8 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 - `references/code-review.md` — requirements-first review using artifacts, diff and results
 - `references/final-verification.md` — final regression gate before PR/handoff
 
+Paths are relative to the folder that contains this file (for example `.agents/dominicode-sdd-creator/`), not to the project root.
+
 Load them only when needed (progressive disclosure), not all at once.
 
 ---

@@ -27,7 +27,7 @@ The generated `AGENTS.md` has exactly those three parts:
 
 This skill sets up **the lane**. Without a lane, the contract is a statement of intent and you have to issue the verdict manually — exactly the problem we came here to solve.
 
-For non-trivial features, the contract comes from the `dominicode-sdd-creator` skill (`spec.md` + `tasks.md`). For small Issues that don't warrant a full spec (a bug with a clear repro, a single-file change), the light contract in `templates/spec.template.md` is enough. See `dominicode-sdd-creator/references/cbrm.md` for the full method.
+For non-trivial features, the contract comes from the `dominicode-sdd-creator` skill (`spec.md` + `tasks.md`). For small Issues that don't warrant a full spec (a bug with a clear repro, a single-file change), a copy of the light contract template at `.dominicode/specs/<issue-number>-<slug>.md` is enough. See `dominicode-sdd-creator/references/cbrm.md` for the full method.
 
 ## Golden rule
 
@@ -88,17 +88,19 @@ If a command does not exist, do not invent or install it yourself: report it as 
 
 If any already exist, **do not overwrite them**. Read them, then propose the diff in Phase 2.
 
+If the root `AGENTS.md` (or `GEMINI.md`, or a `.cursor/rules/*.mdc`) is the `dominicode-sdd-creator` skill file copied by a 1.7.x install (it starts with `# AGENTS.md — Dominicode SDD Creator`), do not merge the lane into it. Report it and propose moving the skill to `.agents/dominicode-sdd-creator/` (with its `templates/` and `references/`) and replacing the root file with the lane.
+
 ### 5. Close the phase with the table
 
 ```
-| Mechanism    | Command            | Status     | Time |
-|--------------|--------------------|------------|--------|
-| Build        | pnpm build         | OK         | 24s    |
-| Type check   | pnpm tsc --noEmit  | OK         | 6s     |
-| Tests        | —                  | DOES NOT EXIST  | —      |
-| Lint         | pnpm lint          | FAILS (12) | 4s     |
-| CI           | —                  | DOES NOT EXIST  | —      |
-| E2E          | —                  | DOES NOT EXIST  | —      |
+| Mechanism    | Command            | Status         | Time |
+|--------------|--------------------|----------------|------|
+| Build        | pnpm build         | OK             | 24s  |
+| Type check   | pnpm tsc --noEmit  | OK             | 6s   |
+| Tests        | —                  | DOES NOT EXIST | —    |
+| Lint         | pnpm lint          | FAILS (12)     | 4s   |
+| CI           | —                  | DOES NOT EXIST | —    |
+| E2E          | —                  | DOES NOT EXIST | —    |
 ```
 
 ## PHASE 2 · Generation
@@ -109,7 +111,7 @@ Generate using the **real commands verified in Phase 1**, never placeholders:
 
 1. **`AGENTS.md`** — the repo's permanent rules, in three parts: **Contract** (where acceptance criteria live, definition of done), **Lane** (stack, verification commands at both speeds, known reds, conventions detected in existing code, boundaries) and **Verdict** (the evidence format every task ends with). Template at `templates/AGENTS.template.md`.
 2. **`CLAUDE.md`** — if the user works with Claude Code and it does not exist, a one-line pointer to `AGENTS.md`. Do not duplicate the content: it will drift within two weeks.
-3. **`.dominicode/spec.template.md`** — the light task contract for small Issues. Template at `templates/spec.template.md`. If the repo already uses `specs/<slug>/spec.md` from the SDD skill, point the Contract section there instead and skip this file.
+3. **`.dominicode/spec.template.md`** — the light task contract for small Issues. Template at `templates/spec.template.md`. Always generate it, even in repos that use the SDD skill: small Issues need a contract too. The template is never filled in place — each small Issue gets a copy at `.dominicode/specs/<issue-number>-<slug>.md`. The Contract section of `AGENTS.md` names both locations: `specs/<slug>/` for features and `.dominicode/specs/` for small Issues.
 4. **`.github/PULL_REQUEST_TEMPLATE.md`** — Contract, Lane and Verdict sections with an evidence table. Template at `templates/pr.template.md`.
 5. **Minimal CI workflow** — only if there is no CI and the user asks for it. Run the long loop on every PR, nothing more.
 

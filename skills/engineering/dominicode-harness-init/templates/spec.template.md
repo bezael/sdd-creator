@@ -3,6 +3,7 @@
 > The contract (CBRM light contract). Sign it **before** writing code.
 > For small Issues only: a bug with a clear repro or a single-file change.
 > If it does not fit on two pages, the task is too large: use the full SDD spec instead.
+> Do not fill this template in place: copy it to `.dominicode/specs/<issue-number>-<slug>.md`.
 
 **Issue:** {{ISSUE_LINK}}
 **Date:** {{DATE}}

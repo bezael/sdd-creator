@@ -7,6 +7,8 @@
 > Before generating code, the agent produces `spec.md` (6 sections plus optional Issue provenance), `plan.md` (technical decisions) and `tasks.md` (TDD-ordered tasks with objective completion evidence) under `specs/<feature-slug>/`.
 >
 > It then drives Implement → Verify → Fix, requirements-first Code Review and Final Verification before PR/handoff. It keeps **`specs/INDEX.md` as project memory**, preserves end-to-end traceability and remains plain Markdown, tool-agnostic and dependency-free.
+>
+> Both skills together implement the **Contract Based Review Method (CBRM)**: `Issue → Contract → Lane → Verdict → PR`. `dominicode-sdd-creator` writes the contract (acceptance criteria with the command that proves each one), `dominicode-harness-init` sets up the lane (the repo's `AGENTS.md` with real verification commands), and the review delivers a verdict backed by evidence instead of "it looks right".
 
 ---
 
@@ -31,6 +33,8 @@ The CLI asks which skills to install and for which agents (Claude Code, Cursor, 
 
 > 💡 **How to update:** To update an existing installation to the latest version, simply run the command above again. For manual installations, re-run their respective copy commands.
 >
+> **Upgrading a non-Claude install from 1.7.x:** 1.8.0 moves the skills to `.agents/<skill>/`. Re-running the copy commands does not remove the old files, so delete (or move into `.agents/dominicode-sdd-creator/`) the root `AGENTS.md` copied from the SDD skill, `GEMINI.md`, `.cursor/rules/dominicode-sdd-creator.mdc`, `./templates` and `./references`. Then follow [Other agents](#other-agents-codex-cursor-gemini-cli-aider-continue) to build the lane.
+>
 > Note: the version number the `skills` CLI prints on startup is the CLI's own version, not this skill's. Check the installed skill version in `CHANGELOG.md` or the GitHub releases.
 
 ---
@@ -48,64 +52,56 @@ cp -r skills/engineering/dominicode-harness-init ~/.claude/skills/
 
 # Verify
 ls ~/.claude/skills/dominicode-sdd-creator/SKILL.md
+ls ~/.claude/skills/dominicode-harness-init/SKILL.md
 ```
 
-From that point on, every Claude Code session will have the skill available.
+From that point on, every Claude Code session will have both skills available.
 
 **Option B — Per-project skill:**
 
 ```bash
 mkdir -p .claude/skills
 cp -r skills/engineering/dominicode-sdd-creator .claude/skills/
+cp -r skills/engineering/dominicode-harness-init .claude/skills/
 ```
 
 ### Claude.ai (web/desktop)
 
-1. Bundle the skill: `zip -r dominicode-sdd-creator.skill skills/engineering/dominicode-sdd-creator/`
-2. In Claude.ai → Settings → Skills → Upload skill → select the `.skill` file.
+1. Bundle each skill:
+   - `zip -r dominicode-sdd-creator.skill skills/engineering/dominicode-sdd-creator/`
+   - `zip -r dominicode-harness-init.skill skills/engineering/dominicode-harness-init/`
+2. In Claude.ai → Settings → Skills → Upload skill → select each `.skill` file.
 
-### Codex CLI (OpenAI)
+### Other agents (Codex, Cursor, Gemini CLI, Aider, Continue…)
 
-```bash
-# In the project root
-cp skills/engineering/dominicode-sdd-creator/AGENTS.md ./AGENTS.md
-cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
-cp -r skills/engineering/dominicode-sdd-creator/references ./references
-```
-
-### Cursor
+Non-Claude agents read one instruction file from the project root. With CBRM, that root `AGENTS.md` belongs to the **lane** (your repo's harness, conventions and boundaries), so the skills live in their own folder and the root file points to them:
 
 ```bash
-mkdir -p .cursor/rules
-cp skills/engineering/dominicode-sdd-creator/AGENTS.md .cursor/rules/dominicode-sdd-creator.mdc
-cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
-cp -r skills/engineering/dominicode-sdd-creator/references ./references
+# In the project root: install both skills side by side, never over the root
+mkdir -p .agents
+cp -r skills/engineering/dominicode-sdd-creator .agents/
+cp -r skills/engineering/dominicode-harness-init .agents/
 ```
 
-Add the Cursor frontmatter at the top of the `.mdc` file:
+1. **Build the lane first.** Ask your agent to follow `.agents/dominicode-harness-init/AGENTS.md`. It audits the repo and proposes the root `AGENTS.md` (Contract / Lane / Verdict). If you already have one, it proposes a diff instead of overwriting it.
+2. **Point the lane at the SDD skill.** The generated Contract section references `.agents/dominicode-sdd-creator/AGENTS.md` for feature work. If you write the root file by hand, add that line yourself.
+3. **Wire your agent to the root file:**
+   - **Codex CLI, Aider, Continue:** they read `AGENTS.md` from the root. Nothing else to do.
+   - **Cursor:** create `.cursor/rules/dominicode.mdc` with the frontmatter below, and a body that says: `Follow AGENTS.md at the project root.`
+   - **Gemini CLI:** create `GEMINI.md` with a single line: `@AGENTS.md`
 
 ```markdown
 ---
-description: Dominicode SDD Creator — write spec before code
+description: Dominicode CBRM — contract, lane, verdict
 alwaysApply: true
 ---
 ```
 
-### Gemini CLI (Google)
-
-```bash
-cp skills/engineering/dominicode-sdd-creator/AGENTS.md ./GEMINI.md
-cp -r skills/engineering/dominicode-sdd-creator/templates ./templates
-cp -r skills/engineering/dominicode-sdd-creator/references ./references
-```
-
-### Aider, Continue and other AGENTS.md-compatible tools
-
-Copy `AGENTS.md` to the project root together with `templates/` and `references/`.
+Each skill's `templates/` and `references/` stay inside its own `.agents/<skill>/` folder, so the two skills never overwrite each other.
 
 ### Agents without instruction-file support
 
-Paste the contents of `AGENTS.md` at the beginning of your system prompt.
+Paste the contents of `.agents/dominicode-harness-init/references/generic-prompt.md` to build the lane. For feature work, paste `.agents/dominicode-sdd-creator/AGENTS.md` at the beginning of your system prompt.
 
 ---
 
@@ -160,7 +156,9 @@ bezael/sdd-creator
 
 ## How to use
 
-Once installed, describe what you want to build:
+**Once per repository — set up the lane.** Ask the agent to run `dominicode-harness-init` ("set up the harness", "prepare my repo for agents"). It runs your real build, type check, test and lint commands, then proposes an `AGENTS.md` with Contract, Lane and Verdict sections and reports your harness level (0–4) and the next gap to close.
+
+**For every feature — write the contract and build against it.** Describe what you want to build:
 
 ```
 "I want to build an app for freelancers to manage invoices"
@@ -183,6 +181,9 @@ The agent will:
 9. For each task, execute its `Verify`; on failure apply the smallest valid fix and verify again. A checkbox requires evidence.
 10. Run an independent, requirements-first Code Review against the Issue, artifacts, real diff and verification results.
 11. Run Final Verification, including rechecking previously passed evidence, before PR/handoff.
+12. Open the PR with the **verdict**: status, alignment and a criterion → evidence table, so the reviewer opens the diff only where it is red.
+
+For a small Issue (a bug with a clear repro, a single-file change), the full spec is overkill: the agent copies the light contract template to `.dominicode/specs/<issue-number>-<slug>.md` and delivers the same verdict.
 
 ---
 
@@ -197,7 +198,7 @@ Issue  ->  Contract  ->  Lane  ->  Verdict  ->  PR
 
 - **Contract**: the spec's acceptance criteria, each with the command that proves it. `dominicode-sdd-creator` writes it for non-trivial features, and a light template covers small Issues.
 - **Lane**: where the agent may work and how it checks itself, meaning the harness (short and long loop), known reds, conventions and boundaries. `dominicode-harness-init` generates it as the repo's `AGENTS.md`, using only commands it actually ran.
-- **Verdict**: per-criterion evidence and an alignment verdict (`Exact`, `Tangling`, `Missing`), delivered in the PR. You read the contract and the verdict, and open the diff only where the verdict is red.
+- **Verdict**: per-criterion evidence and an alignment verdict (`Exact`, `Tangling`, `Missing`, `Missing and Tangling`), delivered in the PR. You read the contract and the verdict, and open the diff only where the verdict is red.
 
 Full method: [`references/cbrm.md`](./skills/engineering/dominicode-sdd-creator/references/cbrm.md).
 
@@ -216,6 +217,8 @@ The degraded file is written to be converted, not thrown away: add a runner late
 ## Philosophy
 
 > **Understand → Spec → Plan → Tasks → Implement → Verify → Review → Final Verify → PR.** Durable decisions stay in spec, plan and tasks; completion is evidence-based.
+>
+> **Issue → Contract → Lane → Verdict → PR.** You don't trust the agent's code because it looks right; you check it against a contract.
 
 The Dominicode adaptation of SDD is documented in the book and in Dominicode courses:
 
@@ -228,5 +231,7 @@ The Dominicode adaptation of SDD is documented in the book and in Dominicode cou
 ## Credits
 
 SDD adaptation: **Bezael Pérez** · [Dominicode](https://dominicode.com) · [YouTube](https://youtube.com/@dominicode)
+
+CBRM (Contract Based Review Method) by **Bezael Pérez** · [Dominicode](https://dominicode.com)
 
 Freely distributed under the MIT license. If you adapt it for your team or product, a mention is welcome.

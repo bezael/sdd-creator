@@ -20,7 +20,7 @@ Work in three phases and **do not move to the next one without showing me the re
 
 3. **Run every candidate.** Record the exact command, exit code, duration, and the last lines if it fails. Do not write any command later that you did not run here: a harness with invented commands is worse than having no harness.
 
-4. Check whether agent configuration already exists: `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`. If it exists, do not overwrite it — read it and then propose the diff.
+4. Check whether agent configuration already exists: `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`. If it exists, do not overwrite it — read it and then propose the diff. If the root `AGENTS.md` is the Dominicode SDD Creator skill file itself, do not merge into it: propose moving it to `.agents/dominicode-sdd-creator/` and replacing the root file with the lane.
 
 5. Return this table:
 
@@ -35,10 +35,10 @@ First show me the list of files you will create or modify and wait for my confir
 Generate using **only the commands verified in Phase 1**:
 
 - `AGENTS.md`, in exactly three sections:
-  - **Contract**: where each task's acceptance criteria live, and the definition of done (every criterion has evidence, both loops green with no new reds, nothing in the diff the contract did not request).
+  - **Contract**: where each task's acceptance criteria live — name both locations: `specs/<slug>/` for features and `.dominicode/specs/` for small Issues — and the definition of done (every criterion has evidence, both loops green with no new reds, nothing in the diff the contract did not request).
   - **Lane**: stack, verification commands separated into a short loop (under 60s, after every change) and a long loop (before the PR), pre-existing known reds, conventions read from existing code, and boundaries you must not touch without permission.
   - **Verdict**: the report every task ends with: status, alignment (Exact / Tangling / Missing / Missing and Tangling) and a criterion -> status -> evidence table.
-- A spec template with acceptance criteria where **each criterion includes the command that proves it**.
+- `.dominicode/spec.template.md`: the light contract for small Issues, with acceptance criteria where **each criterion includes the command that proves it**. Always generate it, even if the repo uses full SDD specs. It is never filled in place: each small Issue gets a copy at `.dominicode/specs/<issue-number>-<slug>.md`.
 - A PR template with Contract, Lane and Verdict sections.
 - A minimal CI workflow, only if there is no CI and I ask for it.
 
