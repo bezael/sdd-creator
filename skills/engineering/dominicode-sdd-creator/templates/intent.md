@@ -56,7 +56,7 @@ status: draft   # draft → accepted (starts spec.md) | rejected (reason below)
 ## Decision
 
 > Filled by whoever accepts or rejects the idea. An accepted intent is what starts `spec.md`.
+> The status itself lives only in the YAML header above; this section records who decided, when, and why.
 
-- Status: [accepted | rejected]
 - By / date: [name, YYYY-MM-DD]
 - Reason (if rejected): [one line]

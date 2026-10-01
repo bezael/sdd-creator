@@ -102,7 +102,7 @@ Out-of-scope changes: none | [list with justification]
 - [missing, stale, skipped or non-reproducible evidence]
 ```
 
-`PASS` means there are no Critical blockers and no unresolved Important finding that invalidates an acceptance criterion or required verification. An alignment verdict other than **Exact** cannot be `PASS` unless the user explicitly accepted the deviation and it was reflowed into the spec first — out-of-scope code is removed or specced, missing work is completed or descoped in writing. A review result is derived evidence, not a new source of product requirements. If a finding exposes a durable requirement or architecture gap, reflow `spec.md` → `plan.md` → `tasks.md` before fixing it.
+`PASS` means there are no Critical blockers and no unresolved Important finding that invalidates an acceptance criterion or required verification. An alignment verdict other than **Exact** cannot be `PASS` unless the user explicitly accepted the deviation and it was reflowed into the spec first — out-of-scope code is removed or specced (an idea worth keeping becomes a follow-up `intent.md`), missing work is completed or descoped in writing. A review result is derived evidence, not a new source of product requirements. If a finding exposes a durable requirement or architecture gap, reflow `spec.md` → `plan.md` → `tasks.md` before fixing it.
 
 Keep the output in the repository's existing review channel (for example a PR review or check) or in the agent handoff. Do not create a new committed review artifact unless project policy requires one; link the stable result from the PR when available.
 

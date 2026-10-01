@@ -69,7 +69,7 @@ This snapshot anchors Section 5 (Architecture) and `plan.md` §1 on what already
 
 Ask for or infer a short kebab-case name (e.g. `invoice-generator`, `user-auth`). All artifacts go under `specs/<feature-slug>/`.
 
-### Step 1.5 — Capture the idea as `intent.md` (LOW context, or when asked)
+### Step 1.5 — Capture the idea as `intent.md` (LOW context, follow-ups, or when asked)
 
 A vague request interviewed straight into six spec sections mixes two jobs: understanding what the person wants and deciding what to build. `intent.md` keeps the first one on its own, in the originator's words, as a versioned artifact the spec is derived from.
 
@@ -77,7 +77,7 @@ A vague request interviewed straight into six spec sections mixes two jobs: unde
 |---------|-------------|
 | **LOW** | **Required.** Interview for the idea, write `specs/<feature-slug>/intent.md` from `templates/intent.md`, and ask the user to accept it before Step 2 |
 | **MEDIUM** | Optional. Write it only when the problem or the outcome is missing from the request, or when the user asks |
-| **HIGH** | Skip it. The PRD, ticket or Issue already is the intent: link it in the spec's `source` block |
+| **HIGH** | Skip it. The PRD, ticket or Issue already is the intent: add it as an entry in the spec's `source` list (`github_issue`, or `doc` for a PRD or ticket elsewhere or pasted into the chat) |
 | **Follow-up** | Any out-of-scope idea surfaced during implementation or review (see Code Review) becomes a new `specs/<new-slug>/intent.md` with `origin: follow-up` |
 
 Rules:
@@ -85,12 +85,12 @@ Rules:
 1. **The problem comes before the solution.** Problem and Proposed outcome are written from the user's side; no stack, no endpoints, no screens.
 2. **One screen maximum.** If it grows past that, it's turning into a spec: stop and move on to Step 2.
 3. **Open questions are never dropped.** Each one gets answered in `spec.md` or carried to its Open questions.
-4. **Acceptance is explicit.** Set `status: accepted` (who and when) only after the user says so. A rejected intent keeps its file and its reason, so the idea isn't proposed again from scratch.
-5. Register it in `specs/INDEX.md` with status **intent** until `spec.md` exists.
+4. **Acceptance is explicit.** Set `status: accepted` in the YAML header (the only status field) only after the user says so, and record who and when under Decision. A rejected intent gets `status: rejected` and keeps its file and its reason, so the idea isn't proposed again from scratch.
+5. Register it in `specs/INDEX.md` with status **intent** until `spec.md` exists, or **rejected** if it is turned down.
 
 ### Step 2 — Write `spec.md` (the 6 sections)
 
-Use the template at `templates/spec.md`. When an accepted `intent.md` exists, derive the spec from it: Vision from Problem + Proposed outcome, Users from Affected users, NFRs from Constraints, and its Open questions answered or carried forward. Reference it in the `source` block (`type: intent`). When the request comes from a GitHub Issue, preserve its repository, number and URL in the optional `source` block, then copy the accepted requirements into the six sections. A source link never replaces the spec. Fill all 6 sections in order. Strict rules:
+Use the template at `templates/spec.md`. When an accepted `intent.md` exists, derive the spec from it: Vision from Problem + Proposed outcome, Users from Affected users, NFRs from Constraints, and its Open questions answered or carried forward. Reference it as a `type: intent` entry in the `source` list. When the request comes from a GitHub Issue, preserve its repository, number and URL as a `type: github_issue` entry in the optional `source` list (alongside the intent entry when both exist), then copy the accepted requirements into the six sections. A source link never replaces the spec. Fill all 6 sections in order. Strict rules:
 
 1. **Section 1 (Visión)** — Must fit in 1–2 sentences. If you cannot express it that briefly, the idea is not clear yet → loop back with the user, do not proceed.
 2. **Section 2 (Usuarios)** — List concrete actions per role, not marketing personas. Format: `Usuario [rol]: acción 1, acción 2, acción 3`.

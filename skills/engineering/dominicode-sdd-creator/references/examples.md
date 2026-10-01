@@ -31,10 +31,10 @@ Questions and resolved answers:
 
 ```yaml
 source:
-  type: github_issue
-  repository: acme/feedback
-  issue: 123
-  url: https://github.com/acme/feedback/issues/123
+  - type: github_issue
+    repository: acme/feedback
+    issue: 123
+    url: https://github.com/acme/feedback/issues/123
 ```
 
 ## SECTION 1 — Product Vision

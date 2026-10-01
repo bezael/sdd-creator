@@ -13,7 +13,7 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 ### Changed
 
 - `templates/specs-index.md`: new **intent** status (and **rejected**) for folders that only hold an idea.
-- `templates/spec.md`: the `source` block documents `type: intent`.
+- `templates/spec.md`: `source` is now a list, so a GitHub Issue, an accepted intent and a PRD/doc (`type: doc`) can be recorded together. A single-object `source` from earlier specs still reads as one entry.
 - READMEs: the workflow and the template tree include `intent.md`.
 
 ## [1.8.0] - 2026-09-23
