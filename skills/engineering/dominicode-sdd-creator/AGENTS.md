@@ -8,7 +8,7 @@
 
 ## Purpose
 
-This file instructs the agent to run the complete Dominicode Spec-Driven Development lifecycle for non-trivial work: Understand → Spec → Plan → Tasks → Implement → Verify (Fix → Verify on failure) → Code Review → Final Verify → PR / Handoff.
+This file instructs the agent to run the complete Dominicode Spec-Driven Development lifecycle for non-trivial work: Understand (→ Intent) → Spec → Plan → Tasks → Implement → Verify (Fix → Verify on failure) → Code Review → Final Verify → PR / Handoff.
 
 The durable sources of truth are `spec.md`, `plan.md` and `tasks.md`. Evidence and review prove completion; `.work/implementation.md` is disposable scratch.
 
@@ -47,7 +47,7 @@ Activate the SDD flow at the **start** of any non-trivial coding work, even if t
 |-------|-------|--------|
 | **HIGH** | Detailed PRD, ticket, or 3+ paragraphs | Full draft + "Open questions" list |
 | **MEDIUM** | 1–2 sentences with a clear goal | Draft with `[NEEDS CONFIRMATION: ...]` on unknowns |
-| **LOW** | "I want to make an app for X" | Interview the user **one section at a time**, not all 6 questions at once |
+| **LOW** | "I want to make an app for X" | Interview the user about the **idea first** (problem, outcome, constraints), one question at a time, and capture it as `intent.md` (Step 1.5). Draft the spec only from the accepted intent |
 
 Tell the user which mode you detected before starting.
 
@@ -66,9 +66,28 @@ This snapshot anchors Architecture (spec Section 5 and `plan.md` §1) on what al
 
 Ask for or infer a kebab-case name (e.g. `invoice-generator`). All artifacts go under `specs/<feature-slug>/`.
 
+### Step 1.5 — Capture the idea as `intent.md` (LOW context, follow-ups, or when asked)
+
+A vague request interviewed straight into six spec sections mixes two jobs: understanding what the person wants and deciding what to build. `intent.md` keeps the first one on its own, in the originator's words, as a versioned artifact the spec is derived from.
+
+| Context | `intent.md` |
+|---------|-------------|
+| **LOW** | **Required.** Interview for the idea, write `specs/<feature-slug>/intent.md` from `templates/intent.md`, and ask the user to accept it before Step 2 |
+| **MEDIUM** | Optional. Write it only when the problem or the outcome is missing from the request, or when the user asks |
+| **HIGH** | Skip it. The PRD, ticket or Issue already is the intent: add it as an entry in the spec's `source` list (`github_issue`, or `doc` for a PRD or ticket elsewhere or pasted into the chat) |
+| **Follow-up** | Any out-of-scope idea surfaced during implementation or review (see Code Review) becomes a new `specs/<new-slug>/intent.md` with `origin: follow-up` |
+
+Rules:
+
+1. **The problem comes before the solution.** Problem and Proposed outcome are written from the user's side; no stack, no endpoints, no screens.
+2. **One screen maximum.** If it grows past that, it's turning into a spec: stop and move on to Step 2.
+3. **Open questions are never dropped.** Each one gets answered in `spec.md` or carried to its Open questions.
+4. **Acceptance is explicit.** Set `status: accepted` in the YAML header (the only status field) only after the user says so, and record who and when under Decision. A rejected intent gets `status: rejected` and keeps its file and its reason, so the idea isn't proposed again from scratch.
+5. Register it in `specs/INDEX.md` with status **intent** until `spec.md` exists, or **rejected** if it is turned down.
+
 ### Step 2 — Write `spec.md` (6 sections, in order)
 
-Use the template at `templates/spec.md`. If the feature comes from a GitHub Issue, preserve repository, issue number and URL in the optional `source` block, then express the accepted requirements in the six sections. A link does not replace the spec. Strict rules:
+Use the template at `templates/spec.md`. When an accepted `intent.md` exists, derive the spec from it: Vision from Problem + Proposed outcome, Users from Affected users, NFRs from Constraints, and its Open questions answered or carried forward. Reference it as a `type: intent` entry in the `source` list. If the feature comes from a GitHub Issue, preserve repository, issue number and URL as a `type: github_issue` entry in the optional `source` list (alongside the intent entry when both exist), then express the accepted requirements in the six sections. A link does not replace the spec. Strict rules:
 
 1. **Vision** — Maximum 2 sentences. If it doesn't fit, the idea is not clear yet.
 2. **Users** — Concrete actions per role, not marketing personas. Format: `User [role]: action 1, action 2, action 3`.
@@ -194,7 +213,7 @@ For each pending task, read Criterion, Files, Verify and Done when; set status t
 
 ### Code Review
 
-Review the source Issue when present, `spec.md`, `plan.md`, `tasks.md`, the real implementation diff, tests and verification results. Review in this order: requirements compliance, correctness, security, performance, tests, maintainability. Requirements compliance closes with an explicit **alignment verdict** — `Exact`, `Tangling`, `Missing` or `Missing and Tangling` — and only `Exact` (or a deviation the user accepted and reflowed into the spec) can be part of a PASS. The reviewer must be conceptually independent from the implementer. Close the review by listing its **durable learnings** (decision confirmed or overturned, alternative rejected, risk materialized) for the hand-off's `specs/INDEX.md` update. Use `references/code-review.md` and resolve blockers before the final gate. Read the lane (the repository's `AGENTS.md` boundaries and harness, when present) as scope input, and deliver the result as a CBRM **Verdict**: status, alignment and a criterion → status → evidence table.
+Review the source Issue when present, `spec.md`, `plan.md`, `tasks.md`, the real implementation diff, tests and verification results. Review in this order: requirements compliance, correctness, security, performance, tests, maintainability. Requirements compliance closes with an explicit **alignment verdict** — `Exact`, `Tangling`, `Missing` or `Missing and Tangling` — and only `Exact` (or a deviation the user accepted and reflowed into the spec) can be part of a PASS. The reviewer must be conceptually independent from the implementer. Close the review by listing its **durable learnings** (decision confirmed or overturned, alternative rejected, risk materialized) for the hand-off's `specs/INDEX.md` update. Tangling code the user doesn't accept into this change is removed; if the idea behind it is worth keeping, capture it as a follow-up `intent.md` (Step 1.5) instead of losing it. Use `references/code-review.md` and resolve blockers before the final gate. Read the lane (the repository's `AGENTS.md` boundaries and harness, when present) as scope input, and deliver the result as a CBRM **Verdict**: status, alignment and a criterion → status → evidence table.
 
 ### Final Verify
 
@@ -212,6 +231,7 @@ Only after Final Verification is PASS, create or hand off the Pull Request with 
 specs/
 ├── INDEX.md                        ← project memory — committed, updated at hand-off
 └── <feature-slug>/
+    ├── intent.md                   ← optional — the idea before the spec (Step 1.5)
     ├── spec.md
     ├── plan.md
     ├── tasks.md
@@ -226,6 +246,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 ## Hard rules
 
 - ❌ Never write implementation code in the same turn that the spec is created
+- ❌ Never draft `spec.md` from a LOW-context request without an accepted `intent.md` — understand the idea before deciding what to build
 - ❌ Never skip Section 1 (Vision) or accept a Vision longer than 2 sentences
 - ❌ Never write a flow with only the happy path
 - ❌ Never silently pick a stack if the user gave no preference
@@ -240,7 +261,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 - ❌ Never mark a task complete without executing Verify and recording evidence
 - ❌ Never set status to `Completed` from checkbox count or implementer assertion alone
 - ❌ Never use review or final verification as a competing requirements source
-- ✅ Confirm with the user between Step 2, Step 3, Step 3.5, and Step 4
+- ✅ Confirm with the user between Step 1.5 (when `intent.md` is written), Step 2, Step 3, Step 3.5, and Step 4
 - ✅ Always update `specs/INDEX.md` at hand-off and reuse its Shared decisions instead of re-deciding them
 - ✅ If implementation reveals a gap: update `spec.md` → `plan.md` → `tasks.md` → then code — a durable decision must never live only in `.work/implementation.md`
 - ✅ Review the real diff against the Issue/spec/plan/tasks and current evidence
@@ -254,6 +275,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose changes
 
 ## Referenced resources
 
+- `templates/intent.md` — the idea before the spec: problem, outcome, constraints, open questions and the accept/reject decision (Step 1.5)
 - `templates/spec.md` — the 6-section spec template
 - `templates/plan.md` — technical plan template
 - `templates/tasks.md` — TDD task list template (includes the coverage matrix) — **the default**

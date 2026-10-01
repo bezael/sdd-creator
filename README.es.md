@@ -127,6 +127,7 @@ bezael/sdd-creator
 │           ├── SKILL.md           ← Claude Code
 │           ├── AGENTS.md          ← otros agentes
 │           ├── templates/
+│           │   ├── intent.md
 │           │   ├── spec.md
 │           │   ├── plan.md
 │           │   ├── tasks.md
@@ -169,7 +170,7 @@ bezael/sdd-creator
 El agente:
 1. Detectará el nivel de contexto (alto / medio / bajo)
 2. Anclará el spec en tu proyecto — detecta el stack en uso, convenciones y specs previos (un "Project Context Snapshot")
-3. Te entrevistará o producirá un draft según el caso
+3. Te entrevistará o producirá un draft según el caso. Si la idea es vaga, primero la recoge en `intent.md` (problema, resultado, restricciones, preguntas abiertas) y espera a que la aceptes
 4. Generará `specs/<feature>/spec.md` con las 6 secciones
 5. Tras tu confirmación, generará `plan.md`
 6. Tras tu confirmación, generará `tasks.md` con TDD — con una matriz de cobertura para que ninguna funcionalidad se quede sin tarea

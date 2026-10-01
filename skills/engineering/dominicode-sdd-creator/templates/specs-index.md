@@ -25,7 +25,7 @@
 ## Specs
 
 > One row per feature spec under `specs/`. `status` mirrors the lifecycle of the work, not the quality of the document.
-> Before `tasks.md` exists, use **draft** for a spec that is not yet confirmed. Once tasks exist, mirror the canonical status from that feature's `tasks.md`: **not started**, **in progress**, or **completed**. Use **archived** only for abandoned or superseded work.
+> Use **intent** for a folder that only has `intent.md` (an idea not yet specced; **rejected** if it was turned down). Before `tasks.md` exists, use **draft** for a spec that is not yet confirmed. Once tasks exist, mirror the canonical status from that feature's `tasks.md`: **not started**, **in progress**, or **completed**. Use **archived** only for abandoned or superseded work.
 > Append `· no-TDD` when the spec uses no-TDD mode — e.g. `in progress · no-TDD`. The suffix does not change the status transition rules.
 
 | Slug | Vision (1 line) | Status | Key stack | Related specs |

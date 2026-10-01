@@ -9,12 +9,19 @@
 
 > Preserve where the feature came from. Omit this block when there is no external source. This is provenance, not a second requirements document: the acceptance criteria below remain the source of truth for the feature.
 
+`source` is a list: keep one entry per origin that applies and delete the rest. An Issue and an accepted intent can coexist.
+
 ```yaml
 source:
-  type: github_issue
-  repository: owner/repo
-  issue: 123
-  url: https://github.com/owner/repo/issues/123
+  - type: github_issue
+    repository: owner/repo
+    issue: 123
+    url: https://github.com/owner/repo/issues/123
+  - type: intent                 # accepted intent.md in this folder
+    path: specs/<feature-slug>/intent.md
+  - type: doc                    # PRD, ticket in another tool, or text pasted into the chat
+    title: [document name]
+    url: [link or repo path — omit if it was pasted]
 ```
 
 > Copy relevant requirements from the source into Sections 3, 4 and 6. A link alone is not a specification.

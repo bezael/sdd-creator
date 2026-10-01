@@ -37,7 +37,7 @@ SDD produces the contract; the lane constrains the implementation; review and fi
 
 ## Issue → PR sequence
 
-1. **Issue.** The source record. Preserve its repository, number and URL in the spec's `source` block.
+1. **Issue.** The source record. Preserve its repository, number and URL as a `type: github_issue` entry in the spec's `source` list.
 2. **Contract.** Write and approve the contract before any code. Non-trivial work gets the full SDD spec, plan and tasks. Small work gets the light contract (see below).
 3. **Lane.** Confirm the repository has one: an `AGENTS.md` with a harness whose commands were actually run. If it doesn't, run `dominicode-harness-init` first. Without a lane, the verdict has to be issued by hand, which is the problem CBRM exists to solve.
 4. **Implement inside the lane.** One task at a time, short loop after every change, no files outside the declared scope without asking.
