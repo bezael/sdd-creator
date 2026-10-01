@@ -17,6 +17,14 @@ source:
   url: https://github.com/owner/repo/issues/123
 ```
 
+When the spec comes from an accepted `intent.md` in this folder:
+
+```yaml
+source:
+  type: intent
+  path: specs/<feature-slug>/intent.md
+```
+
 > Copy relevant requirements from the source into Sections 3, 4 and 6. A link alone is not a specification.
 
 ---

@@ -4,6 +4,18 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Added
+
+- **`intent.md` — the idea before the spec (Step 1.5):** a new template, `templates/intent.md`, captures the idea in the originator's words before anything is specced. It records problem, proposed outcome, affected users and systems, constraints, out of scope, open questions, and an explicit accept/reject decision. It is required for LOW-context requests, optional for MEDIUM, and skipped for HIGH, where the Issue or PRD already is the intent. The spec is derived from the accepted intent and points to it with `source: { type: intent }`. Adapted from the `intent.md` artifact in Anthropic's *AI-Native SDLC Playbook* (2026-08-21).
+- **Follow-up intents:** tangling code the user doesn't accept is still removed from the change, but the idea behind it can be kept as a new `intent.md` with `origin: follow-up` instead of being lost.
+- New hard rule: never draft `spec.md` from a LOW-context request without an accepted `intent.md`.
+
+### Changed
+
+- `templates/specs-index.md`: new **intent** status (and **rejected**) for folders that only hold an idea.
+- `templates/spec.md`: the `source` block documents `type: intent`.
+- READMEs: the workflow and the template tree include `intent.md`.
+
 ## [1.8.0] - 2026-09-23
 
 ### Added
