@@ -6,3 +6,4 @@ node_modules/
 .claude/skills/
 docs/
 announcements/
+evals/results/
