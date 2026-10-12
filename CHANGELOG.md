@@ -4,6 +4,8 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-10-12
+
 ### Added
 
 - **`intent.md` — the idea before the spec (Step 1.5):** a new template, `templates/intent.md`, captures the idea in the originator's words before anything is specced. It records problem, proposed outcome, affected users and systems, constraints, out of scope, open questions, and an explicit accept/reject decision. It is required for LOW-context requests, optional for MEDIUM, and skipped for HIGH, where the Issue or PRD already is the intent. The spec is derived from the accepted intent and points to it with `source: { type: intent }`. Adapted from the `intent.md` artifact in Anthropic's *AI-Native SDLC Playbook* (2026-08-21).
@@ -15,6 +17,7 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 - `templates/specs-index.md`: new **intent** status (and **rejected**) for folders that only hold an idea.
 - `templates/spec.md`: `source` is now a list, so a GitHub Issue, an accepted intent and a PRD/doc (`type: doc`) can be recorded together. A single-object `source` from earlier specs still reads as one entry.
 - READMEs: the workflow and the template tree include `intent.md`.
+- Repository: `node scripts/check.mjs` (run in CI on every PR) checks `plugin.json`, version, `SKILL.md`/`AGENTS.md` mirror structure, links, tables, line endings and credits. `evals/` adds five `claude plugin eval` cases for the SDD hard rules: no-TDD is never inferred, an explicit "no tests" goes through the gate, LOW context interviews before any spec, HIGH context stops after `spec.md`, and a clear bug fix doesn't trigger the skill.
 
 ### Fixed
 
