@@ -15,6 +15,8 @@
 | Light contract location | Template at `.dominicode/spec.template.md`, filled copies at `.dominicode/specs/<issue-number>-<slug>.md` | Small Issues need a contract even in SDD repos; a template filled in place is lost on the next Issue | `contract-based-review` |
 | Credits | SDD: "SDD adaptation by"; CBRM: "CBRM by Bezael Pérez · Dominicode" | SDD is an industry methodology; CBRM is a named method of its own | `contract-based-review` |
 | Line endings | LF everywhere, enforced by `.gitattributes` | A CRLF conversion inflated the 1.8.0 diff 2.5× and broke `git blame` | `contract-based-review` |
+| Spec provenance | `spec.md` `source` is a list of `{ type: github_issue \| intent \| doc }`; a single-object `source` still reads as one entry | An Issue, an accepted intent and a PRD can all feed one spec; review of `intent-md` found a single object couldn't hold them | `intent-md` |
+| Intent status | Lives only in `intent.md`'s YAML header (`draft` → `accepted` \| `rejected`); INDEX mirrors it as **intent** or **rejected** until `spec.md` exists | One status field per artifact, so the header and a body section can't disagree | `intent-md` |
 
 ---
 
@@ -23,6 +25,7 @@
 | Slug | Vision (1 line) | Status | Key stack | Related specs |
 |------|-----------------|--------|-----------|---------------|
 | `contract-based-review` | Name CBRM and ship `dominicode-harness-init` so an Issue becomes a verified PR through contract, lane and verdict (plan-only change, no `spec.md`/`tasks.md`) | completed | Markdown skills, `plugin.json` | — |
+| `intent-md` | Capture the idea as `intent.md` (problem, outcome, accept/reject) before any spec, required for LOW-context requests (shipped in PR #1 without `specs/` artifacts) | completed | Markdown skills, templates | `contract-based-review` |
 
 ---
 
