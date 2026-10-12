@@ -31,6 +31,19 @@ skills/
 3. If it's a new category, also create `skills/<category>/README.md`.
 4. Update the catalog in the root `README.md`.
 
+## Checks
+
+Run `node scripts/check.mjs` before every commit (no dependencies, Node 18+). CI runs the same script on every PR. It fails when:
+
+- a skill in `plugin.json` is missing, its frontmatter `name` doesn't match its folder, or a skill on disk isn't listed
+- `plugin.json` `version` differs from the latest released `CHANGELOG.md` entry (bump both together when cutting a release)
+- a skill's `SKILL.md` and `AGENTS.md` mirror drift apart: Step / PHASE IDs, hard-rule count or referenced `references/` and `templates/` files
+- a `references/` or `templates/` path, or a relative Markdown link, points to a file that doesn't exist
+- a Markdown table row has more cells than its header (escape `|` inside cells as `\|`)
+- a tracked file has CRLF line endings, an SDD credit says "methodology by", or a `dominicode-harness-init` template contains an emoji
+
+When you edit a rule in `SKILL.md`, apply the same change to its `AGENTS.md`. The check catches structural drift, not wording.
+
 ## Current categories
 
 - `engineering` — software development skills
