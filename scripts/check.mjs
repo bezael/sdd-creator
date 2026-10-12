@@ -49,6 +49,20 @@ for (const skillDir of skillsOnDisk) {
   }
 }
 
+// Marketplace: the entry for this repo's root names the plugin as plugin.json does,
+// and carries no version of its own (plugin.json is the single version source).
+if (exists('.claude-plugin/marketplace.json')) {
+  const marketplace = JSON.parse(read('.claude-plugin/marketplace.json'));
+  const entry = (marketplace.plugins ?? []).find((p) => p.source === './');
+  if (!entry) fail('marketplace', 'marketplace.json has no plugin entry with source "./"');
+  else {
+    if (entry.name !== plugin.name) {
+      fail('marketplace', `marketplace.json names the plugin "${entry.name}" but plugin.json says "${plugin.name}"`);
+    }
+    if ('version' in entry) fail('marketplace', 'marketplace.json entry sets a version; keep it only in plugin.json');
+  }
+}
+
 // Version: plugin.json matches the latest released CHANGELOG entry.
 const released = read('CHANGELOG.md').match(/^## \[(\d+\.\d+\.\d+)\]/m)?.[1];
 if (released !== plugin.version) {
