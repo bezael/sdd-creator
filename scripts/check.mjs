@@ -7,7 +7,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderAgents } from './build-agents.mjs';
+import { loadPlugins, renderAgents } from './build-agents.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -21,12 +21,24 @@ const trackedFiles = execSync('git ls-files', { cwd: ROOT, encoding: 'utf8' })
   .filter(Boolean);
 const markdownFiles = trackedFiles.filter((f) => f.endsWith('.md'));
 
-// Plugin manifest: every listed skill exists, and every skill on disk is listed.
-const plugin = JSON.parse(read('.claude-plugin/plugin.json'));
-if (!/^\d+\.\d+\.\d+$/.test(plugin.version ?? '')) {
-  fail('plugin', `version "${plugin.version}" is not semver`);
+// Plugins: every marketplace entry has a manifest with the same name and a semver
+// version, the entry carries no version of its own (plugin.json is the single
+// version source), every listed skill exists, and every skill on disk is listed.
+const plugins = loadPlugins(ROOT);
+for (const { entry, source, manifestPath, manifest } of plugins) {
+  if (!manifest) {
+    fail('plugin', `${source} has no ${manifestPath}`);
+    continue;
+  }
+  if (entry.name && entry.name !== manifest.name) {
+    fail('marketplace', `marketplace.json names the plugin at ${source} "${entry.name}" but its plugin.json says "${manifest.name}"`);
+  }
+  if ('version' in entry) fail('marketplace', `marketplace.json entry "${entry.name}" sets a version; keep it only in ${manifestPath}`);
+  if (!/^\d+\.\d+\.\d+$/.test(manifest.version ?? '')) {
+    fail('plugin', `${manifestPath} version "${manifest.version}" is not semver`);
+  }
 }
-const listedSkills = (plugin.skills ?? []).map((p) => p.replace(/^\.\//, ''));
+const listedSkills = plugins.flatMap((p) => p.skillDirs);
 for (const skillDir of listedSkills) {
   if (!exists(join(skillDir, 'SKILL.md'))) {
     fail('plugin', `${skillDir} is listed but has no SKILL.md`);
@@ -45,28 +57,15 @@ const skillsOnDisk = trackedFiles
   .map(dirname);
 for (const skillDir of skillsOnDisk) {
   if (!listedSkills.includes(skillDir)) {
-    fail('plugin', `${skillDir} has a SKILL.md but is not listed in plugin.json`);
+    fail('plugin', `${skillDir} has a SKILL.md but no plugin.json lists it`);
   }
 }
 
-// Marketplace: the entry for this repo's root names the plugin as plugin.json does,
-// and carries no version of its own (plugin.json is the single version source).
-if (exists('.claude-plugin/marketplace.json')) {
-  const marketplace = JSON.parse(read('.claude-plugin/marketplace.json'));
-  const entry = (marketplace.plugins ?? []).find((p) => p.source === './');
-  if (!entry) fail('marketplace', 'marketplace.json has no plugin entry with source "./"');
-  else {
-    if (entry.name !== plugin.name) {
-      fail('marketplace', `marketplace.json names the plugin "${entry.name}" but plugin.json says "${plugin.name}"`);
-    }
-    if ('version' in entry) fail('marketplace', 'marketplace.json entry sets a version; keep it only in plugin.json');
-  }
-}
-
-// Version: plugin.json matches the latest released CHANGELOG entry.
+// Version: the root plugin matches the latest released CHANGELOG entry.
+const rootPlugin = plugins.find((p) => p.source === '.')?.manifest;
 const released = read('CHANGELOG.md').match(/^## \[(\d+\.\d+\.\d+)\]/m)?.[1];
-if (released !== plugin.version) {
-  fail('version', `plugin.json is ${plugin.version} but the latest CHANGELOG release is ${released}`);
+if (rootPlugin && released !== rootPlugin.version) {
+  fail('version', `plugin.json is ${rootPlugin.version} but the latest CHANGELOG release is ${released}`);
 }
 
 // Mirror sync: each AGENTS.md is generated from its SKILL.md and must match it exactly.

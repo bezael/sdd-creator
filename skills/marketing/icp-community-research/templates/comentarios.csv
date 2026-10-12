@@ -1,0 +1,2 @@
+id,plataforma,grupo,fecha,tipo,alias,texto,contexto
+C001,reddit,r/ejemplo,,comentario,U01,"texto literal","hilo sobre X"

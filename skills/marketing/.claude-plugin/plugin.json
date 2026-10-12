@@ -1,0 +1,13 @@
+{
+  "name": "dominicode-marketing",
+  "description": "Skills de marketing de Dominicode en español: emails de venta, ofertas, auditoría de landings, lanzamientos e investigación de ICP en comunidades.",
+  "version": "1.0.0",
+  "author": { "name": "Bezael Pérez", "url": "https://dominicode.com" },
+  "skills": [
+    "./dominicode-sales-email-isra-hormozi",
+    "./hormozi-offer-builder",
+    "./hormozi-landing-audit",
+    "./dominicode-launch-guide",
+    "./icp-community-research"
+  ]
+}
