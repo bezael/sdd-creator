@@ -4,6 +4,8 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-10-12
+
 ### Added
 
 - **Claude Code marketplace:** `.claude-plugin/marketplace.json` makes the repo installable as a plugin with `/plugin marketplace add bezael/sdd-creator` and `/plugin install dominicode-sdd-creator@dominicode`. The READMEs document the install and update commands, and `scripts/check.mjs` keeps the marketplace entry in line with `plugin.json`.
