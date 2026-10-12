@@ -1,11 +1,18 @@
 {
   "name": "dominicode",
-  "owner": { "name": "Bezael Pérez", "url": "https://dominicode.com" },
-  "description": "Dominicode skills for agent-driven development: the SDD lifecycle and the CBRM harness setup.",
+  "owner": {
+    "name": "Bezael Pérez",
+    "url": "https://dominicode.com"
+  },
+  "description": "Dominicode skills: the SDD lifecycle and CBRM harness setup for agent-driven development, and Spanish-language marketing skills.",
   "plugins": [
     {
       "name": "dominicode-sdd-creator",
       "source": "./"
+    },
+    {
+      "name": "dominicode-marketing",
+      "source": "./skills/marketing"
     }
   ]
 }

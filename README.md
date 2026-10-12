@@ -21,6 +21,18 @@
 | `dominicode-sdd-creator` | Full Spec-Driven Development lifecycle — Issue/understanding, spec/plan/tasks, evidence-based implementation, review, final verification and PR/handoff. |
 | `dominicode-harness-init` | Sets up the lane for agent work: audits the repo's real verification commands and generates an `AGENTS.md` with Contract, Lane and Verdict sections, plus spec and PR templates. |
 
+### Marketing (in Spanish)
+
+A separate plugin, `dominicode-marketing`, so installing the SDD skills doesn't load sales skills. These skills write and analyze copy in Spanish.
+
+| Skill | Description |
+|-------|-------------|
+| `dominicode-sales-email-isra-hormozi` | Sales and launch emails: Isra Bravo's conversational voice plus Hormozi-style offer stacking. Subject, preheader, hook, body and one CTA. |
+| `hormozi-offer-builder` | Builds or fixes an offer with the Value Equation and its six dimensions (promise, price, risk, time, effort, scarcity). |
+| `hormozi-landing-audit` | Scores a sales or landing page against the Value Equation and Grand Slam Offer, with concrete rewrites for hero and CTA. |
+| `dominicode-launch-guide` | Step-by-step launch guidance for digital products: courses, KDP books, SaaS, memberships, workshops. |
+| `icp-community-research` | Validates an ICP from community comments (Reddit, Facebook groups, LinkedIn, X…): ranks pains with literal evidence and drafts short, non-salesy replies. |
+
 ---
 
 ## Quick install (recommended)
@@ -45,6 +57,8 @@ Inside Claude Code, add this repo as a marketplace and install the plugin (both 
 /plugin marketplace add bezael/sdd-creator
 /plugin install dominicode-sdd-creator@dominicode
 ```
+
+The marketing skills are a separate plugin in the same marketplace: `/plugin install dominicode-marketing@dominicode`.
 
 On Claude Code 2.1.275 or later, one line does both: `/plugin install dominicode-sdd-creator --marketplace bezael/sdd-creator`. To update later, run `claude plugin marketplace update dominicode` and `claude plugin update dominicode-sdd-creator@dominicode` in your terminal, then restart Claude Code.
 
@@ -121,8 +135,17 @@ Paste the contents of `.agents/dominicode-harness-init/references/generic-prompt
 ```
 bezael/sdd-creator
 ├── .claude-plugin/
-│   └── plugin.json               ← read by the npx skills CLI and Claude Code
+│   ├── plugin.json               ← read by the npx skills CLI and Claude Code
+│   └── marketplace.json          ← Claude Code marketplace: both plugins
 ├── skills/
+│   ├── marketing/                ← plugin dominicode-marketing (Spanish skills)
+│   │   ├── .claude-plugin/plugin.json
+│   │   ├── README.md
+│   │   ├── dominicode-sales-email-isra-hormozi/
+│   │   ├── hormozi-offer-builder/
+│   │   ├── hormozi-landing-audit/
+│   │   ├── dominicode-launch-guide/
+│   │   └── icp-community-research/
 │   └── engineering/
 │       ├── README.md
 │       ├── dominicode-harness-init/

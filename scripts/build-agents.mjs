@@ -3,8 +3,8 @@
 // frontmatter, and a header for agents that follow the AGENTS.md standard.
 // SKILL.md is the only file to edit. Run: `node scripts/build-agents.mjs`.
 
-import { readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join, posix, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export function renderAgents(skillMarkdown) {
@@ -22,10 +22,23 @@ export function renderAgents(skillMarkdown) {
   ].join('\n');
 }
 
-export const skillDirs = (root) =>
-  JSON.parse(readFileSync(join(root, '.claude-plugin/plugin.json'), 'utf8')).skills.map((p) =>
-    p.replace(/^\.\//, ''),
-  );
+// Every plugin in the marketplace (or just the root plugin.json when there is
+// no marketplace), with its skill folders resolved to repo-relative paths.
+export function loadPlugins(root) {
+  const readJson = (p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
+  const entries = existsSync(join(root, '.claude-plugin/marketplace.json'))
+    ? readJson('.claude-plugin/marketplace.json').plugins ?? []
+    : [{ source: './' }];
+  return entries.map((entry) => {
+    const source = posix.normalize(entry.source).replace(/\/$/, '');
+    const manifestPath = posix.join(source, '.claude-plugin/plugin.json');
+    const manifest = existsSync(join(root, manifestPath)) ? readJson(manifestPath) : null;
+    const skillDirs = (manifest?.skills ?? []).map((p) => posix.join(source, p));
+    return { entry, source, manifestPath, manifest, skillDirs };
+  });
+}
+
+export const skillDirs = (root) => loadPlugins(root).flatMap((p) => p.skillDirs);
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');

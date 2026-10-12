@@ -4,6 +4,14 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Added
+
+- **New plugin `dominicode-marketing` (1.0.0)** in the `dominicode` marketplace, with five Spanish-language skills: `dominicode-sales-email-isra-hormozi`, `hormozi-offer-builder`, `hormozi-landing-audit`, `dominicode-launch-guide` and `icp-community-research`. It installs separately (`/plugin install dominicode-marketing@dominicode`), so the SDD plugin doesn't load sales skills. Its root is `skills/marketing/`, with its own `plugin.json` and version.
+
+### Changed
+
+- `scripts/check.mjs` and `scripts/build-agents.mjs` read every plugin in `marketplace.json`, not only the root `plugin.json`. Every skill, marketing included, gets a generated `AGENTS.md`.
+
 ## [1.10.0] - 2026-10-12
 
 ### Added
