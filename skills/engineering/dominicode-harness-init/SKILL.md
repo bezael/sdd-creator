@@ -9,6 +9,8 @@ Prepare a repository so an agent can work on it **and you can trust the result w
 
 Part of the **Contract Based Review Method (CBRM)** — by **Bezael Pérez · Dominicode**.
 
+> This file instructs the agent that *sets up* the harness. The `AGENTS.md` it generates for the target repository comes from `templates/AGENTS.template.md`.
+
 ## The mechanism in one sentence
 
 ```
