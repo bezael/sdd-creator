@@ -36,6 +36,7 @@ skills/
 Run `node scripts/check.mjs` before every commit (no dependencies, Node 18+). CI runs the same script on every PR. It fails when:
 
 - a skill in `plugin.json` is missing, its frontmatter `name` doesn't match its folder, or a skill on disk isn't listed
+- the `marketplace.json` entry for `./` doesn't use the `plugin.json` name, or sets its own `version`
 - `plugin.json` `version` differs from the latest released `CHANGELOG.md` entry (bump both together when cutting a release)
 - a skill's `AGENTS.md` differs from what `scripts/build-agents.mjs` generates from its `SKILL.md`
 - a `references/` or `templates/` path, or a relative Markdown link, points to a file that doesn't exist

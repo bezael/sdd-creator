@@ -37,6 +37,17 @@ The CLI asks which skills to install and for which agents (Claude Code, Cursor, 
 >
 > Note: the version number the `skills` CLI prints on startup is the CLI's own version, not this skill's. Check the installed skill version in `CHANGELOG.md` or the GitHub releases.
 
+### Claude Code plugin
+
+Inside Claude Code, add this repo as a marketplace and install the plugin (both skills come with it):
+
+```
+/plugin marketplace add bezael/sdd-creator
+/plugin install dominicode-sdd-creator@dominicode
+```
+
+On Claude Code 2.1.275 or later, one line does both: `/plugin install dominicode-sdd-creator --marketplace bezael/sdd-creator`. To update later, run `claude plugin marketplace update dominicode` and `claude plugin update dominicode-sdd-creator@dominicode` in your terminal, then restart Claude Code.
+
 ---
 
 ## Manual install (per-agent fallback)

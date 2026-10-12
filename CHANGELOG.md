@@ -4,6 +4,10 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Added
+
+- **Claude Code marketplace:** `.claude-plugin/marketplace.json` makes the repo installable as a plugin with `/plugin marketplace add bezael/sdd-creator` and `/plugin install dominicode-sdd-creator@dominicode`. The READMEs document the install and update commands, and `scripts/check.mjs` keeps the marketplace entry in line with `plugin.json`.
+
 ### Changed
 
 - **`AGENTS.md` is now generated from `SKILL.md`** by `scripts/build-agents.mjs` (same body, no frontmatter), for both skills. The hand-maintained mirrors had drifted: the SDD mirror asked for a confirmation after Step 4 (`tasks.md`) that `SKILL.md` never required. `SKILL.md` wins. `scripts/check.mjs` now fails when an `AGENTS.md` is out of date.
