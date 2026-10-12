@@ -44,6 +44,31 @@ Run `node scripts/check.mjs` before every commit (no dependencies, Node 18+). CI
 
 When you edit a rule in `SKILL.md`, apply the same change to its `AGENTS.md`. The check catches structural drift, not wording.
 
+## Evals
+
+`evals/` holds behavior evals for `dominicode-sdd-creator`, run with `claude plugin eval`. They check the hard rules a prompt edit can silently break:
+
+| Case | Asserts |
+|------|---------|
+| `no-tdd-not-inferred` | "hazlo rápido, es un prototipo" with no runner → proposes a runner, never offers skipping tests, writes no `tasks.md` yet |
+| `explicit-no-tests` | "No quiero tests" → asks "not now vs never" and for confirmation before any task list |
+| `low-context-intent-first` | "Quiero hacer una app de recetas" → skill fires, interviews the idea, writes no `spec.md` |
+| `high-context-triggers` | Detailed feature in a Fastify/SQLite/Vitest repo → skill fires, writes `spec.md` only, no new stack, stops for confirmation |
+| `bugfix-no-trigger` | Failing test with a clear repro → skill does not fire, bug fixed directly |
+
+Run them after any change to `SKILL.md`, its templates or its references, and before a release:
+
+```bash
+claude plugin eval . --ablation none --scaffold --allow-tools Write Edit --trust-plugin --no-publish -j 5
+```
+
+- About $3 and 2 minutes for the full suite (5 cases × 3 runs). Use `--case <name> --runs 1` while iterating.
+- `--scaffold` runs each case's `scaffold.sh` to create its fixture repo; only use it on cases from this repo.
+- `--ablation none` skips the no-plugin baseline arm, which would double the cost and leave the `Skill` graders unscored.
+- Results go to `evals/results/` (gitignored). Add `--keep-temp` to inspect a run's workspace and `trace.jsonl`.
+- `Write`/`Edit` graders match the tool's JSON input. Anchor them on `"file_path"`, or a file's content will match too.
+- They are not in CI: each run spends real model tokens on your account.
+
 ## Current categories
 
 - `engineering` — software development skills
