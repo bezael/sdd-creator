@@ -1,6 +1,8 @@
 # End-to-end example — vote and unvote a feedback item
 
 > This compact example shows the complete lifecycle. It is documentation, not a sample application and not a second artifact system.
+>
+> A runnable version of the same feature lives at https://github.com/bezael/cbrm-demo: Issue #1, and PR #2 with the real `spec.md`, `plan.md`, `tasks.md` evidence, two review rounds and the verdict.
 
 ## 1. Source Issue
 

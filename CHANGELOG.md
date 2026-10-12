@@ -7,6 +7,7 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 ### Added
 
 - **New plugin `dominicode-marketing` (1.0.0)** in the `dominicode` marketplace, with five Spanish-language skills: `dominicode-sales-email-isra-hormozi`, `hormozi-offer-builder`, `hormozi-landing-audit`, `dominicode-launch-guide` and `icp-community-research`. It installs separately (`/plugin install dominicode-marketing@dominicode`), so the SDD plugin doesn't load sales skills. Its root is `skills/marketing/`, with its own `plugin.json` and version.
+- **Runnable CBRM example:** the READMEs and `references/examples.md` link to [`bezael/cbrm-demo`](https://github.com/bezael/cbrm-demo), which takes the vote/unvote Issue to a verified PR with both skills, including a review that returned CHANGES REQUIRED on correct code.
 
 ### Changed
 
