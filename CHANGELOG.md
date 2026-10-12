@@ -4,6 +4,12 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 
 ## [Unreleased]
 
+### Changed
+
+- **`AGENTS.md` is now generated from `SKILL.md`** by `scripts/build-agents.mjs` (same body, no frontmatter), for both skills. The hand-maintained mirrors had drifted: the SDD mirror asked for a confirmation after Step 4 (`tasks.md`) that `SKILL.md` never required. `SKILL.md` wins. `scripts/check.mjs` now fails when an `AGENTS.md` is out of date.
+- `dominicode-sdd-creator` `SKILL.md` loads less up front: Step 4-bis, the no-TDD hand-off and the `.work/` detail point to `references/test-runner-detection.md` (new "Hand-off in this mode" section) and `templates/implementation.md`, which already held most of it. The Case E gate stays in `SKILL.md`.
+- `dominicode-harness-init` `SKILL.md` states that the `AGENTS.md` it generates for the target repo comes from `templates/AGENTS.template.md` (previously only in its mirror).
+
 ## [1.9.0] - 2026-10-12
 
 ### Added

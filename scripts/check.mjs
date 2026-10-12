@@ -7,6 +7,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { renderAgents } from './build-agents.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -54,26 +55,13 @@ if (released !== plugin.version) {
   fail('version', `plugin.json is ${plugin.version} but the latest CHANGELOG release is ${released}`);
 }
 
-// Mirror sync: SKILL.md and AGENTS.md of a skill must keep the same structure.
-// The prose differs between them; these markers must not.
-const markers = (text) => {
-  const ids = (re) => [...text.matchAll(re)].map((m) => m[1]).join(' ');
-  const rulesSection = text.match(/^## (?:Hard|Strict) rules.*\n([\s\S]*?)(?=^## |(?![\s\S]))/m)?.[1] ?? '';
-  return {
-    steps: ids(/^#{2,4} Step (\d+(?:\.\d+)?(?:-bis)?)\b/gm),
-    phases: ids(/^#{2,4} PHASE (\d+)\b/gm),
-    rules: String(rulesSection.split('\n').filter((l) => /^(- |\d+\. )/.test(l)).length),
-    resources: [...new Set(text.match(/\b(?:references|templates)\/[\w.-]+\.md\b/g) ?? [])].sort().join(' '),
-  };
-};
+// Mirror sync: each AGENTS.md is generated from its SKILL.md and must match it exactly.
 for (const skillDir of listedSkills) {
-  if (!exists(join(skillDir, 'AGENTS.md')) || !exists(join(skillDir, 'SKILL.md'))) continue;
-  const skill = markers(read(join(skillDir, 'SKILL.md')));
-  const agents = markers(read(join(skillDir, 'AGENTS.md')));
-  for (const key of Object.keys(skill)) {
-    if (skill[key] !== agents[key]) {
-      fail('mirror', `${skillDir}: ${key} differ\n    SKILL.md:  ${skill[key] || '(none)'}\n    AGENTS.md: ${agents[key] || '(none)'}`);
-    }
+  if (!exists(join(skillDir, 'SKILL.md'))) continue;
+  const expected = renderAgents(read(join(skillDir, 'SKILL.md')));
+  const actual = exists(join(skillDir, 'AGENTS.md')) ? read(join(skillDir, 'AGENTS.md')) : null;
+  if (actual !== expected) {
+    fail('mirror', `${skillDir}/AGENTS.md is out of date with SKILL.md; run \`node scripts/build-agents.mjs\``);
   }
 }
 

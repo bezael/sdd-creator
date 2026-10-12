@@ -1,12 +1,14 @@
 # AGENTS.md — Dominicode Harness Init
 
-> Mirror version of `SKILL.md` for agents that adopt the [AGENTS.md](https://agents.md) standard: Codex CLI, Cursor, Gemini CLI, Aider, Continue, and others. Equivalent content, without the Anthropic-specific YAML frontmatter.
->
-> Note: this file instructs the agent that *sets up* the harness. The `AGENTS.md` it generates for the target repository comes from `templates/AGENTS.template.md`.
+<!-- Generated from SKILL.md by scripts/build-agents.mjs. Edit SKILL.md, not this file. -->
+
+> Mirror of `SKILL.md` for agents that follow the [AGENTS.md](https://agents.md) standard: Codex CLI, Cursor, Gemini CLI, Aider, Continue and others. Same content, without the YAML frontmatter.
 
 Prepare a repository so an agent can work on it **and you can trust the result without reading every line**.
 
 Part of the **Contract Based Review Method (CBRM)** — by **Bezael Pérez · Dominicode**.
+
+> This file instructs the agent that *sets up* the harness. The `AGENTS.md` it generates for the target repository comes from `templates/AGENTS.template.md`.
 
 ## The mechanism in one sentence
 
@@ -155,7 +157,7 @@ One move per report. Anyone who tries to climb three levels at once climbs none.
 
 ## Agents other than Claude Code
 
-The method does not depend on Claude. For agents that read instruction files, this file is the entry point. For any agent with repository access and no instruction-file support, `references/generic-prompt.md` contains the same three phases as a standalone prompt that can be pasted and used.
+The method does not depend on Claude. For agents that read instruction files (Codex, Cursor, Gemini CLI, Aider…), use `AGENTS.md` in this folder. For any agent with repository access and no instruction-file support, `references/generic-prompt.md` contains the same three phases as a standalone prompt that can be pasted and used.
 
 ---
 

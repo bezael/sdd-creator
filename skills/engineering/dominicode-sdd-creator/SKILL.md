@@ -176,24 +176,9 @@ See `references/tdd-workflow.md` for the full chaining detail and naming convent
 
 ### Step 4-bis — Write `tasks.md` in no-TDD mode (only after the Case E gate)
 
-Use `templates/tasks-no-tdd.md`. Same spec, same plan, same build order, same coverage matrix — the tests are replaced by written manual verifications, nothing else is dropped.
+Use `templates/tasks-no-tdd.md`. Same spec, same plan, same build order, same coverage matrix: each criterion from `spec.md §3` and each error path from §4 becomes a 🔨 Build task paired with a ✅ Verify task written as **Given / When / Then**. Never use 🔴 or 🟢, and keep the banner with the date and who asked for it. Phase 0 runs lint + typecheck + boot smoke instead of a runner.
 
-For every feature in Section 3 of the spec:
-
-1. ⚙️ **Setup task** (only if needed)
-2. 🔨 **Build task**: implement the feature, carrying its acceptance criterion from `spec.md §3`
-3. ✅ **Verify task**: the manual check of that criterion, written as **Given / When / Then**, with a line to record the result
-4. 🔵 **Refactor task**: only if it improves clarity — and it re-runs every ✅ of the touched module
-5. 🔗 **Integration check** when the feature crosses modules
-
-Rules specific to this mode:
-
-- **Never use 🔴 or 🟢.** Those emojis mean "there is a test". A file that mixes them with manual checks is a file nobody can trust.
-- **Every criterion still gets a ✅**, including the error paths from Section 4. Dropping tests does not mean dropping criteria — that is the whole distinction between this mode and no methodology at all.
-- **Write each ✅ as Given / When / Then**, concrete enough to execute without thinking. This is what makes the file convertible: each ✅ becomes a 🔴 one-to-one if the user later adds a runner.
-- **Keep the banner at the top of the file**, with the date and the fact that the user requested this. Six months from now, nobody remembers whose decision it was.
-- **The coverage matrix is still mandatory**, with the task column reading 🔨/✅. It matters *more* here: with no runner, it is the only completeness signal left. A checked 🔨 whose ✅ was never run counts as an orphan too.
-- Phase 0 has no runner. Lint, typecheck and a boot smoke check become mandatory instead — they are the only automated signal left.
+Before writing it, read `references/test-runner-detection.md` § "Case E — no-TDD mode": the TDD vs no-TDD table, the non-negotiables and the hand-off for this mode.
 
 ### Step 5 — Implement, verify and close the lifecycle
 
@@ -208,22 +193,11 @@ Then tell the user:
    - **Autonomous Loop (Bucle Autónomo):** They can use the host agent's autonomous loop/goal capability, when available, to implement pending tasks and stop only when verification passes.
 3. If a task surfaces a missing spec decision, **stop and update `spec.md` first**, don't paper over it in code
 
-**In no-TDD mode, the hand-off changes:**
-
-4. 🔨 and ✅ are one unit — a Build task is not done until its Verify task has actually been **run**, not read
-5. **An autonomous loop cannot close a human-only ✅.** With no tests, the most it can prove automatically is lint + typecheck + boot. Say so plainly and recommend turn-based. If the user still wants automation, it must stop at the 🔨 tasks and leave human-only checks for a person.
-6. The upgrade path is at the end of `tasks.md`: adding a runner later converts every ✅ into a 🔴 without rewriting the spec
+In no-TDD mode, add the three hand-off points from `references/test-runner-detection.md` § "Hand-off in this mode": 🔨 and ✅ are one unit, an autonomous loop cannot close a human-only ✅, and the upgrade path to a runner.
 
 #### Ephemeral implementation plan (`.work/`)
 
-The three SDD artifacts document **decisions**; execution deserves a plan too — but a disposable one. At the start of each implementation session (this one or a future agent run), before touching code:
-
-1. Create `specs/<feature-slug>/.work/implementation.md` from `templates/implementation.md`: which tasks from `tasks.md` this session covers, files to touch in attack order, execution order, and the exact test command.
-2. Ensure `specs/**/.work/` is in the project's `.gitignore` — add it if missing. This file is agent scratch, **never committed**: if persisted it goes stale and starts competing with `plan.md` as a source of truth.
-3. Granularity: one per **session or module/phase**, never per 🔴→🟢→🔵 micro-task. Skip it for trivial tasks — the task entry already says what to do.
-4. **Reflow rule:** if planning execution surfaces a durable decision (spec gap, missing contract, new risk), update `spec.md` → `plan.md` → `tasks.md` first, then regenerate the ephemeral plan. This feeds the existing rule 4 of `tasks.md`, it does not replace it.
-
-The benefit: the plan survives context compaction within the session, and is cheap to regenerate in the next one because it derives from `tasks.md`.
+At the start of each implementation session, before touching code, create `specs/<feature-slug>/.work/implementation.md` from `templates/implementation.md` (one per session or module/phase, never per micro-task; skip it for trivial tasks). Ensure `specs/**/.work/` is in the project's `.gitignore`: this file is agent scratch and is **never committed**. If planning execution surfaces a durable decision, update `spec.md` → `plan.md` → `tasks.md` first, then regenerate it. It survives context compaction and is cheap to regenerate because it derives from `tasks.md`.
 
 #### Implement → Verify → Fix
 
@@ -288,6 +262,8 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 - ✅ Always present Turn-based and Autonomous Loop execution options at implementation hand-off, describing host-specific commands only as optional examples.
 
 ## Resources
+
+Paths are relative to this skill's folder, not to the project root. Load each file only when its step needs it.
 
 - `templates/intent.md` — the idea before the spec: problem, outcome, constraints, open questions and the accept/reject decision (Step 1.5)
 - `templates/spec.md` — the 6-section spec template (fill in directly)

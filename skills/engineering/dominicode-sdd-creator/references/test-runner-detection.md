@@ -186,6 +186,7 @@ The user gets to decide. What is not negotiable is that **the decision has to be
 | Template | `templates/tasks.md` | `templates/tasks-no-tdd.md` |
 | Phase 0 | install + configure + smoke-test the runner | lint + typecheck + boot smoke (the only automated signal left) |
 | Per feature | 🔴 Red → 🟢 Green → 🔵 Refactor | 🔨 Build → ✅ Verify → 🔵 Refactor |
+| Crossing modules | 🔗 integration test | 🔗 integration check, manual |
 | Criterion from `spec.md §3` | encoded in a test | written as Given / When / Then, verified by a human |
 | Error paths from `spec.md §4` | one test each | one ✅ each — **not** dropped |
 | Refactor safety | run the suite | re-run every ✅ of the touched module |
@@ -200,6 +201,14 @@ The user gets to decide. What is not negotiable is that **the decision has to be
 - **Every criterion keeps a check.** Dropping the runner is the user's decision; dropping the acceptance criteria is not on the table — that is the line between degraded SDD and no methodology at all.
 - **The coverage matrix still gates hand-off.** It is the only completeness signal left once the runner is gone, so it gets *more* important here, not less.
 - **Each ✅ is written to be convertible.** Given = fixture, When = call, Then = assertion. If a runner shows up later, the conversion to 🔴 is mechanical and the spec never gets rewritten.
+
+### Hand-off in this mode
+
+On top of the normal Step 5 hand-off, tell the user:
+
+- **🔨 and ✅ are one unit.** A Build task is not done until its Verify task has actually been **run**, not read.
+- **An autonomous loop cannot close a human-only ✅.** With no tests, the most it can prove automatically is lint + typecheck + boot. Say so plainly and recommend turn-based. If the user still wants automation, it must stop at the 🔨 tasks and leave the human-only checks for a person.
+- **The upgrade path** is at the end of `tasks.md`: adding a runner later converts every ✅ into a 🔴 without rewriting the spec.
 
 ---
 
