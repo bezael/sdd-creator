@@ -16,6 +16,10 @@ All notable changes to this project, following [Keep a Changelog](https://keepac
 - `templates/spec.md`: `source` is now a list, so a GitHub Issue, an accepted intent and a PRD/doc (`type: doc`) can be recorded together. A single-object `source` from earlier specs still reads as one entry.
 - READMEs: the workflow and the template tree include `intent.md`.
 
+### Fixed
+
+- `SKILL.md` spec and plan rules still required Spanish phrasing (`El usuario puede ...`, `A decidir con el agente`, `Stack final`) while `templates/spec.md`, `templates/plan.md` and the `AGENTS.md` mirror use English. Claude Code and non-Claude agents now produce specs with the same wording.
+
 ## [1.8.0] - 2026-09-23
 
 ### Added

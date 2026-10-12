@@ -92,11 +92,11 @@ Rules:
 
 Use the template at `templates/spec.md`. When an accepted `intent.md` exists, derive the spec from it: Vision from Problem + Proposed outcome, Users from Affected users, NFRs from Constraints, and its Open questions answered or carried forward. Reference it as a `type: intent` entry in the `source` list. When the request comes from a GitHub Issue, preserve its repository, number and URL as a `type: github_issue` entry in the optional `source` list (alongside the intent entry when both exist), then copy the accepted requirements into the six sections. A source link never replaces the spec. Fill all 6 sections in order. Strict rules:
 
-1. **Section 1 (Visión)** — Must fit in 1–2 sentences. If you cannot express it that briefly, the idea is not clear yet → loop back with the user, do not proceed.
-2. **Section 2 (Usuarios)** — List concrete actions per role, not marketing personas. Format: `Usuario [rol]: acción 1, acción 2, acción 3`.
-3. **Section 3 (Funcionalidades)** — MUST use behavioral phrasing: `El usuario puede ...` or `El sistema permite ...`. Organize by module. This is non-negotiable — it forces thinking from behavior, not from code.
-4. **Section 4 (Flujos)** — Pick the 3–5 most important actions and write the exact steps. **Every flow must include at least one error/failure path**, not just the happy path.
-5. **Section 5 (Arquitectura)** — If the user has no preference, write `A decidir con el agente` and propose 2–3 reasonable stacks with trade-offs. Don't invent a stack silently.
+1. **Section 1 (Vision)** — Must fit in 1–2 sentences. If you cannot express it that briefly, the idea is not clear yet → loop back with the user, do not proceed.
+2. **Section 2 (Users)** — List concrete actions per role, not marketing personas. Format: `User [role]: action 1, action 2, action 3`.
+3. **Section 3 (Features)** — MUST use behavioral phrasing: `The user can ...` or `The system allows ...`. Organize by module. This is non-negotiable — it forces thinking from behavior, not from code.
+4. **Section 4 (Flows)** — Pick the 3–5 most important actions and write the exact steps. **Every flow must include at least one error/failure path**, not just the happy path.
+5. **Section 5 (Architecture)** — If the user has no preference, write `To be decided with the agent` and propose 2–3 reasonable stacks with trade-offs. Don't invent a stack silently.
 6. **Section 6 (NFRs)** — Always cover at minimum: performance, security, scalability, language. Add others (offline, accessibility, compliance) if relevant.
 
 After writing, **stop and ask the user to confirm**. Do not move to Step 3 without explicit go-ahead.
@@ -105,12 +105,12 @@ After writing, **stop and ask the user to confirm**. Do not move to Step 3 witho
 
 Use the template at `templates/plan.md`. Translate the spec into technical decisions:
 
-- Stack final (frontend, backend, DB, hosting, auth) — with one-line rationale each
-- Modelo de datos (entidades + relaciones, 1 línea cada una)
-- Endpoints o contratos (si es API) o componentes principales (si es UI)
+- Final stack (frontend, backend, DB, hosting, auth) — with one-line rationale each
+- Data model (entities + relationships, one line each)
+- Contracts: endpoints (if it's an API) or main components (if it's a UI)
 - Dependencies externas (servicios, librerías clave)
-- Riesgos técnicos y mitigaciones (3–5 puntos)
-- Orden de construcción (qué módulo se hace primero, segundo, tercero)
+- Technical risks and mitigations (3–5 points)
+- Build order (which module comes first, second, third)
 
 Again, stop and confirm before Step 3.5.
 
@@ -126,7 +126,7 @@ Use the test-runner facts already gathered in the **Step 0.5 snapshot** (re-insp
    - **A. Runner installed + tests exist** → use it. Don't propose another.
    - **B. Runner installed but no tests yet** → use it; first 🔴 task creates the test scaffold.
    - **C. Project exists but no runner** → **stop**. Propose the ecosystem default (Vitest for Node-TS, pytest for Python, RSpec for Ruby, JUnit 5 for Java, xUnit for .NET — `cargo test` and `go test` are built-in). Confirm with the user. Setup tasks go in Phase 0 of `tasks.md`.
-   - **D. Greenfield** → the runner must already be decided in `plan.md` § "Stack final → CI / Tests". If it's not, go back and close it before continuing.
+   - **D. Greenfield** → the runner must already be decided in `plan.md` § "Final stack → CI / Tests". If it's not, go back and close it before continuing.
    - **E. The user explicitly asked for no tests** → **no-TDD mode** (degraded). See the gate below. Cases A–D are the only outcomes you may reach on your own; E is reached **only** because the user asked for it.
 
 State the result of the detection to the user in one sentence before proceeding to Step 4 ("Detected pytest in `pyproject.toml`, using it" / "No runner found — proposing Vitest, please confirm").
@@ -146,7 +146,7 @@ When all three hold:
 - **Separate "not now" from "never" with one question.** If the user means *not yet* (prototype, spike, demo with a deadline), that is **not** case E — stay in TDD mode, keep the runner in Phase 0, and offer to defer the 🔴 tasks. Case E is only for "no tests, period".
 - **State the cost once, in one sentence, without moralizing:** no regression detection, no confident refactoring, and every acceptance criterion gets verified by hand instead of by a runner.
 - **Ask for one explicit confirmation.** If the answer is hedged or ambiguous, you stay in TDD mode.
-- Then, and only then, go to Step 4-bis. Record the decision and its date in `plan.md` § "Stack final → CI / Tests" — that section gets closed with "no tests, requested by the user on [date]", never left blank.
+- Then, and only then, go to Step 4-bis. Record the decision and its date in `plan.md` § "Final stack → CI / Tests" — that section gets closed with "no tests, requested by the user on [date]", never left blank.
 
 ### Step 4 — Write `tasks.md` (TDD-ordered task list)
 
@@ -158,7 +158,7 @@ Use the template at `templates/tasks.md`. This is where SDD meets TDD. For every
 2. 🔴 **Red task**: write a failing test that encodes the acceptance criterion
 3. 🟢 **Green task**: minimal implementation to pass the test
 4. 🔵 **Refactor task**: cleanup, naming, extract — only if it improves clarity
-5. **Integration test** (only when the funcionalidad crosses modules)
+5. **Integration test** (only when the feature crosses modules)
 
 Each task is a checkbox. Each task has:
 - A stable `TASK-XX` ID and short title
@@ -204,8 +204,8 @@ Rules specific to this mode:
 Then tell the user:
 1. The three files are in `specs/<feature-slug>/`, and `specs/INDEX.md` is updated
 2. The options to start implementation:
-   - **Modo Paso a Paso (Turn-based):** They should tell you (or the next agent run) to pick a specific unchecked task in `tasks.md` and execute it (e.g. "Implementa la tarea T1").
-   - **Modo Bucle Autónomo (Goal-based Loop):** They can use the host agent's autonomous loop/goal capability, when available, to implement pending tasks and stop only when verification passes.
+   - **Turn-based (Paso a Paso):** They should tell you (or the next agent run) to pick a specific unchecked task in `tasks.md` and execute it (e.g. "Implementa la tarea T1").
+   - **Autonomous Loop (Bucle Autónomo):** They can use the host agent's autonomous loop/goal capability, when available, to implement pending tasks and stop only when verification passes.
 3. If a task surfaces a missing spec decision, **stop and update `spec.md` first**, don't paper over it in code
 
 **In no-TDD mode, the hand-off changes:**
@@ -263,7 +263,7 @@ If `specs/<feature-slug>/` already exists, **read it first** and propose updates
 
 - ❌ Never write implementation code in the same turn that the spec is created — spec and code are separate phases on purpose
 - ❌ Never draft `spec.md` from a LOW-context request without an accepted `intent.md` — understand the idea before deciding what to build
-- ❌ Never skip Section 1 (Visión) or accept a Visión longer than 2 sentences
+- ❌ Never skip Section 1 (Vision) or accept a Vision longer than 2 sentences
 - ❌ Never write a flow with only the happy path
 - ❌ Never silently pick a stack in Section 5 if the user gave no preference — propose, don't impose
 - ❌ Never propose a stack that conflicts with what the project already uses (per the Step 0.5 snapshot) without explicitly flagging it — anchor on what exists, don't override silently
