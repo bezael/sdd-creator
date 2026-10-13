@@ -237,6 +237,8 @@ Issue  ->  Contrato  ->  Carril  ->  Veredicto  ->  PR
 
 Método completo: [`references/cbrm.md`](./skills/engineering/dominicode-sdd-creator/references/cbrm.md).
 
+**Míralo funcionando:** [`bezael/cbrm-demo`](https://github.com/bezael/cbrm-demo) lleva un Issue a una PR verificada con las dos skills. Su primera review devolvió CHANGES REQUIRED con el código correcto, porque dos tests pasaban sin probar su criterio. La PR enseña el veredicto, los mutantes que destaparon el hueco y la corrección.
+
 ---
 
 ## Si no quieres tests

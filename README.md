@@ -237,6 +237,8 @@ Issue  ->  Contract  ->  Lane  ->  Verdict  ->  PR
 
 Full method: [`references/cbrm.md`](./skills/engineering/dominicode-sdd-creator/references/cbrm.md).
 
+**See it run:** [`bezael/cbrm-demo`](https://github.com/bezael/cbrm-demo) takes one Issue to one verified PR with both skills. Its first review returned CHANGES REQUIRED on correct code, because two tests passed without proving their criterion. The PR shows the verdict, the mutants that exposed the gap and the fix.
+
 ---
 
 ## If you don't want tests
