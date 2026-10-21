@@ -268,7 +268,7 @@ In a repo whose `AGENTS.md` has the lane `dominicode-harness-init` writes, every
 
 - The result is shown to you: `✓ short loop 2/2`, the commands that are red, or "still red after 3 tries".
 - A command annotated `known red` in the lane runs, but never sends the agent back.
-- No `AGENTS.md`, or no `Short loop` section: it does nothing.
+- No lane in `AGENTS.md`: it falls back to the `Test` / `Lint` / `Typecheck` commands that [ai-workflow-kit](https://github.com/bezael/ai-workflow-kit)'s `/ak-setup` records in `.ak/config.md`. Neither: it does nothing.
 - Claude Code: set `DOMINICODE_VERIFIED_DONE=off` to turn it off. Pi: `/verify` runs the short loop now, and `/verify off` / `/verify on` toggle the automatic check.
 
 This repo runs under its own lane: see [`AGENTS.md`](./AGENTS.md).

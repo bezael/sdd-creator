@@ -268,7 +268,7 @@ En un repo cuyo `AGENTS.md` tenga el carril que escribe `dominicode-harness-init
 
 - Ves el resultado: `✓ short loop 2/2`, los comandos en rojo o "still red after 3 tries".
 - Un comando marcado `known red` en el carril se ejecuta, pero nunca devuelve al agente al trabajo.
-- Sin `AGENTS.md`, o sin sección `Short loop`, no hace nada.
+- Sin carril en `AGENTS.md`, usa los comandos `Test` / `Lint` / `Typecheck` que el `/ak-setup` de [ai-workflow-kit](https://github.com/bezael/ai-workflow-kit) registra en `.ak/config.md`. Si no hay ninguno de los dos, no hace nada.
 - Claude Code: pon `DOMINICODE_VERIFIED_DONE=off` para desactivarlo. Pi: `/verify` ejecuta el short loop ahora, y `/verify off` / `/verify on` activan o desactivan la comprobación automática.
 
 Este repo trabaja con su propio carril: mira [`AGENTS.md`](./AGENTS.md).

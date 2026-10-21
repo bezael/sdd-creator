@@ -146,13 +146,54 @@ export function gitSnapshot(cwd) {
 	);
 }
 
-/** @param {string} cwd @returns {LoopCommand[]} */
-export function readLane(cwd) {
-	try {
-		return parseShortLoop(fs.readFileSync(path.join(cwd, "AGENTS.md"), "utf8"));
-	} catch {
-		return [];
+/** The `.ak/config.md` keys that make a short loop; Build and E2E are long-loop work. */
+const AK_SHORT_LOOP_KEYS = ["Test", "Lint", "Typecheck"];
+
+/**
+ * The short-loop commands of ai-workflow-kit's `.ak/config.md`: the `- Key: value` bullets under
+ * `## Commands`, backticks stripped, values starting with "unknown" skipped. Same rules as the
+ * kit's own parseConfigCommands.
+ * @param {string} markdown
+ * @returns {LoopCommand[]}
+ */
+export function parseAkCommands(markdown) {
+	/** @type {Map<string, string>} */
+	const found = new Map();
+	let inCommands = false;
+	for (const line of markdown.split(/\r?\n/)) {
+		const heading = line.match(/^##\s+(.+?)\s*$/);
+		if (heading) {
+			inCommands = /^commands$/i.test(heading[1]);
+			continue;
+		}
+		if (!inCommands) continue;
+		const m = line.match(/^\s*-\s*([A-Za-z0-9 ]+?):\s*(.+?)\s*$/);
+		const key = m && AK_SHORT_LOOP_KEYS.find((k) => k.toLowerCase() === m[1].trim().toLowerCase());
+		if (!key) continue;
+		const value = m[2].trim().replace(/^`(.+)`$/, "$1");
+		if (!/^unknown\b/i.test(value)) found.set(key, value);
 	}
+	return AK_SHORT_LOOP_KEYS.filter((k) => found.has(k)).map((k) => ({ command: /** @type {string} */ (found.get(k)), knownRed: false }));
+}
+
+/** @param {string} file */
+const readText = (file) => {
+	try {
+		return fs.readFileSync(file, "utf8");
+	} catch {
+		return "";
+	}
+};
+
+/**
+ * The short loop of the repo: the CBRM lane in AGENTS.md, or, when there is none, the
+ * Test / Lint / Typecheck commands ai-workflow-kit's /ak-setup recorded in .ak/config.md.
+ * @param {string} cwd
+ * @returns {LoopCommand[]}
+ */
+export function readLane(cwd) {
+	const lane = parseShortLoop(readText(path.join(cwd, "AGENTS.md")));
+	return lane.length ? lane : parseAkCommands(readText(path.join(cwd, ".ak", "config.md")));
 }
 
 /**
