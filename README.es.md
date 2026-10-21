@@ -74,6 +74,17 @@ Invoca una skill con `/skill:dominicode-sdd-creator` o `/skill:dominicode-harnes
 
 Si ya copiaste alguna skill a `~/.agents/skills/` o `.agents/skills/`, Pi carga esa copia primero y avisa de la colisión de nombres: bórrala para que gane la del paquete.
 
+#### Verified done (extensión de Pi)
+
+El paquete trae también `extensions/dominicode-verified-done.ts`. En un repo cuyo `AGENTS.md` tenga el carril que escribe `dominicode-harness-init`, ejecuta él mismo el **short loop** cada vez que el agente para después de cambiar archivos. Si un comando sale en rojo, Pi no da la tarea por cerrada: el agente recibe el comando que falla y su salida, y tiene que arreglar el código. Tras tres comprobaciones en rojo para el mismo prompt deja de insistir y te lo pasa a ti.
+
+- El footer muestra el último resultado: `✓ short loop 3/3`, o los comandos en rojo.
+- Un comando marcado `known red` en el carril se ejecuta, pero nunca devuelve al agente al trabajo.
+- `/verify` ejecuta el short loop ahora; `/verify off` y `/verify on` activan o desactivan la comprobación automática en la sesión.
+- Sin `AGENTS.md`, o sin sección `Short loop`, no hace nada.
+
+El prompt le pide al agente que ejecute el harness; esto hace que no pueda saltárselo. Desactiva la extensión con `pi config` si solo quieres las skills.
+
 ---
 
 ## Instalación manual (fallback por agente)
@@ -149,7 +160,10 @@ bezael/sdd-creator
 ├── .claude-plugin/
 │   ├── plugin.json               ← leído por el CLI npx skills y Claude Code
 │   └── marketplace.json          ← marketplace de Claude Code: los dos plugins
-├── package.json                  ← paquete de Pi: las seis skills
+├── package.json                  ← paquete de Pi: las seis skills + la extensión verified-done
+├── extensions/
+│   └── dominicode-verified-done.ts  ← Pi: ejecuta el short loop del carril antes de que el agente pare
+├── tests/                        ← node --test, para la extensión
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (skills en español)
 │   │   ├── .claude-plugin/plugin.json

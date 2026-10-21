@@ -1,7 +1,7 @@
 {
   "name": "dominicode-sdd-creator",
   "version": "1.10.0",
-  "description": "Dominicode skills for Pi: the SDD lifecycle and CBRM harness setup for agent-driven development, plus Spanish-language marketing skills.",
+  "description": "Dominicode skills for Pi: the SDD lifecycle and CBRM harness setup for agent-driven development, an extension that runs the lane's short loop before the agent may stop, plus Spanish-language marketing skills.",
   "keywords": [
     "pi-package",
     "agent-skills",
@@ -16,8 +16,12 @@
     "url": "git+https://github.com/bezael/sdd-creator.git"
   },
   "homepage": "https://github.com/bezael/sdd-creator#readme",
+  "scripts": {
+    "test": "node --test \"tests/*.test.ts\""
+  },
   "files": [
     "skills/",
+    "extensions/",
     "README.md",
     "README.es.md",
     "CHANGELOG.md",
@@ -31,6 +35,9 @@
       "./skills/marketing/dominicode-sales-email-isra-hormozi",
       "./skills/marketing/hormozi-landing-audit",
       "./skills/marketing/hormozi-offer-builder"
+    ],
+    "extensions": [
+      "./extensions/dominicode-verified-done.ts"
     ]
   }
 }
