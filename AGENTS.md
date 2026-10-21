@@ -87,6 +87,8 @@ Each plugin lists its skills in its own `plugin.json`, and `.claude-plugin/marke
 
 The root `package.json` is the **Pi package** manifest: its `"pi"."skills"` array lists every skill of both plugins, one folder each (a category folder would make Pi load its `README.md` as a skill), and its `version` follows the root `plugin.json`. Its `"pi"."extensions"` array ships `extensions/dominicode-verified-done.ts`, the Pi extension that runs the lane's short loop when the agent stops; `tests/` covers it with `node --test` (`npm test`, no dependencies, Node 22.18+ strips the types).
 
+The root plugin also ships Claude Code hooks: `hooks/hooks.json` runs `hooks/verified-done.mjs`, the Claude Code side of verified done. Both sides call `extensions/verified-done-core.mjs`, so a change to the check goes there, with tests in `tests/` for each side.
+
 Two plugins can't share a root: a second marketplace entry on `./` conflicts with the root `plugin.json`. A category that ships as its own plugin gets its own `.claude-plugin/plugin.json` inside `skills/<category>/`.
 
 #### Adding a new skill
@@ -107,6 +109,7 @@ It fails when:
 - a `marketplace.json` entry doesn't use its plugin's `plugin.json` name, sets its own `version`, or points to a folder without a `plugin.json`
 - the root `plugin.json` `version` differs from the latest released `CHANGELOG.md` entry (bump both together when cutting a release)
 - `package.json` `"pi"."skills"` doesn't list exactly the skills of the `plugin.json` files, its `version` differs from the root `plugin.json`, it lacks the `pi-package` keyword, or a `"pi"."extensions"` entry is missing or left out of `"files"`
+- `hooks/hooks.json` lacks its top-level `"hooks"` key or runs a `${CLAUDE_PLUGIN_ROOT}/…` script that doesn't exist
 - a `SKILL.md` frontmatter breaks the Agent Skills rules Pi enforces: an unquoted `description` containing `: ` or ` #` (invalid YAML, so Pi drops the skill), a `name` that isn't lowercase-and-hyphens or is over 64 characters, or a `description` over 1024 characters
 - a skill's `AGENTS.md` differs from what `scripts/build-agents.mjs` generates from its `SKILL.md`
 - a `references/` or `templates/` path, or a relative Markdown link, points to a file that doesn't exist

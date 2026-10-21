@@ -1,0 +1,17 @@
+{
+  "description": "Verified done (CBRM): run the lane's short loop from AGENTS.md before Claude may stop",
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/verified-done.mjs\"" }] }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/verified-done.mjs\"" }]
+      }
+    ],
+    "Stop": [
+      { "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/verified-done.mjs\"", "timeout": 1200 }] }
+    ]
+  }
+}

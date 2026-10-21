@@ -59,6 +59,8 @@ Dentro de Claude Code, añade este repo como marketplace e instala el plugin (tr
 
 Las skills de marketing son un plugin aparte en el mismo marketplace: `/plugin install dominicode-marketing@dominicode`.
 
+El plugin trae también los hooks de [verified done](#verified-done-el-short-loop-que-el-agente-no-puede-saltarse). En un repo sin carril CBRM no hacen nada.
+
 Desde Claude Code 2.1.275, una sola línea hace las dos cosas: `/plugin install dominicode-sdd-creator --marketplace bezael/sdd-creator`. Para actualizar después, ejecuta en tu terminal `claude plugin marketplace update dominicode` y `claude plugin update dominicode-sdd-creator@dominicode`, y reinicia Claude Code.
 
 ### Paquete de Pi
@@ -74,16 +76,7 @@ Invoca una skill con `/skill:dominicode-sdd-creator` o `/skill:dominicode-harnes
 
 Si ya copiaste alguna skill a `~/.agents/skills/` o `.agents/skills/`, Pi carga esa copia primero y avisa de la colisión de nombres: bórrala para que gane la del paquete.
 
-#### Verified done (extensión de Pi)
-
-El paquete trae también `extensions/dominicode-verified-done.ts`. En un repo cuyo `AGENTS.md` tenga el carril que escribe `dominicode-harness-init`, ejecuta él mismo el **short loop** cada vez que el agente para después de cambiar archivos. Si un comando sale en rojo, Pi no da la tarea por cerrada: el agente recibe el comando que falla y su salida, y tiene que arreglar el código. Tras tres comprobaciones en rojo para el mismo prompt deja de insistir y te lo pasa a ti.
-
-- El footer muestra el último resultado: `✓ short loop 3/3`, o los comandos en rojo.
-- Un comando marcado `known red` en el carril se ejecuta, pero nunca devuelve al agente al trabajo.
-- `/verify` ejecuta el short loop ahora; `/verify off` y `/verify on` activan o desactivan la comprobación automática en la sesión.
-- Sin `AGENTS.md`, o sin sección `Short loop`, no hace nada.
-
-El prompt le pide al agente que ejecute el harness; esto hace que no pueda saltárselo. Desactiva la extensión con `pi config` si solo quieres las skills.
+El paquete trae también la extensión [verified done](#verified-done-el-short-loop-que-el-agente-no-puede-saltarse). Desactívala con `pi config` si solo quieres las skills.
 
 ---
 
@@ -162,8 +155,12 @@ bezael/sdd-creator
 │   └── marketplace.json          ← marketplace de Claude Code: los dos plugins
 ├── package.json                  ← paquete de Pi: las seis skills + la extensión verified-done
 ├── extensions/
-│   └── dominicode-verified-done.ts  ← Pi: ejecuta el short loop del carril antes de que el agente pare
-├── tests/                        ← node --test, para la extensión
+│   ├── dominicode-verified-done.ts  ← Pi: ejecuta el short loop del carril antes de que el agente pare
+│   └── verified-done-core.mjs    ← la lógica que comparten los dos agentes
+├── hooks/
+│   ├── hooks.json                ← Claude Code: conecta verified done al plugin
+│   └── verified-done.mjs         ← Claude Code: ejecuta el short loop del carril antes de que Claude pare
+├── tests/                        ← node --test, para verified done (Pi y Claude Code)
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (skills en español)
 │   │   ├── .claude-plugin/plugin.json
@@ -262,6 +259,19 @@ Issue  ->  Contrato  ->  Carril  ->  Veredicto  ->  PR
 - **Veredicto**: evidencia por criterio y un veredicto de alineación (`Exact`, `Tangling`, `Missing`, `Missing and Tangling`) que se entrega en la PR. Tú lees el contrato y el veredicto, y solo abres el diff donde el veredicto está en rojo.
 
 Método completo: [`references/cbrm.md`](./skills/engineering/dominicode-sdd-creator/references/cbrm.md).
+
+### Verified done: el short loop que el agente no puede saltarse
+
+El carril le pide al agente que ejecute el short loop después de cada cambio; pedir no es obligar. Los dos paquetes lo obligan: el plugin de Claude Code con hooks (`hooks/hooks.json`) y el paquete de Pi con una extensión (`extensions/dominicode-verified-done.ts`), sobre una misma implementación.
+
+En un repo cuyo `AGENTS.md` tenga el carril que escribe `dominicode-harness-init`, cada vez que el agente para después de cambiar archivos se ejecuta el short loop. Si un comando sale en rojo, el agente no puede parar: recibe el comando que falla y su salida, y tiene que arreglar el código. Tras tres comprobaciones en rojo para el mismo prompt deja de insistir y te lo pasa a ti.
+
+- Ves el resultado: `✓ short loop 2/2`, los comandos en rojo o "still red after 3 tries".
+- Un comando marcado `known red` en el carril se ejecuta, pero nunca devuelve al agente al trabajo.
+- Sin `AGENTS.md`, o sin sección `Short loop`, no hace nada.
+- Claude Code: pon `DOMINICODE_VERIFIED_DONE=off` para desactivarlo. Pi: `/verify` ejecuta el short loop ahora, y `/verify off` / `/verify on` activan o desactivan la comprobación automática.
+
+Este repo trabaja con su propio carril: mira [`AGENTS.md`](./AGENTS.md).
 
 **Míralo funcionando:** [`bezael/cbrm-demo`](https://github.com/bezael/cbrm-demo) lleva un Issue a una PR verificada con las dos skills. Su primera review devolvió CHANGES REQUIRED con el código correcto, porque dos tests pasaban sin probar su criterio. La PR enseña el veredicto, los mutantes que destaparon el hueco y la corrección.
 

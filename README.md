@@ -59,6 +59,8 @@ Inside Claude Code, add this repo as a marketplace and install the plugin (both 
 
 The marketing skills are a separate plugin in the same marketplace: `/plugin install dominicode-marketing@dominicode`.
 
+The plugin also ships the [verified done](#verified-done-the-short-loop-the-agent-cannot-skip) hooks. They do nothing in a repo without a CBRM lane.
+
 On Claude Code 2.1.275 or later, one line does both: `/plugin install dominicode-sdd-creator --marketplace bezael/sdd-creator`. To update later, run `claude plugin marketplace update dominicode` and `claude plugin update dominicode-sdd-creator@dominicode` in your terminal, then restart Claude Code.
 
 ### Pi package
@@ -74,16 +76,7 @@ Invoke a skill with `/skill:dominicode-sdd-creator` or `/skill:dominicode-harnes
 
 If you already copied a skill to `~/.agents/skills/` or `.agents/skills/`, Pi loads that copy first and warns about the name collision: delete it so the package version wins.
 
-#### Verified done (Pi extension)
-
-The package also ships `extensions/dominicode-verified-done.ts`. In a repo whose `AGENTS.md` has the lane that `dominicode-harness-init` writes, it runs the **short loop** itself every time the agent stops after changing files. If a command is red, Pi does not settle: the agent gets the failing command and its output, and has to fix the code. After three red checks for the same prompt it stops pushing and hands over to you.
-
-- The footer shows the last result: `✓ short loop 3/3`, or the commands that are red.
-- A command annotated `known red` in the lane runs, but never sends the agent back.
-- `/verify` runs the short loop now; `/verify off` and `/verify on` toggle the automatic check for the session.
-- No `AGENTS.md`, or no `Short loop` section: it does nothing.
-
-The prompt asks the agent to run the harness; this makes it unskippable. Turn the extension off with `pi config` if you only want the skills.
+The package also ships the [verified done](#verified-done-the-short-loop-the-agent-cannot-skip) extension. Turn it off with `pi config` if you only want the skills.
 
 ---
 
@@ -162,8 +155,12 @@ bezael/sdd-creator
 │   └── marketplace.json          ← Claude Code marketplace: both plugins
 ├── package.json                  ← Pi package: all six skills + the verified-done extension
 ├── extensions/
-│   └── dominicode-verified-done.ts  ← Pi: runs the lane's short loop before the agent may stop
-├── tests/                        ← node --test, for the extension
+│   ├── dominicode-verified-done.ts  ← Pi: runs the lane's short loop before the agent may stop
+│   └── verified-done-core.mjs    ← the logic both agents share
+├── hooks/
+│   ├── hooks.json                ← Claude Code: wires verified done into the plugin
+│   └── verified-done.mjs         ← Claude Code: runs the lane's short loop before Claude may stop
+├── tests/                        ← node --test, for verified done (Pi and Claude Code)
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (Spanish skills)
 │   │   ├── .claude-plugin/plugin.json
@@ -262,6 +259,19 @@ Issue  ->  Contract  ->  Lane  ->  Verdict  ->  PR
 - **Verdict**: per-criterion evidence and an alignment verdict (`Exact`, `Tangling`, `Missing`, `Missing and Tangling`), delivered in the PR. You read the contract and the verdict, and open the diff only where the verdict is red.
 
 Full method: [`references/cbrm.md`](./skills/engineering/dominicode-sdd-creator/references/cbrm.md).
+
+### Verified done: the short loop the agent cannot skip
+
+The lane asks the agent to run the short loop after every change; asking is not enforcing. Both packages enforce it: the Claude Code plugin with hooks (`hooks/hooks.json`) and the Pi package with an extension (`extensions/dominicode-verified-done.ts`), on one shared implementation.
+
+In a repo whose `AGENTS.md` has the lane `dominicode-harness-init` writes, every time the agent stops after changing files, the short loop runs. If a command is red, the agent is not allowed to stop: it gets the failing command and its output, and has to fix the code. After three red checks for the same prompt it stops pushing and hands over to you.
+
+- The result is shown to you: `✓ short loop 2/2`, the commands that are red, or "still red after 3 tries".
+- A command annotated `known red` in the lane runs, but never sends the agent back.
+- No `AGENTS.md`, or no `Short loop` section: it does nothing.
+- Claude Code: set `DOMINICODE_VERIFIED_DONE=off` to turn it off. Pi: `/verify` runs the short loop now, and `/verify off` / `/verify on` toggle the automatic check.
+
+This repo runs under its own lane: see [`AGENTS.md`](./AGENTS.md).
 
 **See it run:** [`bezael/cbrm-demo`](https://github.com/bezael/cbrm-demo) takes one Issue to one verified PR with both skills. Its first review returned CHANGES REQUIRED on correct code, because two tests passed without proving their criterion. The PR shows the verdict, the mutants that exposed the gap and the fix.
 
