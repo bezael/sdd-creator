@@ -31,7 +31,6 @@ Un plugin aparte, `dominicode-marketing`, para que instalar las skills de SDD no
 | `hormozi-offer-builder` | Construye o arregla una oferta con la Value Equation y sus seis dimensiones (promesa, precio, riesgo, tiempo, sacrificio, escasez). |
 | `hormozi-landing-audit` | Puntúa una landing o página de ventas con la Value Equation y la Grand Slam Offer, con reescrituras concretas del hero y del CTA. |
 | `dominicode-launch-guide` | Guía paso a paso para lanzar productos digitales: cursos, libros KDP, SaaS, membresías, workshops. |
-| `icp-community-research` | Valida un ICP con comentarios de comunidades (Reddit, grupos de Facebook, LinkedIn, X…): rankea dolores con evidencia literal y redacta respuestas breves que no suenan a venta. |
 
 ---
 
@@ -64,7 +63,7 @@ Desde Claude Code 2.1.275, una sola línea hace las dos cosas: `/plugin install 
 
 ### Paquete de Pi
 
-[Pi](https://pi.dev) implementa la especificación Agent Skills, así que carga los mismos `SKILL.md`. El repo es un paquete de Pi (`package.json`, clave `"pi"`) con las siete skills:
+[Pi](https://pi.dev) implementa la especificación Agent Skills, así que carga los mismos `SKILL.md`. El repo es un paquete de Pi (`package.json`, clave `"pi"`) con las seis skills:
 
 ```bash
 pi install git:github.com/bezael/sdd-creator      # para ti (~/.pi/agent/settings.json)
@@ -150,7 +149,7 @@ bezael/sdd-creator
 ├── .claude-plugin/
 │   ├── plugin.json               ← leído por el CLI npx skills y Claude Code
 │   └── marketplace.json          ← marketplace de Claude Code: los dos plugins
-├── package.json                  ← paquete de Pi: las siete skills
+├── package.json                  ← paquete de Pi: las seis skills
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (skills en español)
 │   │   ├── .claude-plugin/plugin.json
@@ -158,8 +157,7 @@ bezael/sdd-creator
 │   │   ├── dominicode-sales-email-isra-hormozi/
 │   │   ├── hormozi-offer-builder/
 │   │   ├── hormozi-landing-audit/
-│   │   ├── dominicode-launch-guide/
-│   │   └── icp-community-research/
+│   │   └── dominicode-launch-guide/
 │   └── engineering/
 │       ├── README.md
 │       ├── dominicode-harness-init/

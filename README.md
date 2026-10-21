@@ -31,7 +31,6 @@ A separate plugin, `dominicode-marketing`, so installing the SDD skills doesn't 
 | `hormozi-offer-builder` | Builds or fixes an offer with the Value Equation and its six dimensions (promise, price, risk, time, effort, scarcity). |
 | `hormozi-landing-audit` | Scores a sales or landing page against the Value Equation and Grand Slam Offer, with concrete rewrites for hero and CTA. |
 | `dominicode-launch-guide` | Step-by-step launch guidance for digital products: courses, KDP books, SaaS, memberships, workshops. |
-| `icp-community-research` | Validates an ICP from community comments (Reddit, Facebook groups, LinkedIn, X…): ranks pains with literal evidence and drafts short, non-salesy replies. |
 
 ---
 
@@ -64,7 +63,7 @@ On Claude Code 2.1.275 or later, one line does both: `/plugin install dominicode
 
 ### Pi package
 
-[Pi](https://pi.dev) implements the Agent Skills specification, so it loads the same `SKILL.md` files. The repo is a Pi package (`package.json`, `"pi"` key) with all seven skills:
+[Pi](https://pi.dev) implements the Agent Skills specification, so it loads the same `SKILL.md` files. The repo is a Pi package (`package.json`, `"pi"` key) with all six skills:
 
 ```bash
 pi install git:github.com/bezael/sdd-creator      # for you (~/.pi/agent/settings.json)
@@ -150,7 +149,7 @@ bezael/sdd-creator
 ├── .claude-plugin/
 │   ├── plugin.json               ← read by the npx skills CLI and Claude Code
 │   └── marketplace.json          ← Claude Code marketplace: both plugins
-├── package.json                  ← Pi package: all seven skills
+├── package.json                  ← Pi package: all six skills
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (Spanish skills)
 │   │   ├── .claude-plugin/plugin.json
@@ -158,8 +157,7 @@ bezael/sdd-creator
 │   │   ├── dominicode-sales-email-isra-hormozi/
 │   │   ├── hormozi-offer-builder/
 │   │   ├── hormozi-landing-audit/
-│   │   ├── dominicode-launch-guide/
-│   │   └── icp-community-research/
+│   │   └── dominicode-launch-guide/
 │   └── engineering/
 │       ├── README.md
 │       ├── dominicode-harness-init/
