@@ -20,7 +20,7 @@ Work in three phases and **do not move to the next one without showing me the re
 
 3. **Run every candidate.** Record the exact command, exit code, duration, and the last lines if it fails. Do not write any command later that you did not run here: a harness with invented commands is worse than having no harness.
 
-4. Check whether agent configuration already exists: `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`. If it exists, do not overwrite it — read it and then propose the diff. If the root `AGENTS.md` is the Dominicode SDD Creator skill file itself, do not merge into it: propose moving it to `.agents/dominicode-sdd-creator/` and replacing the root file with the lane.
+4. Check whether agent configuration already exists: `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.pi/`. If it exists, do not overwrite it — read it and then propose the diff. If the root `AGENTS.md` is the Dominicode SDD Creator skill file itself, do not merge into it: propose moving it to `.agents/dominicode-sdd-creator/` and replacing the root file with the lane.
 
 5. Return this table:
 

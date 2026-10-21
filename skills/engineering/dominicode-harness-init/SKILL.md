@@ -87,7 +87,7 @@ If a command does not exist, do not invent or install it yourself: report it as 
 
 ### 4. Detect existing agent configuration
 
-`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.claude/`.
+`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.claude/`, `.pi/`.
 
 If any already exist, **do not overwrite them**. Read them, then propose the diff in Phase 2.
 
@@ -158,7 +158,7 @@ One move per report. Anyone who tries to climb three levels at once climbs none.
 
 ## Agents other than Claude Code
 
-The method does not depend on Claude. For agents that read instruction files (Codex, Cursor, Gemini CLI, Aider…), use `AGENTS.md` in this folder. For any agent with repository access and no instruction-file support, `references/generic-prompt.md` contains the same three phases as a standalone prompt that can be pasted and used.
+The method does not depend on Claude. Pi loads this `SKILL.md` as is (it implements the Agent Skills specification) and reads the generated `AGENTS.md` from the repo root, so it needs no `CLAUDE.md` pointer. For agents that read instruction files (Codex, Cursor, Gemini CLI, Aider…), use `AGENTS.md` in this folder. For any agent with repository access and no instruction-file support, `references/generic-prompt.md` contains the same three phases as a standalone prompt that can be pasted and used.
 
 ---
 

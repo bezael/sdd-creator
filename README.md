@@ -2,7 +2,7 @@
 
 > [🇪🇸 Versión en español](./README.es.md)
 
-> Generates specs following the **Spec-Driven Development** methodology, as adapted by Dominicode (Bezael Pérez), in any AI agent: Claude, Codex, Gemini, Cursor, Aider, Continue.
+> Generates specs following the **Spec-Driven Development** methodology, as adapted by Dominicode (Bezael Pérez), in any AI agent: Claude, Codex, Gemini, Cursor, Pi, Aider, Continue.
 >
 > Before generating code, the agent produces `spec.md` (6 sections plus optional Issue provenance), `plan.md` (technical decisions) and `tasks.md` (TDD-ordered tasks with objective completion evidence) under `specs/<feature-slug>/`.
 >
@@ -31,7 +31,6 @@ A separate plugin, `dominicode-marketing`, so installing the SDD skills doesn't 
 | `hormozi-offer-builder` | Builds or fixes an offer with the Value Equation and its six dimensions (promise, price, risk, time, effort, scarcity). |
 | `hormozi-landing-audit` | Scores a sales or landing page against the Value Equation and Grand Slam Offer, with concrete rewrites for hero and CTA. |
 | `dominicode-launch-guide` | Step-by-step launch guidance for digital products: courses, KDP books, SaaS, memberships, workshops. |
-| `icp-community-research` | Validates an ICP from community comments (Reddit, Facebook groups, LinkedIn, X…): ranks pains with literal evidence and drafts short, non-salesy replies. |
 
 ---
 
@@ -61,6 +60,19 @@ Inside Claude Code, add this repo as a marketplace and install the plugin (both 
 The marketing skills are a separate plugin in the same marketplace: `/plugin install dominicode-marketing@dominicode`.
 
 On Claude Code 2.1.275 or later, one line does both: `/plugin install dominicode-sdd-creator --marketplace bezael/sdd-creator`. To update later, run `claude plugin marketplace update dominicode` and `claude plugin update dominicode-sdd-creator@dominicode` in your terminal, then restart Claude Code.
+
+### Pi package
+
+[Pi](https://pi.dev) implements the Agent Skills specification, so it loads the same `SKILL.md` files. The repo is a Pi package (`package.json`, `"pi"` key) with all six skills:
+
+```bash
+pi install git:github.com/bezael/sdd-creator      # for you (~/.pi/agent/settings.json)
+pi install -l git:github.com/bezael/sdd-creator   # for this project (.pi/settings.json)
+```
+
+Invoke a skill with `/skill:dominicode-sdd-creator` or `/skill:dominicode-harness-init`, or just describe the feature and let Pi pick it. To keep only the engineering skills, turn the marketing ones off with `pi config`. Update with `pi update --extensions`.
+
+If you already copied a skill to `~/.agents/skills/` or `.agents/skills/`, Pi loads that copy first and warns about the name collision: delete it so the package version wins.
 
 ---
 
@@ -137,6 +149,7 @@ bezael/sdd-creator
 ├── .claude-plugin/
 │   ├── plugin.json               ← read by the npx skills CLI and Claude Code
 │   └── marketplace.json          ← Claude Code marketplace: both plugins
+├── package.json                  ← Pi package: all six skills
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (Spanish skills)
 │   │   ├── .claude-plugin/plugin.json
@@ -144,8 +157,7 @@ bezael/sdd-creator
 │   │   ├── dominicode-sales-email-isra-hormozi/
 │   │   ├── hormozi-offer-builder/
 │   │   ├── hormozi-landing-audit/
-│   │   ├── dominicode-launch-guide/
-│   │   └── icp-community-research/
+│   │   └── dominicode-launch-guide/
 │   └── engineering/
 │       ├── README.md
 │       ├── dominicode-harness-init/
