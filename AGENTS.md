@@ -29,14 +29,17 @@ Each plugin lists its skills in its own `plugin.json`, and `.claude-plugin/marke
 | `dominicode-sdd-creator` | `./` | `.claude-plugin/plugin.json` (`skills/engineering/*`) | `CHANGELOG.md` releases |
 | `dominicode-marketing` | `./skills/marketing` | `skills/marketing/.claude-plugin/plugin.json` | its own `plugin.json` |
 
+The root `package.json` is the **Pi package** manifest: its `"pi"."skills"` array lists every skill of both plugins, one folder each (a category folder would make Pi load its `README.md` as a skill), and its `version` follows the root `plugin.json`.
+
 Two plugins can't share a root: a second marketplace entry on `./` conflicts with the root `plugin.json`. A category that ships as its own plugin gets its own `.claude-plugin/plugin.json` inside `skills/<category>/`.
 
 ## Adding a new skill
 
 1. Create `skills/<category>/<skill-name>/` with at least `SKILL.md`, then run `node scripts/build-agents.mjs` to generate its `AGENTS.md`.
 2. Add it to the `skills` array of the plugin that ships it: `"./skills/engineering/<skill-name>"` in `.claude-plugin/plugin.json`, or `"./<skill-name>"` in `skills/marketing/.claude-plugin/plugin.json`.
-3. If it's a new category, also create `skills/<category>/README.md`.
-4. Update the catalog in the root `README.md`.
+3. Add it to `"pi"."skills"` in the root `package.json`: `"./skills/<category>/<skill-name>"`.
+4. If it's a new category, also create `skills/<category>/README.md`.
+5. Update the catalog in the root `README.md`.
 
 ## Checks
 
@@ -45,6 +48,8 @@ Run `node scripts/check.mjs` before every commit (no dependencies, Node 18+). CI
 - a skill listed in a `plugin.json` is missing, its frontmatter `name` doesn't match its folder, or a skill on disk isn't listed by any plugin
 - a `marketplace.json` entry doesn't use its plugin's `plugin.json` name, sets its own `version`, or points to a folder without a `plugin.json`
 - the root `plugin.json` `version` differs from the latest released `CHANGELOG.md` entry (bump both together when cutting a release)
+- `package.json` `"pi"."skills"` doesn't list exactly the skills of the `plugin.json` files, its `version` differs from the root `plugin.json`, or it lacks the `pi-package` keyword
+- a `SKILL.md` frontmatter breaks the Agent Skills rules Pi enforces: an unquoted `description` containing `: ` or ` #` (invalid YAML, so Pi drops the skill), a `name` that isn't lowercase-and-hyphens or is over 64 characters, or a `description` over 1024 characters
 - a skill's `AGENTS.md` differs from what `scripts/build-agents.mjs` generates from its `SKILL.md`
 - a `references/` or `templates/` path, or a relative Markdown link, points to a file that doesn't exist
 - a Markdown table row has more cells than its header (escape `|` inside cells as `\|`)

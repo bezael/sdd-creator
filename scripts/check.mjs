@@ -51,6 +51,19 @@ for (const skillDir of listedSkills) {
     fail('plugin', `${skillDir}/SKILL.md frontmatter name "${name}" does not match its folder`);
   }
   if (!description) fail('plugin', `${skillDir}/SKILL.md frontmatter has no description`);
+  // Pi and other Agent Skills loaders parse frontmatter as strict YAML: an
+  // unquoted value with ": " or " #" is invalid there and the skill is dropped.
+  if (description && !/^["'>|]/.test(description) && /: | #/.test(description)) {
+    fail('frontmatter', `${skillDir}/SKILL.md description is an unquoted YAML value with ": " or " #"; quote it`);
+  }
+  if (name && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name)) {
+    fail('frontmatter', `${skillDir}/SKILL.md name "${name}" is not lowercase letters, digits and single hyphens`);
+  }
+  if (name && name.length > 64) fail('frontmatter', `${skillDir}/SKILL.md name is longer than 64 characters`);
+  const descriptionText = description?.replace(/^(["'])([\s\S]*)\1$/, '$2');
+  if (descriptionText && [...descriptionText].length > 1024) {
+    fail('frontmatter', `${skillDir}/SKILL.md description is longer than 1024 characters`);
+  }
 }
 const skillsOnDisk = trackedFiles
   .filter((f) => /^skills\/[^/]+\/[^/]+\/SKILL\.md$/.test(f))
@@ -66,6 +79,26 @@ const rootPlugin = plugins.find((p) => p.source === '.')?.manifest;
 const released = read('CHANGELOG.md').match(/^## \[(\d+\.\d+\.\d+)\]/m)?.[1];
 if (rootPlugin && released !== rootPlugin.version) {
   fail('version', `plugin.json is ${rootPlugin.version} but the latest CHANGELOG release is ${released}`);
+}
+
+// Pi package: package.json ships the same skills as the plugins, at the root
+// plugin's version, and keeps the keyword that lists it in the Pi gallery.
+// Skills are listed one by one: a category folder would load its README.md as a skill.
+const pkg = exists('package.json') ? JSON.parse(read('package.json')) : null;
+if (!pkg) {
+  fail('pi', 'package.json is missing; it is the Pi package manifest');
+} else {
+  const piSkills = (pkg.pi?.skills ?? []).map((p) => p.replace(/^\.\//, '').replace(/\/$/, ''));
+  for (const skillDir of listedSkills) {
+    if (!piSkills.includes(skillDir)) fail('pi', `${skillDir} is in a plugin.json but not in package.json "pi.skills"`);
+  }
+  for (const skillDir of piSkills) {
+    if (!listedSkills.includes(skillDir)) fail('pi', `package.json "pi.skills" lists ${skillDir}, which no plugin.json lists`);
+  }
+  if (rootPlugin && pkg.version !== rootPlugin.version) {
+    fail('pi', `package.json is ${pkg.version} but plugin.json is ${rootPlugin.version}; bump both together`);
+  }
+  if (!pkg.keywords?.includes('pi-package')) fail('pi', 'package.json keywords lack "pi-package"');
 }
 
 // Mirror sync: each AGENTS.md is generated from its SKILL.md and must match it exactly.

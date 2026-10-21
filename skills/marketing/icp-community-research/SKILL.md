@@ -1,6 +1,6 @@
 ---
 name: icp-community-research
-description: Investiga comentarios y publicaciones de comunidades online (grupos de Facebook, Reddit, LinkedIn, X/Twitter, Instagram, YouTube, Discord, Telegram, foros) para validar si el ICP aparece de verdad, extraer y rankear dolores de cliente con evidencia literal, y redactar respuestas humanas y muy breves a las dudas de los usuarios. Úsala siempre que se hable de research en comunidades o redes sociales; de validar o afinar un ICP; de detectar pain points, objeciones o lenguaje de cliente; de analizar comentarios pegados o exportados; o de contestar dudas en un grupo, subreddit o hilo sin sonar a vendedor. Actívala aunque el usuario no diga "ICP" ni "research": basta con que pegue comentarios de cualquier plataforma y pregunte qué ve ahí.
+description: 'Investiga comentarios y publicaciones de comunidades online (grupos de Facebook, Reddit, LinkedIn, X/Twitter, Instagram, YouTube, Discord, Telegram, foros) para validar si el ICP aparece de verdad, extraer y rankear dolores de cliente con evidencia literal, y redactar respuestas humanas y muy breves a las dudas de los usuarios. Úsala siempre que se hable de research en comunidades o redes sociales; de validar o afinar un ICP; de detectar pain points, objeciones o lenguaje de cliente; de analizar comentarios pegados o exportados; o de contestar dudas en un grupo, subreddit o hilo sin sonar a vendedor. Actívala aunque el usuario no diga "ICP" ni "research": basta con que pegue comentarios de cualquier plataforma y pregunte qué ve ahí.'
 ---
 
 # ICP Community Research

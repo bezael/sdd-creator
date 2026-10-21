@@ -2,7 +2,7 @@
 
 > [🇬🇧 English version](./README.md)
 
-> Genera specs siguiendo la metodología **Spec-Driven Development**, según la adaptación de Dominicode (Bezael Pérez), en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Aider, Continue.
+> Genera specs siguiendo la metodología **Spec-Driven Development**, según la adaptación de Dominicode (Bezael Pérez), en cualquier agente de IA: Claude, Codex, Gemini, Cursor, Pi, Aider, Continue.
 >
 > Antes de generar código, el agente produce `spec.md` (6 secciones y provenance opcional del Issue), `plan.md` (decisiones técnicas) y `tasks.md` (tareas TDD con evidencia objetiva de finalización) bajo `specs/<feature-slug>/`.
 >
@@ -61,6 +61,19 @@ Dentro de Claude Code, añade este repo como marketplace e instala el plugin (tr
 Las skills de marketing son un plugin aparte en el mismo marketplace: `/plugin install dominicode-marketing@dominicode`.
 
 Desde Claude Code 2.1.275, una sola línea hace las dos cosas: `/plugin install dominicode-sdd-creator --marketplace bezael/sdd-creator`. Para actualizar después, ejecuta en tu terminal `claude plugin marketplace update dominicode` y `claude plugin update dominicode-sdd-creator@dominicode`, y reinicia Claude Code.
+
+### Paquete de Pi
+
+[Pi](https://pi.dev) implementa la especificación Agent Skills, así que carga los mismos `SKILL.md`. El repo es un paquete de Pi (`package.json`, clave `"pi"`) con las siete skills:
+
+```bash
+pi install git:github.com/bezael/sdd-creator      # para ti (~/.pi/agent/settings.json)
+pi install -l git:github.com/bezael/sdd-creator   # para este proyecto (.pi/settings.json)
+```
+
+Invoca una skill con `/skill:dominicode-sdd-creator` o `/skill:dominicode-harness-init`, o describe la feature y deja que Pi la elija. Para quedarte solo con las de engineering, desactiva las de marketing con `pi config`. Actualiza con `pi update --extensions`.
+
+Si ya copiaste alguna skill a `~/.agents/skills/` o `.agents/skills/`, Pi carga esa copia primero y avisa de la colisión de nombres: bórrala para que gane la del paquete.
 
 ---
 
@@ -137,6 +150,7 @@ bezael/sdd-creator
 ├── .claude-plugin/
 │   ├── plugin.json               ← leído por el CLI npx skills y Claude Code
 │   └── marketplace.json          ← marketplace de Claude Code: los dos plugins
+├── package.json                  ← paquete de Pi: las siete skills
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (skills en español)
 │   │   ├── .claude-plugin/plugin.json
