@@ -63,7 +63,7 @@ If multiple manifests appear, this is a monorepo: ask which package the harness 
 
 ### 2. Inventory feedback mechanisms
 
-Look for candidates in manifest scripts, `Makefile` / `Justfile` / `Taskfile`, and `.github/workflows` workflows — CI is often the most reliable source for the project's real commands.
+Look for candidates in manifest scripts, `Makefile` / `Justfile` / `Taskfile`, and `.github/workflows` workflows — CI is often the most reliable source for the project's real commands. If the repo uses ai-workflow-kit, `.ak/config.md` (`## Commands`: `Test`, `Lint`, `Typecheck`, `Build`, `E2E`) lists the commands `/ak-setup` found; treat them as candidates like any other and run them, since that file records that a command exists, not that it passes.
 
 The harness has six categories:
 
@@ -87,7 +87,9 @@ If a command does not exist, do not invent or install it yourself: report it as 
 
 ### 4. Detect existing agent configuration
 
-`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.claude/`, `.pi/`.
+`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.claude/`, `.pi/`, `.ak/config.md`.
+
+`.ak/config.md` belongs to ai-workflow-kit: never write it. Both tools read each other's format, so the lane and that file can live side by side; the kit's `verify --final` runs the lane's loops too.
 
 If any already exist, **do not overwrite them**. Read them, then propose the diff in Phase 2.
 

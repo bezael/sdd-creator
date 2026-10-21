@@ -1,6 +1,6 @@
 ---
 slug: pi-verified-done
-status: in-progress
+status: completed
 source:
   - type: intent
     summary: "A Pi extension that refuses to let the agent finish with the lane's short loop red"

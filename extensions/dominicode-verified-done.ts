@@ -101,7 +101,12 @@ export function createVerifiedDone({ maxAttempts = MAX_ATTEMPTS, run = runInShel
 				}
 				const commands = readLane(ctx.cwd);
 				if (!commands.length) {
-					if (ctx.hasUI) ctx.ui.notify(`verified-done: no "Short loop" section in ${path.join(ctx.cwd, "AGENTS.md")}`, "warning");
+					if (ctx.hasUI) {
+						ctx.ui.notify(
+							`verified-done: no "Short loop" section in ${path.join(ctx.cwd, "AGENTS.md")} and no Test / Lint / Typecheck in ${path.join(ctx.cwd, ".ak", "config.md")}`,
+							"warning",
+						);
+					}
 					return;
 				}
 				const verdict = verdictOf(await runLoop(commands, ctx.cwd, run));

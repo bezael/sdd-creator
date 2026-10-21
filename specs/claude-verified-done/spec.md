@@ -1,6 +1,6 @@
 ---
 slug: claude-verified-done
-status: in-progress
+status: completed
 source:
   - type: intent
     summary: "The verified-done check of pi-verified-done, for Claude Code, shipped by the dominicode-sdd-creator plugin"

@@ -16,6 +16,7 @@
 | Credits | SDD: "SDD adaptation by"; CBRM: "CBRM by Bezael Pérez · Dominicode" | SDD is an industry methodology; CBRM is a named method of its own | `contract-based-review` |
 | Line endings | LF everywhere, enforced by `.gitattributes` | A CRLF conversion inflated the 1.8.0 diff 2.5× and broke `git blame` | `contract-based-review` |
 | Verified done | One implementation (`extensions/verified-done-core.mjs`) behind the Pi extension and the Claude Code hook; 3 tries per prompt; `known red` never blocks | Two copies of the stop rule would drift, and the agents must agree on what done means | `claude-verified-done` |
+| CBRM and ai-workflow-kit | Separate tools that read each other's harness format (lane in `AGENTS.md` ↔ `.ak/config.md`); neither writes the other's file | Chosen over merging on 2026-10-21: users mix the tools, and two writers on one file would fight | `ak-config-fallback` |
 | Spec provenance | `spec.md` `source` is a list of `{ type: github_issue \| intent \| doc }`; a single-object `source` still reads as one entry | An Issue, an accepted intent and a PRD can all feed one spec; review of `intent-md` found a single object couldn't hold them | `intent-md` |
 | Intent status | Lives only in `intent.md`'s YAML header (`draft` → `accepted` \| `rejected`); INDEX mirrors it as **intent** or **rejected** until `spec.md` exists | One status field per artifact, so the header and a body section can't disagree | `intent-md` |
 
@@ -26,8 +27,9 @@
 | Slug | Vision (1 line) | Status | Key stack | Related specs |
 |------|-----------------|--------|-----------|---------------|
 | `contract-based-review` | Name CBRM and ship `dominicode-harness-init` so an Issue becomes a verified PR through contract, lane and verdict (plan-only change, no `spec.md`/`tasks.md`) | completed | Markdown skills, `plugin.json` | — |
-| `claude-verified-done` | The verified-done check for Claude Code as plugin hooks, on a core shared with Pi; this repo adopts its own CBRM lane | in-progress | Plain ESM hook, `node --test` | `pi-verified-done` |
-| `pi-verified-done` | Pi extension that runs the lane's short loop when the agent stops and sends a red result back to it, up to 3 times per prompt | in-progress | TypeScript Pi extension, `node --test` | `contract-based-review` |
+| `ak-config-fallback` | Verified done and harness-init read ai-workflow-kit's `.ak/config.md`; the kit reads the lane in return | in-progress | Core parser, harness-init text | `claude-verified-done` |
+| `claude-verified-done` | The verified-done check for Claude Code as plugin hooks, on a core shared with Pi; this repo adopts its own CBRM lane (PR #14) | completed | Plain ESM hook, `node --test` | `pi-verified-done` |
+| `pi-verified-done` | Pi extension that runs the lane's short loop when the agent stops and sends a red result back to it, up to 3 times per prompt (PR #13) | completed | TypeScript Pi extension, `node --test` | `contract-based-review` |
 | `intent-md` | Capture the idea as `intent.md` (problem, outcome, accept/reject) before any spec, required for LOW-context requests (shipped in PR #1 without `specs/` artifacts) | completed | Markdown skills, templates | `contract-based-review` |
 
 ---

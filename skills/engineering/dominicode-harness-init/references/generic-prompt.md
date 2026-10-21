@@ -15,12 +15,12 @@ Work in three phases and **do not move to the next one without showing me the re
 
 1. Identify the stack from its manifests (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `pom.xml`, `*.csproj`, `Gemfile`, `composer.json`) and the package manager from the lockfile, not convention. If there are multiple manifests, this is a monorepo: ask which package we are working on.
 
-2. Find candidate commands in the manifest scripts, `Makefile` / `Justfile` / `Taskfile`, and especially `.github/workflows` — CI usually reveals the project's real commands:
+2. Find candidate commands in the manifest scripts, `Makefile` / `Justfile` / `Taskfile`, `.ak/config.md` (ai-workflow-kit) and especially `.github/workflows` — CI usually reveals the project's real commands:
    build, type check, tests, lint/format, CI, e2e/smoke.
 
 3. **Run every candidate.** Record the exact command, exit code, duration, and the last lines if it fails. Do not write any command later that you did not run here: a harness with invented commands is worse than having no harness.
 
-4. Check whether agent configuration already exists: `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.pi/`. If it exists, do not overwrite it — read it and then propose the diff. If the root `AGENTS.md` is the Dominicode SDD Creator skill file itself, do not merge into it: propose moving it to `.agents/dominicode-sdd-creator/` and replacing the root file with the lane.
+4. Check whether agent configuration already exists: `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`, `.github/copilot-instructions.md`, `.pi/`, `.ak/config.md` (ai-workflow-kit's, never written by this prompt). If it exists, do not overwrite it — read it and then propose the diff. If the root `AGENTS.md` is the Dominicode SDD Creator skill file itself, do not merge into it: propose moving it to `.agents/dominicode-sdd-creator/` and replacing the root file with the lane.
 
 5. Return this table:
 
