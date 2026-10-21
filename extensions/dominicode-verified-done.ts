@@ -20,134 +20,31 @@
  *
  * `/verify` runs the short loop now; `/verify off` and `/verify on` toggle the automatic check.
  *
+ * The logic lives in verified-done-core.mjs, shared with the Claude Code hook.
+ *
  * CBRM by Bezael Pérez · Dominicode
  */
 
-import { execFile, spawn } from "node:child_process";
-import fs from "node:fs";
 import path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import {
+	type CommandRun,
+	type Verdict,
+	freshState,
+	gitSnapshot,
+	MAX_ATTEMPTS,
+	onStop,
+	readLane,
+	runInShell,
+	runLoop,
+	startPrompt,
+	statusText,
+	verdictOf,
+} from "./verified-done-core.mjs";
 
-export type LoopCommand = { command: string; knownRed: boolean };
-export type CommandRun = { code: number | null; output: string; timedOut: boolean };
-export type CommandResult = LoopCommand & CommandRun;
-export type Verdict =
-	| { kind: "green"; passed: number; total: number }
-	| { kind: "red"; failing: string[] }
-	| { kind: "gave-up"; failing: string[]; tries: number };
+export { failureMessage, gitSnapshot, parseShortLoop, statusText } from "./verified-done-core.mjs";
 
 const STATUS_KEY = "verified-done";
-const MAX_ATTEMPTS = 3;
-const TIMEOUT_MS = 10 * 60_000;
-const OUTPUT_TAIL = 4_000;
-
-/**
- * The commands of the first fenced block under the `Short loop` heading, without blank lines,
- * comment lines or trailing `# comments`. A trailing comment saying "known red" marks the command.
- */
-export function parseShortLoop(markdown: string): LoopCommand[] {
-	const lines = markdown.split(/\r?\n/);
-	const heading = lines.findIndex((l) => /^#{1,6}\s+short loop\b/i.test(l));
-	if (heading === -1) return [];
-
-	let i = heading + 1;
-	while (i < lines.length && !lines[i].startsWith("```")) {
-		if (/^#{1,6}\s/.test(lines[i])) return []; // next section before any code block
-		i++;
-	}
-
-	const commands: LoopCommand[] = [];
-	for (i++; i < lines.length && !lines[i].startsWith("```"); i++) {
-		const line = lines[i].trim();
-		if (!line || line.startsWith("#")) continue;
-		const comment = line.match(/\s+#\s.*$/);
-		commands.push({
-			command: comment ? line.slice(0, comment.index).trim() : line,
-			knownRed: comment ? /known red/i.test(comment[0]) : false,
-		});
-	}
-	return commands;
-}
-
-const isRed = (r: CommandResult) => !r.knownRed && r.code !== 0;
-
-/** What the model reads when the short loop is red. */
-export function failureMessage(results: CommandResult[], attempt: number, maxAttempts: number): string {
-	const failures = results.filter(isRed).map((r) => {
-		const how = r.timedOut ? "timed out" : `exited ${r.code}`;
-		const output = r.output.length > OUTPUT_TAIL ? `…${r.output.slice(-OUTPUT_TAIL)}` : r.output;
-		return `\`${r.command}\` ${how}:\n\n\`\`\`\n${output.trim()}\n\`\`\``;
-	});
-	return [
-		`The lane's short loop is red, so the task is not done (verified-done, attempt ${attempt} of ${maxAttempts}).`,
-		...failures,
-		"Fix the cause in the code and stop again; the short loop will run again. Do not edit tests or the lane to make it pass.",
-	].join("\n\n");
-}
-
-export function statusText(verdict: Verdict): string {
-	switch (verdict.kind) {
-		case "green":
-			return `✓ short loop ${verdict.passed}/${verdict.total}`;
-		case "red":
-			return `✗ short loop: ${verdict.failing.join(", ")}`;
-		case "gave-up":
-			return `✗ short loop still red after ${verdict.tries} tries: ${verdict.failing.join(", ")}`;
-	}
-}
-
-function runInShell(command: string, cwd: string): Promise<CommandRun> {
-	return new Promise((resolve) => {
-		const child = spawn(command, { cwd, shell: true });
-		let output = "";
-		let timedOut = false;
-		const timer = setTimeout(() => {
-			timedOut = true;
-			child.kill();
-		}, TIMEOUT_MS);
-		child.stdout.on("data", (d) => (output += d));
-		child.stderr.on("data", (d) => (output += d));
-		child.on("error", (err) => {
-			clearTimeout(timer);
-			resolve({ code: null, output: err.message, timedOut });
-		});
-		child.on("close", (code) => {
-			clearTimeout(timer);
-			resolve({ code, output, timedOut });
-		});
-	});
-}
-
-/**
- * The changed files with their size and mtime, or null outside a git repo. The status alone is not
- * enough: a file that is already modified or untracked keeps the same status line when bash
- * changes it again.
- */
-export function gitSnapshot(cwd: string): Promise<string | null> {
-	return new Promise((resolve) =>
-		execFile("git", ["status", "--porcelain", "-z", "--untracked-files=all"], { cwd }, (err, stdout) => {
-			if (err) return resolve(null);
-			const lines = stdout.split("\0").filter(Boolean).map((entry) => {
-				const file = entry.length > 3 && entry[2] === " " ? entry.slice(3) : entry; // a rename's source has no status
-				try {
-					const s = fs.statSync(path.join(cwd, file));
-					return `${entry} ${s.size} ${s.mtimeMs}`;
-				} catch {
-					return `${entry} gone`;
-				}
-			});
-			resolve(lines.join("\n"));
-		}),
-	);
-}
-
-function readLane(cwd: string): LoopCommand[] {
-	try {
-		return parseShortLoop(fs.readFileSync(path.join(cwd, "AGENTS.md"), "utf8"));
-	} catch {
-		return [];
-	}
-}
 
 type Options = {
 	maxAttempts?: number;
@@ -158,85 +55,34 @@ type Options = {
 export function createVerifiedDone({ maxAttempts = MAX_ATTEMPTS, run = runInShell, snapshot = gitSnapshot }: Options = {}) {
 	return function (pi: ExtensionAPI) {
 		let enabled = true;
-		let attempts = 0; // red checks since the last user prompt
-		let gaveUp = false;
-		let edited = false; // an edit or write since the last check
-		let recheck = false; // the agent was sent back and has to be checked again
-		let baseline: string | null = null;
+		let state = freshState();
 
 		const show = (ctx: ExtensionContext, verdict: Verdict | undefined) => {
-			if (!ctx.hasUI) return;
-			const text = verdict ? statusText(verdict) : undefined;
-			ctx.ui.setStatus(STATUS_KEY, text);
-		};
-
-		const runLoop = async (commands: LoopCommand[], cwd: string): Promise<CommandResult[]> => {
-			const results: CommandResult[] = [];
-			for (const c of commands) results.push({ ...c, ...(await run(c.command, cwd)) });
-			return results;
-		};
-
-		const verdictOf = (results: CommandResult[]): Verdict => {
-			const failing = results.filter(isRed).map((r) => r.command);
-			return failing.length
-				? { kind: "red", failing }
-				: { kind: "green", passed: results.filter((r) => r.code === 0).length, total: results.length };
+			if (ctx.hasUI) ctx.ui.setStatus(STATUS_KEY, verdict ? statusText(verdict) : undefined);
 		};
 
 		pi.on("before_agent_start", async (event, ctx) => {
 			if (event.messageType !== "user") return undefined;
-			attempts = 0;
-			gaveUp = false;
-			edited = false;
-			recheck = false;
-			baseline = enabled ? await snapshot(ctx.cwd) : null;
+			state = enabled ? await startPrompt(ctx.cwd, snapshot) : freshState();
 			return undefined;
 		});
 
 		pi.on("tool_call", async (event) => {
-			if (event.toolName === "edit" || event.toolName === "write") edited = true;
+			if (event.toolName === "edit" || event.toolName === "write") state.edited = true;
 			return undefined;
 		});
 
 		pi.on("agent_before_settle", async (event, ctx) => {
-			if (!enabled || gaveUp || event.outcome !== "completed") return undefined;
-			const commands = readLane(ctx.cwd);
-			if (!commands.length) return undefined;
-
-			const changed = edited || recheck || (baseline !== null && (await snapshot(ctx.cwd)) !== baseline);
-			if (!changed) return undefined;
-			edited = false;
-
-			const results = await runLoop(commands, ctx.cwd);
-			const verdict = verdictOf(results);
-			if (verdict.kind === "green") {
-				recheck = false;
-				show(ctx, verdict);
-				return undefined;
+			if (!enabled || event.outcome !== "completed") return undefined;
+			const result = await onStop(state, ctx.cwd, { maxAttempts, run, snapshot });
+			if (result.action === "skip") return undefined;
+			show(ctx, result.verdict);
+			if (result.action === "gave-up" && ctx.hasUI) {
+				ctx.ui.notify(`verified-done: short loop still red after ${maxAttempts} tries, over to you`, "warning");
 			}
-
-			attempts++;
-			if (attempts > maxAttempts) {
-				gaveUp = true;
-				recheck = false;
-				show(ctx, { kind: "gave-up", failing: verdict.failing, tries: maxAttempts });
-				if (ctx.hasUI) {
-					ctx.ui.notify(`verified-done: short loop still red after ${maxAttempts} tries, over to you`, "warning");
-				}
-				return undefined;
-			}
-
-			recheck = true;
-			show(ctx, verdict);
+			if (result.action !== "red") return undefined;
 			return {
-				entries: [
-					{
-						type: "custom_message" as const,
-						customType: STATUS_KEY,
-						content: failureMessage(results, attempts, maxAttempts),
-						display: true,
-					},
-				],
+				entries: [{ type: "custom_message" as const, customType: STATUS_KEY, content: result.message, display: true }],
 				continue: true,
 			};
 		});
@@ -258,7 +104,7 @@ export function createVerifiedDone({ maxAttempts = MAX_ATTEMPTS, run = runInShel
 					if (ctx.hasUI) ctx.ui.notify(`verified-done: no "Short loop" section in ${path.join(ctx.cwd, "AGENTS.md")}`, "warning");
 					return;
 				}
-				const verdict = verdictOf(await runLoop(commands, ctx.cwd));
+				const verdict = verdictOf(await runLoop(commands, ctx.cwd, run));
 				show(ctx, verdict);
 				if (ctx.hasUI) ctx.ui.notify(statusText(verdict), verdict.kind === "green" ? "info" : "error");
 			},

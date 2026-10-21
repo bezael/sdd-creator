@@ -108,6 +108,25 @@ if (!pkg) {
   }
 }
 
+// Claude Code hooks shipped by the root plugin: hooks/hooks.json needs the top-level "hooks"
+// wrapper (a bare event map fails to load), and every script it runs must exist.
+if (exists('hooks/hooks.json')) {
+  let hooks = null;
+  try {
+    hooks = JSON.parse(read('hooks/hooks.json'));
+  } catch (err) {
+    fail('hooks', `hooks/hooks.json is not valid JSON: ${err.message}`);
+  }
+  if (hooks && typeof hooks.hooks !== 'object') fail('hooks', 'hooks/hooks.json lacks the top-level "hooks" key');
+  for (const groups of Object.values(hooks?.hooks ?? {})) {
+    for (const hook of groups.flatMap((g) => g.hooks ?? [])) {
+      for (const [, script] of String(hook.command ?? '').matchAll(/\$\{CLAUDE_PLUGIN_ROOT\}\/([^"'\s]+)/g)) {
+        if (!exists(script)) fail('hooks', `hooks/hooks.json runs ${script}, which doesn't exist`);
+      }
+    }
+  }
+}
+
 // Mirror sync: each AGENTS.md is generated from its SKILL.md and must match it exactly.
 for (const skillDir of listedSkills) {
   if (!exists(join(skillDir, 'SKILL.md'))) continue;
