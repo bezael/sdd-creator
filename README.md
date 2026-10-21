@@ -74,6 +74,17 @@ Invoke a skill with `/skill:dominicode-sdd-creator` or `/skill:dominicode-harnes
 
 If you already copied a skill to `~/.agents/skills/` or `.agents/skills/`, Pi loads that copy first and warns about the name collision: delete it so the package version wins.
 
+#### Verified done (Pi extension)
+
+The package also ships `extensions/dominicode-verified-done.ts`. In a repo whose `AGENTS.md` has the lane that `dominicode-harness-init` writes, it runs the **short loop** itself every time the agent stops after changing files. If a command is red, Pi does not settle: the agent gets the failing command and its output, and has to fix the code. After three red checks for the same prompt it stops pushing and hands over to you.
+
+- The footer shows the last result: `✓ short loop 3/3`, or the commands that are red.
+- A command annotated `known red` in the lane runs, but never sends the agent back.
+- `/verify` runs the short loop now; `/verify off` and `/verify on` toggle the automatic check for the session.
+- No `AGENTS.md`, or no `Short loop` section: it does nothing.
+
+The prompt asks the agent to run the harness; this makes it unskippable. Turn the extension off with `pi config` if you only want the skills.
+
 ---
 
 ## Manual install (per-agent fallback)
@@ -149,7 +160,10 @@ bezael/sdd-creator
 ├── .claude-plugin/
 │   ├── plugin.json               ← read by the npx skills CLI and Claude Code
 │   └── marketplace.json          ← Claude Code marketplace: both plugins
-├── package.json                  ← Pi package: all six skills
+├── package.json                  ← Pi package: all six skills + the verified-done extension
+├── extensions/
+│   └── dominicode-verified-done.ts  ← Pi: runs the lane's short loop before the agent may stop
+├── tests/                        ← node --test, for the extension
 ├── skills/
 │   ├── marketing/                ← plugin dominicode-marketing (Spanish skills)
 │   │   ├── .claude-plugin/plugin.json

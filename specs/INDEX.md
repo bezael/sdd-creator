@@ -25,6 +25,7 @@
 | Slug | Vision (1 line) | Status | Key stack | Related specs |
 |------|-----------------|--------|-----------|---------------|
 | `contract-based-review` | Name CBRM and ship `dominicode-harness-init` so an Issue becomes a verified PR through contract, lane and verdict (plan-only change, no `spec.md`/`tasks.md`) | completed | Markdown skills, `plugin.json` | — |
+| `pi-verified-done` | Pi extension that runs the lane's short loop when the agent stops and sends a red result back to it, up to 3 times per prompt | in-progress | TypeScript Pi extension, `node --test` | `contract-based-review` |
 | `intent-md` | Capture the idea as `intent.md` (problem, outcome, accept/reject) before any spec, required for LOW-context requests (shipped in PR #1 without `specs/` artifacts) | completed | Markdown skills, templates | `contract-based-review` |
 
 ---

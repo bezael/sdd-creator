@@ -99,6 +99,13 @@ if (!pkg) {
     fail('pi', `package.json is ${pkg.version} but plugin.json is ${rootPlugin.version}; bump both together`);
   }
   if (!pkg.keywords?.includes('pi-package')) fail('pi', 'package.json keywords lack "pi-package"');
+  for (const ext of pkg.pi?.extensions ?? []) {
+    const file = ext.replace(/^\.\//, '');
+    if (!exists(file)) fail('pi', `package.json "pi.extensions" lists ${ext}, which doesn't exist`);
+    if (!(pkg.files ?? []).some((f) => file.startsWith(f.replace(/\/$/, '') + '/') || file === f)) {
+      fail('pi', `${ext} is a Pi extension but package.json "files" doesn't ship it`);
+    }
+  }
 }
 
 // Mirror sync: each AGENTS.md is generated from its SKILL.md and must match it exactly.
